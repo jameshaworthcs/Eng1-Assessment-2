@@ -1,44 +1,57 @@
 package com.UniSim.game;
 
+import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class BuildingList {
     private Stage stage;
     private Skin skin;
-    private Table table;
+    private World world;
     private Window buildingWindow;
-    private boolean isWindowOpen = false; // Track if the window is open
+    private boolean isWindowOpen = false;
 
-    // Constructor to initialize stage and skin
-    public BuildingList(Stage stage, Skin skin) {
+    private Texture selectedBuildingTexture = null;
+    private boolean isPlacingBuilding = false;
+    private Vector3 mousePosition = new Vector3();
+
+    private ArrayList<Rectangle> placedBuildings = new ArrayList<>(); // Store placed buildings' rectangles
+    private Label messageLabel;
+
+    private float selectedBuildingWidth;
+    private float selectedBuildingHeight;
+
+    public BuildingList(Stage stage, Skin skin, World world) {
         this.stage = stage;
         this.skin = skin;
+        this.world = world;
 
-        // Create the initial UI for the building list
         createBuildingButton();
-    }
-
-    private void closeBuildingWindow() {
-        if (buildingWindow != null) {
-            buildingWindow.remove(); // Remove the window from the stage
-        }
-        isWindowOpen = false; // Allow opening new windows again
+        createMessageLabel(); // Initialize the message label
     }
 
     // Create the button in the game that opens the building selection window
     private void createBuildingButton() {
-        // Button to open the building selection window
         TextButton buildingButton = new TextButton("Building", skin);
         buildingButton.setSize(200, 50);
         buildingButton.setPosition(10, 10);
 
-        // Add a ClickListener to open the window when clicked
         buildingButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -48,64 +61,83 @@ public class BuildingList {
             }
         });
 
-        // Add the button to the stage
         stage.addActor(buildingButton);
     }
 
-    // Method to show the building selection window
+    // Create the message label for invalid placement
+    private void createMessageLabel() {
+        messageLabel = new Label("", skin);
+        messageLabel.setPosition(10, 70); // Set the position for the message
+        messageLabel.setVisible(false); // Initially hidden
+        stage.addActor(messageLabel); // Add the label to the stage
+    }
+
     private void showBuildingSelectionWindow() {
-        isWindowOpen = true; // Mark that the window is now open
+        if (buildingWindow == null) {
+            buildingWindow = new Window("Select Building Type", skin);
+            buildingWindow.setSize(300, 400);
+            buildingWindow.setPosition(300, 200);
+        } else {
+            buildingWindow.clear(); // Clear existing content
+        }
 
-        // Create a window
-        buildingWindow = new Window("Select Building Type", skin);
-        buildingWindow.setSize(300, 400);
-        buildingWindow.setPosition(300, 200);
+        isWindowOpen = true;
 
-        // Create buttons for each building type
         TextButton accommodationButton = new TextButton("Accommodation", skin);
-        TextButton academicButton = new TextButton("Academic", skin);
-        TextButton foodButton = new TextButton("Food", skin);
-
-        // Add listeners for each building type
         accommodationButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 showAccommodationOptions();
             }
         });
-
-        // Add buttons to the window
         buildingWindow.add(accommodationButton).padBottom(10).row();
-        buildingWindow.add(academicButton).padBottom(10).row();
-        buildingWindow.add(foodButton).padBottom(10).row();
-
-        // Add a "Close" button to close the window
-        TextButton closeButton = new TextButton("Close", skin);
-        closeButton.addListener(new ClickListener() {
+        
+        // **Declare and initialize the Academic Button**
+        TextButton academicButton = new TextButton("Academic", skin);
+        academicButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                closeBuildingWindow();
+                showAcademicOptions();
             }
         });
+        buildingWindow.add(academicButton).padBottom(10).row();
 
-        buildingWindow.add(closeButton).padTop(20).row(); // Add the close button at the bottom
+        // **Declare and initialize the Food Button**
+        TextButton foodButton = new TextButton("Food", skin);
+        foodButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showFoodOptions();
+            }
+        });
+        buildingWindow.add(foodButton).padBottom(10).row();
 
-        // Add the window to the stage
-        stage.addActor(buildingWindow);
+        if (!stage.getActors().contains(buildingWindow, true)) {
+            stage.addActor(buildingWindow);
+        }
     }
 
-    // Show accommodation options when the "Accommodation" button is clicked
     private void showAccommodationOptions() {
-        buildingWindow.clear();  // Clear the window to show new content
-        // Add a label at the top of the window to represent the title
-        Label titleLabel = new Label("Select Accommodation", skin);
-        buildingWindow.add(titleLabel).padBottom(20).row();  // Add some padding and move to the next row
-
-        // Add different accommodations
-        addBuildingOption("Accommodation 1", "reception.png", 5000);
-        addBuildingOption("Accommodation 2", "reception.png", 6000);
-   
-        // Add a "Back" button to return to the main building selection window
+        buildingWindow.clear();  // Clear previous content
+        buildingWindow.add(new Label("Select Accommodation", skin)).padBottom(20).row();
+    
+        // Create a Table for building options
+        Table buildingTable = new Table();
+        
+        // Add building options
+        addBuildingOption(buildingTable, "Accommodation 1", "accommodation_3.png", 5000, 64.0f, 64.0f);
+        addBuildingOption(buildingTable, "Accommodation 2", "accommodation_3.png", 6000, 32.0f, 32.0f);
+        addBuildingOption(buildingTable, "Accommodation 3", "accommodation_3.png", 6000, 128.0f, 128.0f);
+        // Create a ScrollPane and set it to only show vertical scrollbars
+        ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
+        scrollPane.setFadeScrollBars(false);         // Disable fade so scrollbars are always visible
+        scrollPane.setScrollingDisabled(true, false); // Disable horizontal scrolling, enable vertical scrolling
+        scrollPane.setForceScroll(false, true);       // Only force vertical scroll
+        
+        // Add the scroll pane to the window
+        buildingWindow.add(scrollPane).expand().fill().row();
+        
+        // Add the Back button at the bottom
         TextButton backButton = new TextButton("Back", skin);
         backButton.addListener(new ClickListener() {
             @Override
@@ -113,53 +145,213 @@ public class BuildingList {
                 showBuildingSelectionWindow();  // Go back to the main menu
             }
         });
-
+        
         buildingWindow.add(backButton).padTop(20).row();  // Add the "Back" button at the bottom
     }
 
-    // Utility method to create an option for each building with a button
-    private void addBuildingOption(String buildingName, String imagePath, int price) {
-        // Create an image for the building
-        Texture buildingTexture = new Texture(Gdx.files.internal("reception.png"));
+
+    // Add Academic options
+    private void showAcademicOptions() {
+        buildingWindow.clear();
+        buildingWindow.add(new Label("Select Academic Building", skin)).padBottom(20).row();
+
+        Table buildingTable = new Table();
+        addBuildingOption(buildingTable, "Library", "accommodation_3.png", 10000, 100.0f, 100.0f);
+        addBuildingOption(buildingTable, "Lab", "accommodation_3.png", 8000, 80.0f, 80.0f);
+
+        // Create a ScrollPane and set it to only show vertical scrollbars
+        ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
+        scrollPane.setFadeScrollBars(false);         // Disable fade so scrollbars are always visible
+        scrollPane.setScrollingDisabled(true, false); // Disable horizontal scrolling, enable vertical scrolling
+        scrollPane.setForceScroll(false, true);       // Only force vertical scroll
+        
+        // Add the scroll pane to the window
+        buildingWindow.add(scrollPane).expand().fill().row();
+        
+        // Add the Back button at the bottom
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showBuildingSelectionWindow();  // Go back to the main menu
+            }
+        });
+        
+        buildingWindow.add(backButton).padTop(20).row();  // Add the "Back" button at the bottom
+    }
+
+    // Add Food options
+    private void showFoodOptions() {
+        buildingWindow.clear();
+        buildingWindow.add(new Label("Select Food Facility", skin)).padBottom(20).row();
+
+        Table buildingTable = new Table();
+        addBuildingOption(buildingTable, "Cafeteria", "accommodation_3.png", 7000, 70.0f, 70.0f);
+        addBuildingOption(buildingTable, "Restaurant", "accommodation_3.png", 12000, 120.0f, 120.0f);
+
+        // Create a ScrollPane and set it to only show vertical scrollbars
+        ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
+        scrollPane.setFadeScrollBars(false);         // Disable fade so scrollbars are always visible
+        scrollPane.setScrollingDisabled(true, false); // Disable horizontal scrolling, enable vertical scrolling
+        scrollPane.setForceScroll(false, true);       // Only force vertical scroll
+        
+        // Add the scroll pane to the window
+        buildingWindow.add(scrollPane).expand().fill().row();
+        
+        // Add the Back button at the bottom
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showBuildingSelectionWindow();  // Go back to the main menu
+            }
+        });
+        
+        buildingWindow.add(backButton).padTop(20).row();  // Add the "Back" button at the bottom
+    }
+
+
+    
+    private void addBuildingOption(Table buildingTable, String buildingName, String imagePath, int price, float width, float height) {
+        // Load the texture for the building
+        Texture buildingTexture = new Texture(Gdx.files.internal(imagePath));
+    
+        // Create the Image and maintain its aspect ratio
         Image buildingImage = new Image(buildingTexture);
-
-        // Create a label to display the building name and price
+    
+        // Set maximum width and height (for display in the selection window)
+        float maxWidth = 100; 
+        float maxHeight = 100; 
+    
+        // Calculate aspect ratio
+        float aspectRatio = (float) buildingTexture.getWidth() / buildingTexture.getHeight();
+    
+        // Adjust width and height to maintain the aspect ratio but within the max size
+        float displayWidth, displayHeight;
+        if (aspectRatio > 1) {
+            displayWidth = maxWidth;
+            displayHeight = maxWidth / aspectRatio;
+        } else {
+            displayHeight = maxHeight;
+            displayWidth = maxHeight * aspectRatio;
+        }
+    
+        // Set the size of the image for the selection window
+        buildingImage.setSize(displayWidth, displayHeight);
+    
+        // Add the building image and label to the table
+        buildingTable.add(buildingImage).size(displayWidth, displayHeight).padBottom(10).row();
         Label buildingLabel = new Label(buildingName + " - $" + price, skin);
-
-        // Create a button for selecting the building
+        buildingTable.add(buildingLabel).padBottom(10).row();
+    
+        // Create the Select button
         TextButton selectButton = new TextButton("Select", skin);
-
-        // Add a listener to handle building selection
         selectButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                placeBuilding(buildingName, imagePath, price);
+                // Pass the size (width and height) when selecting the building
+                placeBuilding(buildingName, imagePath, price, width, height);
             }
         });
-
-        // Add building image, label, and button to the window
-        buildingWindow.add(buildingImage).padBottom(10).row();
-        buildingWindow.add(buildingLabel).padBottom(10).row();
-        buildingWindow.add(selectButton).padBottom(10).row();
+    
+        buildingTable.add(selectButton).padBottom(20).row();
     }
 
-    // Method to place the building on the map
-    private void placeBuilding(String buildingName, String imagePath, int price) {
-        System.out.println("Placing " + buildingName + " with price $" + price);
-
-        // TODO: Add logic here to allow placing the building on the map
-        // You can use this part to place the building where the player clicks or at a specific location
-        closeBuildingWindow(); // Close the window after placing the building
+    private void placeBuilding(String buildingName, String imagePath, int price, float width, float height) {
+        try {
+            selectedBuildingTexture = new Texture(Gdx.files.internal(imagePath));
+            selectedBuildingWidth = width;  // Store the custom width
+            selectedBuildingHeight = height;  // Store the custom height
+            isPlacingBuilding = true;
+            closeBuildingWindow();
+        } catch (Exception e) {
+            Gdx.app.error("BuildingList", "Error loading texture: " + imagePath, e);
+        }
     }
 
-    // Handle keyboard input for the X key
+    public void handleBuildingPlacement(SpriteBatch batch, OrthographicCamera camera, Viewport viewport) {
+        if (isPlacingBuilding && selectedBuildingTexture != null) {
+            mousePosition.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(mousePosition, viewport.getScreenX(), viewport.getScreenY(),
+                    viewport.getScreenWidth(), viewport.getScreenHeight());
+    
+            batch.begin();
+            batch.setColor(1, 1, 1, 0.5f);  // Semi-transparent
+            
+            // Draw the building using the custom width and height
+            batch.draw(selectedBuildingTexture, mousePosition.x - selectedBuildingWidth / 2, 
+                       mousePosition.y - selectedBuildingHeight / 2, 
+                       selectedBuildingWidth, selectedBuildingHeight);
+            
+            batch.setColor(1, 1, 1, 1);  // Reset to full opacity
+            batch.end();
+    
+            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                if (!checkOverlap(mousePosition.x, mousePosition.y, selectedBuildingWidth, selectedBuildingHeight)) {
+                    placedBuildings.add(new Rectangle(mousePosition.x - selectedBuildingWidth / 2, 
+                                                      mousePosition.y - selectedBuildingHeight / 2, 
+                                                      selectedBuildingWidth, selectedBuildingHeight));
+                    createBuildingBody(mousePosition.x, mousePosition.y, selectedBuildingWidth, selectedBuildingHeight); // Create Box2D body
+                    isPlacingBuilding = false;
+                    messageLabel.setVisible(false); // Hide error message after successful placement
+                } else {
+                    messageLabel.setText("Cannot place building here!");
+                    messageLabel.setVisible(true); // Show error message
+                }
+            }
+        }
+    
+        batch.begin();
+        for (Rectangle buildingPos : placedBuildings) {
+            // Draw placed buildings using the stored size
+            batch.draw(selectedBuildingTexture, buildingPos.x, buildingPos.y, buildingPos.width, buildingPos.height);
+        }
+        batch.end();
+    }
+
+    private boolean checkOverlap(float x, float y, float width, float height) {
+        Rectangle newBuildingRect = new Rectangle(x - width / 2, y - height / 2, width, height);
+        for (Rectangle placedBuilding : placedBuildings) {
+            if (newBuildingRect.overlaps(placedBuilding)) {
+                return true; // Overlap detected
+            }
+        }
+        return false;
+    }
+
+    private void createBuildingBody(float x, float y, float width, float height) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.position.set(x / Constants.PPM, y / Constants.PPM);
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+
+        Body buildingBody = world.createBody(bodyDef);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(width / 2 / Constants.PPM, height / 2 / Constants.PPM);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 1.0f;
+        fixtureDef.friction = 0.3f;
+
+        buildingBody.createFixture(fixtureDef);
+        shape.dispose();
+    }
+
     public void handleInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
             if (!isWindowOpen) {
-                showBuildingSelectionWindow(); // Open the window if not already open
+                showBuildingSelectionWindow();
             } else {
-                closeBuildingWindow(); // Close the window if it's already open
+                closeBuildingWindow();
             }
         }
+    }
+
+    private void closeBuildingWindow() {
+        if (buildingWindow != null) {
+            buildingWindow.remove();
+        }
+        isWindowOpen = false;
     }
 }

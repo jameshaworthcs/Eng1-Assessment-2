@@ -87,14 +87,20 @@ public class UniSim extends ApplicationAdapter {
         stage = new Stage(new ScreenViewport()); // Initialize the stage
         Gdx.input.setInputProcessor(stage); // Set the stage as the input processor
 
-        // Initialize BuildingList
-        buildingList = new BuildingList(stage, skin);
+       
+        
 
 
-        boxes = new ArrayList<>();
+        
 
 
         world = new World(new Vector2(0, 0), false);
+
+        // Initialize BuildingList
+        buildingList = new BuildingList(stage, skin, world);
+
+        boxes = new ArrayList<>();
+
         b2dr = new Box2DDebugRenderer();
         player = createBox(1508, 1510, 32, 32, false, false);
 
@@ -141,6 +147,9 @@ public class UniSim extends ApplicationAdapter {
         // Handle input from BuildingList
         buildingList.handleInput();
 
+        // Handle building placement and preview
+        buildingList.handleBuildingPlacement(batch, camera, fitViewport);
+
 
         // Update the text box positions to be static and fixed above the bodies
         for (BoxEntity textBox : boxes) {
@@ -180,9 +189,22 @@ public class UniSim extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
-        //camera.setToOrtho(false, width / SCALE, height / SCALE);
-        fitViewport.update(width, height); // updates screen in fitViewport way
+        // Update the UI stage viewport when the window size changes
+        stage.getViewport().update(width, height, true); // 'true' centers the camera
+        
+        // Update the camera's viewport if you're using a camera for the game world
+        if (camera != null) {
+            camera.viewportWidth = width;
+            camera.viewportHeight = height;
+            camera.update(); // Important to call update to apply the changes
+        }
+
+        // Update game world viewport (like FitViewport) if you're using one
+        if (fitViewport != null) {
+            fitViewport.update(width, height, true); // 'true' ensures the camera stays centered
+        }
     }
+
 
     // Update camera position if the character moves into the border area
     private void updateCamera() {
