@@ -23,6 +23,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.ArrayList;
 
+import com.UniSim.game.BuildingList;
+
 import static com.UniSim.game.Constants.PPM;
 
 public class UniSim extends ApplicationAdapter {
@@ -38,6 +40,8 @@ public class UniSim extends ApplicationAdapter {
     private OrthographicCamera camera;
 
     private Box2DDebugRenderer b2dr;
+
+    private BuildingList buildingList;
 
 
     private final float SCALE = 2.0f;
@@ -82,6 +86,10 @@ public class UniSim extends ApplicationAdapter {
         skin = new Skin(Gdx.files.internal("uiskin.json")); // Load the skin file
         stage = new Stage(new ScreenViewport()); // Initialize the stage
         Gdx.input.setInputProcessor(stage); // Set the stage as the input processor
+
+        // Initialize BuildingList
+        buildingList = new BuildingList(stage, skin);
+
 
         boxes = new ArrayList<>();
 
@@ -128,6 +136,11 @@ public class UniSim extends ApplicationAdapter {
         batch.end();
 
         b2dr.render(world, camera.combined.scl(PPM));
+        
+        
+        // Handle input from BuildingList
+        buildingList.handleInput();
+
 
         // Update the text box positions to be static and fixed above the bodies
         for (BoxEntity textBox : boxes) {
