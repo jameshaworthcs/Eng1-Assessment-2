@@ -102,17 +102,8 @@ public class BuildingList {
         });
         buildingWindow.add(academicButton).padBottom(10).row();
 
-        // **Declare and initialize the Food Button**
-        TextButton foodButton = new TextButton("Food", skin);
-        foodButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                showFoodOptions();
-            }
-        });
-        buildingWindow.add(foodButton).padBottom(10).row();
 
-        // **Declare and initialize the Food Button**
+        // **Declare and initialize the Recreational Button**
         TextButton RecreationalButton = new TextButton("Recreational", skin);
         foodButton.addListener(new ClickListener() {
             @Override
@@ -194,7 +185,7 @@ public class BuildingList {
     // Add Food options
     private void showFoodOptions() {
         buildingWindow.clear();
-        buildingWindow.add(new Label("Select Food Facility", skin)).padBottom(20).row();
+        buildingWindow.add(new Label("Select Recreational Facility", skin)).padBottom(20).row();
 
         Table buildingTable = new Table();
         addBuildingOption(buildingTable, "Cafeteria", "accommodation_3.png", 7000, 70.0f, 70.0f);
