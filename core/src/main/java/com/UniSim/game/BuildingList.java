@@ -105,7 +105,7 @@ public class BuildingList {
 
         // **Declare and initialize the Recreational Button**
         TextButton RecreationalButton = new TextButton("Recreational", skin);
-        foodButton.addListener(new ClickListener() {
+        RecreationalButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 showFoodOptions();
