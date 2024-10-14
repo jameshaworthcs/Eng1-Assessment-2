@@ -116,6 +116,7 @@ public class BoxEntity {
     // Update the position of the text box to stay static on the screen
     public void updatePosition(OrthographicCamera camera) { //
         // TODO: temp fix the y coordinate is not static - logic works - maths is wrong
+        // TODO: also does not scale with resize
         Vector3 worldPosition = new Vector3(body.getPosition().x, body.getPosition().y + 40, 0);
         Vector3 screenPosition = camera.project(worldPosition);
         table.setPosition(screenPosition.x, screenPosition.y - 1300);
