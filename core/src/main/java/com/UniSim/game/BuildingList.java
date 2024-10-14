@@ -112,6 +112,17 @@ public class BuildingList {
         });
         buildingWindow.add(foodButton).padBottom(10).row();
 
+        // **Declare and initialize the Food Button**
+        TextButton RecreationalButton = new TextButton("Recreational", skin);
+        foodButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showFoodOptions();
+            }
+        });
+        buildingWindow.add(RecreationalButton).padBottom(10).row();
+        
+
         if (!stage.getActors().contains(buildingWindow, true)) {
             stage.addActor(buildingWindow);
         }
