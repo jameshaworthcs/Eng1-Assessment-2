@@ -84,15 +84,10 @@ public class UniSim extends ApplicationAdapter {
         map = new Texture("tempbg2.png");
 
         skin = new Skin(Gdx.files.internal("uiskin.json")); // Load the skin file
-        stage = new Stage(new ScreenViewport()); // Initialize the stage
+
+        // Use a FitViewport to handle resizing
+        stage = new Stage(new FitViewport(1280, 720));  // You can change this resolution to whatever fits your design
         Gdx.input.setInputProcessor(stage); // Set the stage as the input processor
-
-       
-        
-
-
-        
-
 
         world = new World(new Vector2(0, 0), false);
 
@@ -104,20 +99,13 @@ public class UniSim extends ApplicationAdapter {
         b2dr = new Box2DDebugRenderer();
         player = createBox(1508, 1510, 32, 32, false, false);
 
-
-
         boxes.add(new BoxEntity(world, stage, skin, 1500, 1500, 64, 32, true, "TEST"));
 
-
         camera = new OrthographicCamera();
-
-        fitViewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
-        camera.setToOrtho(false, 640 / SCALE / PPM, 480 / SCALE / PPM);  // Screen size is 640, 480 pixels
-        camera.position.set(1500, 1500, 0);  // Initially set the camera to the character's position
+        fitViewport = new FitViewport(1280, 720, camera);  // Use a consistent resolution for the game world
+        camera.setToOrtho(false, 1280 / SCALE / PPM, 720 / SCALE / PPM);  // Adjust these to your world dimensions
+        camera.position.set(1500, 1500, 0);
         camera.update();
-
-
-
     }
 
     @Override
