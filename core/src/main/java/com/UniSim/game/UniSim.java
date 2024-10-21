@@ -4,6 +4,8 @@ package com.UniSim.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -73,11 +75,22 @@ public class UniSim extends ApplicationAdapter {
     private int fatigueLvl;
     private int knowledgeLvl;
 
+    public static AssetManager manager;
+    private Music music;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
         tex = new Texture("character.jpg");
         map = new Texture("tempbg2.png");
+
+        manager = new AssetManager();
+        manager.load("music/sakura.mp3", Music.class);
+        manager.finishLoading();
+        
+        music = manager.get("music/sakura.mp3", Music.class);
+        music.setLooping(true);
+        music.play();
 
         skin = new Skin(Gdx.files.internal("uiskin.json")); // Load the skin file
         stage = new Stage(new ScreenViewport()); // Initialize the stage
@@ -110,7 +123,7 @@ public class UniSim extends ApplicationAdapter {
     public void render() {
         // Update character movement
         update(Gdx.graphics.getDeltaTime());
-
+        manager.update();
 
 
         // Clear the screen and start rendering
