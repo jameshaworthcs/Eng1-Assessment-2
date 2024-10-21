@@ -28,6 +28,7 @@ import static com.UniSim.game.Constants.PPM;
 public class UniSim extends ApplicationAdapter {
     private SpriteBatch batch;
     private Stage stage;
+    private Hud hud;
 
 
     private Texture tex;
@@ -76,6 +77,7 @@ public class UniSim extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
+        hud = new Hud(batch);
         tex = new Texture("character.jpg");
         map = new Texture("tempbg2.png");
 
@@ -127,6 +129,10 @@ public class UniSim extends ApplicationAdapter {
         //batch.draw(character, charX - CHARACTER_SIZE / 2, charY - CHARACTER_SIZE / 2, CHARACTER_SIZE, CHARACTER_SIZE);  // Draw character resized to 50x50
         batch.end();
 
+        // Draw the HUD
+        batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        hud.stage.draw();
+
         b2dr.render(world, camera.combined.scl(PPM));
 
         // Update the text box positions to be static and fixed above the bodies
@@ -145,7 +151,7 @@ public class UniSim extends ApplicationAdapter {
         handleInput(delta);
         checkProximityToPlatform();
 
-
+        hud.update(delta);
     }
 
     private void checkProximityToPlatform() {
