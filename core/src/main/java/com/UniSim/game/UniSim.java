@@ -36,6 +36,7 @@ public class UniSim extends ApplicationAdapter {
     private Body player;
     private Texture map;
     private OrthographicCamera camera;
+    private PlayerStats stats;
 
     private Box2DDebugRenderer b2dr;
 
@@ -63,6 +64,7 @@ public class UniSim extends ApplicationAdapter {
     //private BoxEntity platform2;
 
     private ArrayList<BoxEntity> boxes;
+    private ArrayList<StatsLabels> playerStatLabels;
 
     //private Stage uiStage;       // Stage for UI components
     private Skin skin;           // Skin for UI styling
@@ -82,8 +84,10 @@ public class UniSim extends ApplicationAdapter {
         skin = new Skin(Gdx.files.internal("uiskin.json")); // Load the skin file
         stage = new Stage(new ScreenViewport()); // Initialize the stage
         Gdx.input.setInputProcessor(stage); // Set the stage as the input processor
+        stats = new PlayerStats();
 
         boxes = new ArrayList<>();
+        playerStatLabels = new ArrayList<>();
 
 
         world = new World(new Vector2(0, 0), false);
@@ -94,6 +98,11 @@ public class UniSim extends ApplicationAdapter {
 
         boxes.add(new BoxEntity(world, stage, skin, 1500, 1500, 64, 32, true, "TEST"));
 
+        //putting the player stats on the screen
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10,200, "SATISFACTION: " + stats.getSatisfaction()));
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180, "CURRENCY: " + stats.getCurrency()));
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue()));
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
 
         camera = new OrthographicCamera();
 
