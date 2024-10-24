@@ -27,10 +27,7 @@ public class BoxEntity {
 
 
     public BoxEntity(World world, Stage stage, Skin skin, int x, int y, int width, int height, boolean isStatic, String labelText) {
-        // TODO: add a way to add images
 
-        // TODO: add different building types and then alter the types of buttons and text
-        // TODO: - could create a dictionary with all correlated data per building
 
         this.world = world;
         this.stage = stage;
@@ -78,7 +75,7 @@ public class BoxEntity {
         TextButton noButton = new TextButton("No", skin);
 
          //Add listeners to the buttons
-        // TODO: find a way to relate the ClickListeners back to main game class
+        // TODO: find a way to relate the ClickListeners back to main game class??
         yesButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
