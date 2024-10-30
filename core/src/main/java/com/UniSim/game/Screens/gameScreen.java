@@ -41,20 +41,7 @@ public class gameScreen implements Screen {
 
     private Box2DDebugRenderer b2dr;
 
-    private final float SCALE = 4;
-
     private FitViewport fitViewport;
-
-    // Screen size and camera border calculations
-    private final float SCREEN_SIZE_X = Gdx.graphics.getWidth() / SCALE;
-    private final float BORDER_SIZE_X = SCREEN_SIZE_X * 0.2f; // 20% border is 200 pixels
-    private final float CENTER_MIN_X = BORDER_SIZE_X;         // 200 pixels from edge
-    private final float CENTER_MAX_X = SCREEN_SIZE_X - BORDER_SIZE_X; // 800 pixels from edge
-
-    private final float SCREEN_SIZE_Y = Gdx.graphics.getHeight() / SCALE;
-    private final float BORDER_SIZE_Y = SCREEN_SIZE_Y * 0.3f; // 20% border is 200 pixels
-    private final float CENTER_MIN_Y = BORDER_SIZE_Y;         // 200 pixels from edge
-    private final float CENTER_MAX_Y = SCREEN_SIZE_Y - BORDER_SIZE_Y; // 800 pixels from edge
 
     private ArrayList<BoxEntity> boxes;
 
@@ -93,11 +80,6 @@ public class gameScreen implements Screen {
         buildingList = new BuildingList(stage, skin, world);
 
         boxes = new ArrayList<>();
-
-        //camera.setToOrtho(false, Gdx.graphics.getWidth() / SCALE / PPM, Gdx.graphics.getHeight() / SCALE / PPM);  // Screen size is 640, 480 pixels
-        //camera.position.set(1500, 1500, 0);  // Initially set the camera to the character's position
-        //camera.update();
-
 
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
@@ -147,7 +129,6 @@ public class gameScreen implements Screen {
         //Draw the map and character
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        //game.batch.draw(map, 0, 0, MAP_SIZE_X, MAP_SIZE_Y);  // Draw the map resized to 3000x3000
         game.batch.end();
 
         renderer.render();
