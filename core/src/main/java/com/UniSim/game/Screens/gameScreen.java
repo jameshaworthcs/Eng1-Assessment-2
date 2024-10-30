@@ -1,6 +1,7 @@
 package com.UniSim.game.Screens;
 
 import com.UniSim.game.BoxEntity;
+import com.UniSim.game.BuildingList;
 import com.UniSim.game.Sprites.Character;
 import com.UniSim.game.UniSim;
 import com.badlogic.gdx.Gdx;
@@ -22,13 +23,14 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
 import static com.UniSim.game.Constants.*;
 
 public class gameScreen implements Screen {
     private UniSim game;
     private Stage stage;
+
+    private BuildingList buildingList;
 
     private Texture characterTexture;
 
@@ -65,9 +67,9 @@ public class gameScreen implements Screen {
     public gameScreen(UniSim game){
         this.game = game;
         characterTexture = new Texture("character-1.png");
-        //map = new Texture("tempbg2.png");
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        stage = new Stage(new ScreenViewport()); // Initialize the stage
+        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Initialize the stage
         Gdx.input.setInputProcessor(stage); // Set the stage as the input processor
 
         boxes = new ArrayList<>();
@@ -87,6 +89,10 @@ public class gameScreen implements Screen {
         tiledMap = mapLoader.load("SimMap.tmx");
         renderer = new OrthogonalTiledMapRenderer(tiledMap, 1 / PPM);
         camera.position.set(fitViewport.getWorldWidth() / 2, fitViewport.getWorldHeight() / 2, 0);
+
+        buildingList = new BuildingList(stage, skin, world);
+
+        boxes = new ArrayList<>();
 
         //camera.setToOrtho(false, Gdx.graphics.getWidth() / SCALE / PPM, Gdx.graphics.getHeight() / SCALE / PPM);  // Screen size is 640, 480 pixels
         //camera.position.set(1500, 1500, 0);  // Initially set the camera to the character's position
@@ -145,6 +151,9 @@ public class gameScreen implements Screen {
         game.batch.end();
 
         renderer.render();
+
+        buildingList.handleInput();
+        buildingList.handleBuildingPlacement(game.batch, camera, fitViewport);
 
 
 
@@ -220,7 +229,19 @@ public class gameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        fitViewport.update(width, height); // updates screen in fitViewport way
+        stage.getViewport().update(width, height, true); // 'true' centers the camera
+
+        // Update the camera's viewport if you're using a camera for the game world
+        if (camera != null) {
+            camera.viewportWidth = width;
+            camera.viewportHeight = height;
+            camera.update(); // Important to call update to apply the changes
+        }
+
+        // Update game world viewport (like FitViewport) if you're using one
+        if (fitViewport != null) {
+            fitViewport.update(width, height, true); // 'true' ensures the camera stays centered
+        }
     }
 
     @Override
