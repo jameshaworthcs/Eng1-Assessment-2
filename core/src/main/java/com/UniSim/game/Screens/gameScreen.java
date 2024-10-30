@@ -10,6 +10,13 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
@@ -33,20 +40,17 @@ public class gameScreen implements Screen {
 
     private Box2DDebugRenderer b2dr;
 
-    private BoxEntity mapBorder;
-
-
-    private final float SCALE = 2;
+    private final float SCALE = 4;
 
     private FitViewport fitViewport;
 
     // Screen size and camera border calculations
-    private final float SCREEN_SIZE_X = 640f;
+    private final float SCREEN_SIZE_X = Gdx.graphics.getWidth() / SCALE;
     private final float BORDER_SIZE_X = SCREEN_SIZE_X * 0.2f; // 20% border is 200 pixels
     private final float CENTER_MIN_X = BORDER_SIZE_X;         // 200 pixels from edge
     private final float CENTER_MAX_X = SCREEN_SIZE_X - BORDER_SIZE_X; // 800 pixels from edge
 
-    private final float SCREEN_SIZE_Y = 480f;
+    private final float SCREEN_SIZE_Y = Gdx.graphics.getHeight() / SCALE;
     private final float BORDER_SIZE_Y = SCREEN_SIZE_Y * 0.3f; // 20% border is 200 pixels
     private final float CENTER_MIN_Y = BORDER_SIZE_Y;         // 200 pixels from edge
     private final float CENTER_MAX_Y = SCREEN_SIZE_Y - BORDER_SIZE_Y; // 800 pixels from edge
@@ -55,13 +59,15 @@ public class gameScreen implements Screen {
 
     private Skin skin;           // Skin for UI styling
 
+    private TmxMapLoader mapLoader;
+    private TiledMap tiledMap;
+    private OrthogonalTiledMapRenderer renderer;
 
     public gameScreen(UniSim game){
         this.game = game;
         characterTexture = new Texture("character-1.png");
-        map = new Texture("tempbg2.png");
+        //map = new Texture("tempbg2.png");
 
-        skin = new Skin(Gdx.files.internal("uiskin.json")); // Load the skin file
         stage = new Stage(new ScreenViewport()); // Initialize the stage
         Gdx.input.setInputProcessor(stage); // Set the stage as the input processor
 
@@ -76,13 +82,48 @@ public class gameScreen implements Screen {
         //boxes.add(new BoxEntity(world, stage, skin, 1000, 1000, 64, 32, true, "TEST"));
 
         camera = new OrthographicCamera();
-        fitViewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+        fitViewport = new FitViewport(Gdx.graphics.getWidth() / SCALE / PPM, Gdx.graphics.getHeight() / SCALE / PPM, camera);
 
-        camera.setToOrtho(false, Gdx.graphics.getWidth() / SCALE / PPM, Gdx.graphics.getHeight() / SCALE / PPM);  // Screen size is 640, 480 pixels
-        camera.position.set(1500, 1500, 0);  // Initially set the camera to the character's position
-        camera.update();
+        mapLoader = new TmxMapLoader();
+        tiledMap = mapLoader.load("SimMap.tmx");
+        renderer = new OrthogonalTiledMapRenderer(tiledMap, 1 / PPM);
+        camera.position.set(fitViewport.getWorldWidth() / 2, fitViewport.getWorldHeight() / 2, 0);
+
+        //camera.setToOrtho(false, Gdx.graphics.getWidth() / SCALE / PPM, Gdx.graphics.getHeight() / SCALE / PPM);  // Screen size is 640, 480 pixels
+        //camera.position.set(1500, 1500, 0);  // Initially set the camera to the character's position
+        //camera.update();
 
 
+        BodyDef bdef = new BodyDef();
+        PolygonShape shape = new PolygonShape();
+        FixtureDef fdef = new FixtureDef();
+        Body body;
+
+        for(MapObject object : tiledMap.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.StaticBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / PPM, (rect.getY() + rect.getHeight() / 2) / PPM);
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox(rect.getWidth() / 2 / PPM, rect.getHeight() / 2 / PPM);
+            fdef.shape = shape;
+            body.createFixture(fdef);
+        }
+
+        for(MapObject object : tiledMap.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.StaticBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / PPM, (rect.getY() + rect.getHeight() / 2) / PPM);
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox(rect.getWidth() / 2 / PPM, rect.getHeight() / 2 / PPM);
+            fdef.shape = shape;
+            body.createFixture(fdef);
+        }
 
     }
 
@@ -101,12 +142,14 @@ public class gameScreen implements Screen {
         //Draw the map and character
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        game.batch.draw(map, 0, 0, MAP_SIZE_X, MAP_SIZE_Y);  // Draw the map resized to 3000x3000
+        //game.batch.draw(map, 0, 0, MAP_SIZE_X, MAP_SIZE_Y);  // Draw the map resized to 3000x3000
         game.batch.end();
 
+        renderer.render();
 
 
-        b2dr.render(world, camera.combined.scl(PPM));
+
+        b2dr.render(world, camera.combined);
 
         // Update the text box positions to be static and fixed above the bodies
         for (BoxEntity textBox : boxes) {
@@ -127,9 +170,10 @@ public class gameScreen implements Screen {
         world.step(1 / 60f, 6, 2);
         player.update(delta);
         updateCamera();
+        renderer.setView(camera);
         handleInput(delta);
         moveRequest();
-        checkProximityToPlatform();
+        //checkProximityToPlatform();
     }
 
     /***

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="100" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="26">
+ <tileset firstgid="1" source="Tiles.tsx"/>
+ <tileset firstgid="27" source="Water.tsx"/>
+ <layer id="1" name="Backround" width="100" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztmssKwjAUBQM+6hu0//+vbaGClOzOjb0TzmKQbsIcnGAXDqWUwaThalLxNukYV/yc4/mz4ucczy3u2tjo/Ay03HgP5DZz+OESfH4GvhtPjTZGvqvVXPd+f4ym1lzk+edAaq6R52eg1tzeTj24qhsJzZFc1Y2E5kiu6kZCcyRXdSOhOZKrupHQHMlV3UhojuSqbiQ0R3JVNxKaI7mqGwnNkVzVjYTmSK7qRkJzJFd1I6E5kqu6kdAcyVXdSGiO5KpuJDRHclU3EpojuaobCc2RXNWNhOZIrupGQnMkV3UjoTmSq7qR0BzJVd1IaG7r+px5dMarcJrb3o+eId2PhWPnn74fOcn8fSy/F3v/3/nfRP/n1hhjjDHGGGOMMcYYYwyTCXgXitA=
+  </data>
+ </layer>
+ <layer id="2" name="Water" width="100" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt2t0KwjAMhuHeh39TUNEjvf+bs5kEathkJ2s+2PtAzss+0nVZSwEAAAAAALta++xFYGRZHGo9sxeC0b3Wo9ax0CMKPA8reiQfeWghDy2nWudCHko8E/LQYZkM2YuALL5RdVgWvM90+JmPPPL5/IaZgYb2e4geyRfzoEfytHsVPZIv9gZ55CIPLeShhTy0tLNmr0thrpaJ7w8t5KGFPLTEdwjf5/noES3MsLTYnvUqv/sWPZKPu0hayEMLd8OW6Xn3g7thX/bMrzNl/4zszHPrtJat3Q2bevZT/+licQ5dx9yce0ltfR9Zg5/3veLMmzxyWT7vpv7lw57VX8wn1pC2MgDo6wN3aiMH
+  </data>
+ </layer>
+ <layer id="3" name="Images" width="100" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztzkERwCAQBLAz0QJuK50PBnhtGRIFqQI4y5MO/EhLBzhSTweWkQ5seKu+9AEAAAAAAAAAAAAAAAAAAAAAuMMEmoYA9A==
+  </data>
+ </layer>
+ <objectgroup id="4" name="Water">
+  <object id="3" x="80" y="304" width="32" height="304"/>
+  <object id="4" x="64" y="320" width="16" height="288"/>
+  <object id="5" x="48" y="352" width="16" height="208"/>
+  <object id="6" x="32" y="416" width="16" height="80"/>
+  <object id="7" x="32" y="400" width="16" height="16"/>
+  <object id="8" x="112" y="368" width="16" height="304"/>
+  <object id="9" x="96" y="608" width="16" height="48"/>
+  <object id="11" x="128" y="576" width="32" height="112"/>
+  <object id="12" x="128" y="544" width="16" height="32"/>
+  <object id="13" x="128" y="384" width="16" height="112"/>
+  <object id="14" x="112" y="352" width="16" height="16"/>
+  <object id="15" x="1168" y="656" width="160" height="80"/>
+  <object id="16" x="1328" y="720" width="32" height="32"/>
+  <object id="17" x="1216" y="736" width="112" height="16"/>
+  <object id="18" x="1328" y="672" width="16" height="48"/>
+  <object id="19" x="1280" y="640" width="32" height="16"/>
+  <object id="20" x="1152" y="672" width="16" height="64"/>
+  <object id="21" x="1088" y="672" width="64" height="48"/>
+  <object id="22" x="1104" y="176" width="32" height="112"/>
+  <object id="23" x="1088" y="144" width="32" height="32"/>
+  <object id="24" x="1072" y="160" width="32" height="96"/>
+  <object id="25" x="1088" y="256" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="5" name="Road">
+  <object id="2" x="0" y="0" width="1600" height="96"/>
+ </objectgroup>
+</map>
