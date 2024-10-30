@@ -20,6 +20,7 @@ public class BoxEntity {
     private World world;
     private Skin skin;
     private Stage stage;
+    private Boolean isVisible;
 
     // TODO: the textbox should only be displayed when checkProximityToPlayform in UniSim is true
     // TODO: feel free to move it/use the code etc to do so
@@ -32,12 +33,21 @@ public class BoxEntity {
         this.world = world;
         this.stage = stage;
         this.skin = skin;
+        this.isVisible = false;
 
         // Create the Box2D body
         this.body = createBox(x, y, width, height, isStatic);
 
         // Create the UI text above the box
         createTextBox(x, y, labelText);
+    }
+
+    public void setIsVisible(boolean isVisible) {
+        this.isVisible = isVisible;
+    }
+
+    public Boolean getIsVisible() {
+        return isVisible;
     }
 
     // Create a Box2D body

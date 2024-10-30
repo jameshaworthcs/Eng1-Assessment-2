@@ -1,6 +1,7 @@
 package com.UniSim.game.Screens;
 
 import com.UniSim.game.BoxEntity;
+import com.UniSim.game.Sprites.Character;
 import com.UniSim.game.UniSim;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -17,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
-import static com.UniSim.game.Constants.PPM;
+import static com.UniSim.game.Constants.*;
 
 public class gameScreen implements Screen {
     private UniSim game;
@@ -26,7 +27,7 @@ public class gameScreen implements Screen {
     private Texture characterTexture;
 
     private World world;
-    private Body player;
+    private Character player;
     private Texture map;
     private OrthographicCamera camera;
 
@@ -36,12 +37,6 @@ public class gameScreen implements Screen {
 
 
     private final float SCALE = 2;
-    private final float CHARACTER_SPEED = 20;  // Movement speed in pixels per second
-    private final float CHARACTER_SIZE = 50;    // Character size in pixels (50x50)
-
-    // Map size (resized to 4400x2000)
-    private final float MAP_SIZE_X = 8800;
-    private final float MAP_SIZE_Y = 4000;
 
     private FitViewport fitViewport;
 
@@ -63,29 +58,26 @@ public class gameScreen implements Screen {
 
     public gameScreen(UniSim game){
         this.game = game;
-        characterTexture = new Texture("character.jpg");
+        characterTexture = new Texture("character-1.png");
         map = new Texture("tempbg2.png");
 
         skin = new Skin(Gdx.files.internal("uiskin.json")); // Load the skin file
         stage = new Stage(new ScreenViewport()); // Initialize the stage
         Gdx.input.setInputProcessor(stage); // Set the stage as the input processor
 
-
-
         boxes = new ArrayList<>();
 
         world = new World(new Vector2(0, 0), false);
-        //mapBorder = new BoxEntity(world, stage, skin, (int)MAP_SIZE_X / 2, (int)MAP_SIZE_Y / 2, (int)MAP_SIZE_X, (int)MAP_SIZE_Y, true, "Map Border");
+
         b2dr = new Box2DDebugRenderer();
-        player = createBox(1508, 1510, (int)CHARACTER_SIZE, (int)CHARACTER_SIZE, false, false);
+        player = new Character(world, this);
 
-        boxes.add(new BoxEntity(world, stage, skin, 1500, 1500, 64, 32, true, "TEST"));
-        boxes.add(new BoxEntity(world, stage, skin, 1000, 1000, 64, 32, true, "TEST"));
-
+        //boxes.add(new BoxEntity(world, stage, skin, 1500, 1500, 64, 32, true, "TEST"));
+        //boxes.add(new BoxEntity(world, stage, skin, 1000, 1000, 64, 32, true, "TEST"));
 
         camera = new OrthographicCamera();
-
         fitViewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+
         camera.setToOrtho(false, Gdx.graphics.getWidth() / SCALE / PPM, Gdx.graphics.getHeight() / SCALE / PPM);  // Screen size is 640, 480 pixels
         camera.position.set(1500, 1500, 0);  // Initially set the camera to the character's position
         camera.update();
@@ -109,11 +101,10 @@ public class gameScreen implements Screen {
         //Draw the map and character
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        //batch.draw(tex, player.getPosition().x * PPM - (16), player.getPosition().y * PPM - (16), 32, 32);
         game.batch.draw(map, 0, 0, MAP_SIZE_X, MAP_SIZE_Y);  // Draw the map resized to 3000x3000
-        game.batch.draw(characterTexture, player.getPosition().x * PPM - (25), player.getPosition().y * PPM - (25), CHARACTER_SIZE, CHARACTER_SIZE);
-        //batch.draw(character, charX - CHARACTER_SIZE / 2, charY - CHARACTER_SIZE / 2, CHARACTER_SIZE, CHARACTER_SIZE);  // Draw character resized to 50x50
         game.batch.end();
+
+
 
         b2dr.render(world, camera.combined.scl(PPM));
 
@@ -122,13 +113,19 @@ public class gameScreen implements Screen {
             textBox.updatePosition(camera);
         }
 
+        game.batch.setProjectionMatrix(camera.combined);
+        game.batch.begin();
+        player.draw(game.batch);
+        game.batch.end();
+
         // Update the stage to process UI events
-        stage.act(Gdx.graphics.getDeltaTime());
+        stage.act(delta);
         stage.draw();
     }
 
     public void update(float delta) {
         world.step(1 / 60f, 6, 2);
+        player.update(delta);
         updateCamera();
         handleInput(delta);
         moveRequest();
@@ -139,19 +136,19 @@ public class gameScreen implements Screen {
      * Checks if it is within the map borders
      */
     private void moveRequest(){
-        Vector2 vector = player.getLinearVelocity();
+        Vector2 vector = player.b2body.getLinearVelocity();
         if(!vector.isZero()){
-            if(vector.x < 0 && player.getPosition().x * PPM - (CHARACTER_SIZE / 2) - 1 <= 0){
+            if(vector.x < 0 && player.b2body.getPosition().x * PPM - (CHARACTER_SIZE_X / 2) - 1 <= 0){
                 vector.x = 0;
-            } else if (vector.x > 0 && player.getPosition().x * PPM + (CHARACTER_SIZE / 2) + 1 >= MAP_SIZE_X) {
+            } else if (vector.x > 0 && player.b2body.getPosition().x * PPM + (CHARACTER_SIZE_X / 2) + 1 >= MAP_SIZE_X) {
                 vector.x = 0;
             }
-            if(vector.y < 0 && player.getPosition().y * PPM - (CHARACTER_SIZE / 2) - 1 <= 0){
+            if(vector.y < 0 && player.b2body.getPosition().y * PPM - (CHARACTER_SIZE_Y / 2) - 1 <= 0){
                 vector.y = 0;
-            } else if (vector.y > 0 && player.getPosition().y * PPM + (CHARACTER_SIZE / 2 ) >= MAP_SIZE_Y) {
+            } else if (vector.y > 0 && player.b2body.getPosition().y * PPM + (CHARACTER_SIZE_Y / 2 ) >= MAP_SIZE_Y) {
                 vector.y = 0;
             }
-            player.setLinearVelocity(vector);
+            player.b2body.setLinearVelocity(vector);
         }
 
 
@@ -159,7 +156,7 @@ public class gameScreen implements Screen {
 
     private void checkProximityToPlatform() {
         // Get player position (center of the player body)
-        Vector2 playerPosition = player.getPosition().scl(PPM); // Scale to pixels
+        Vector2 playerPosition = player.b2body.getPosition().scl(PPM); // Scale to pixels
         // Get platform position (center of the platform body)
         for (BoxEntity box : boxes){
             Vector2 platformPosition = box.getBody().getPosition().scl(PPM); // Scale to pixels
@@ -167,10 +164,10 @@ public class gameScreen implements Screen {
             float distance = playerPosition.dst(platformPosition);
 
             // Check if the distance is within 10 pixels
-            if (distance <= 50) {
-                //System.out.println("HII");
-                int hello = 1; // If nearby a platform
-            }}
+            box.setIsVisible(distance <= 50);
+
+        }
+
     }
 
     @Override
@@ -196,6 +193,10 @@ public class gameScreen implements Screen {
     @Override
     public void hide() {
 
+    }
+
+    public Texture getCharacterTexture() {
+        return characterTexture;
     }
 
     @Override
@@ -232,8 +233,8 @@ public class gameScreen implements Screen {
 
     // Update camera position if the character moves into the border area
     private void updateCamera() {
-        float screenX = (player.getPosition().x * PPM) - (camera.position.x - SCREEN_SIZE_X / 2);
-        float screenY = (player.getPosition().y * PPM) - (camera.position.y - SCREEN_SIZE_Y / 2);
+        float screenX = (player.b2body.getPosition().x * PPM) - (camera.position.x - SCREEN_SIZE_X / 2);
+        float screenY = (player.b2body.getPosition().y * PPM) - (camera.position.y - SCREEN_SIZE_Y / 2);
         //Adjust the camera if the character is outside the center area
         if (screenX < CENTER_MIN_X) {
             camera.position.x -= (CENTER_MIN_X - screenX) / PPM;
@@ -268,28 +269,28 @@ public class gameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             horizontalForce = CHARACTER_SPEED;
         }
-        player.setLinearVelocity(horizontalForce, verticalForce);
+        player.b2body.setLinearVelocity(horizontalForce, verticalForce);
     }
 
 
-    public Body createBox(int x, int y, int width, int height, boolean isStatic, boolean isBuilding) {  // creates boxes that can interact
-        Body pBody;
-        BodyDef def = new BodyDef();
-        if (isStatic) {
-            def.type = BodyDef.BodyType.StaticBody;
-        } else {
-            def.type = BodyDef.BodyType.DynamicBody;
-        }
-        def.position.set(x / PPM, y / PPM);
-        def.fixedRotation = true;
-        pBody = world.createBody(def);
-
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width / 2 / PPM, height / 2 / PPM); // 2 as 32 in each diriection
-
-        pBody.createFixture(shape, 1.0f);
-        shape.dispose();
-
-        return pBody;
-    }
+//    public Body createBox(int x, int y, int width, int height, boolean isStatic, boolean isBuilding) {  // creates boxes that can interact
+//        Body pBody;
+//        BodyDef def = new BodyDef();
+//        if (isStatic) {
+//            def.type = BodyDef.BodyType.StaticBody;
+//        } else {
+//            def.type = BodyDef.BodyType.DynamicBody;
+//        }
+//        def.position.set(x / PPM, y / PPM);
+//        def.fixedRotation = true;
+//        pBody = world.createBody(def);
+//
+//        PolygonShape shape = new PolygonShape();
+//        shape.setAsBox(width / 2 / PPM, height / 2 / PPM); // 2 as 32 in each diriection
+//
+//        pBody.createFixture(shape, 1.0f);
+//        shape.dispose();
+//
+//        return pBody;
+//    }
 }
