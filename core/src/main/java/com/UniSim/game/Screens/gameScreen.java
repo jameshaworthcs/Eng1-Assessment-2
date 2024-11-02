@@ -53,9 +53,6 @@ public class gameScreen implements Screen {
 
     public static AssetManager manager;
     private Music music;
-    private PlayerStats stats;
-
-    private ArrayList<StatsLabels> playerStatLabels;
 
     private Hud hud;
 
@@ -97,15 +94,7 @@ public class gameScreen implements Screen {
         music.setLooping(true);
         music.play();
 
-        stats = new PlayerStats();
-        playerStatLabels = new ArrayList<>();
-
-        playerStatLabels.add(new StatsLabels(world, stage, skin, 10,200, "SATISFACTION: " + stats.getSatisfaction()));
-        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180, "CURRENCY: " + stats.getCurrency()));
-        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue()));
-        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
-
-        hud = new Hud(game.batch);
+        hud = new Hud(game.batch, skin, world);
 
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
