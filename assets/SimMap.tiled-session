@@ -24,15 +24,15 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 800.5,
-                "y": 406
+                "y": 399.5
             }
         },
         "SimMap.tmx": {
-            "scale": 0.3218125,
-            "selectedLayer": 0,
+            "scale": 0.75,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 222.17906389590212,
-                "y": 812.5849679549428
+                "x": 1111.3333333333333,
+                "y": 428.66666666666663
             }
         },
         "Tiles.tsx": {

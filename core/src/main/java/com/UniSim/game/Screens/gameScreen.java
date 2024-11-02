@@ -82,7 +82,7 @@ public class gameScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(tiledMap, 1 / PPM);
         camera.position.set(fitViewport.getWorldWidth() / 2, fitViewport.getWorldHeight() / 2, 0);
 
-        buildingList = new BuildingList(stage, skin, world);
+        buildingList = new BuildingList(stage, skin, world, tiledMap);
 
         boxes = new ArrayList<>();
 

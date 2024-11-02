@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="100" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="26">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="100" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="31">
  <tileset firstgid="1" source="Tiles.tsx"/>
  <tileset firstgid="27" source="Water.tsx"/>
  <layer id="1" name="Backround" width="100" height="50">
@@ -43,5 +43,10 @@
  </objectgroup>
  <objectgroup id="5" name="Road">
   <object id="2" x="0" y="0" width="1600" height="96"/>
+ </objectgroup>
+ <objectgroup id="6" name="Road2">
+  <object id="27" x="304" y="96" width="80" height="480"/>
+  <object id="28" x="384" y="496" width="912" height="80"/>
+  <object id="29" x="1216" y="96" width="80" height="400"/>
  </objectgroup>
 </map>
