@@ -7,6 +7,8 @@ import com.UniSim.game.UniSim;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -51,6 +53,9 @@ public class gameScreen implements Screen {
     private TiledMap tiledMap;
     private OrthogonalTiledMapRenderer renderer;
 
+    public static AssetManager manager;
+    private Music music;
+
     public gameScreen(UniSim game){
         this.game = game;
         characterTexture = new Texture("character-1.png");
@@ -80,6 +85,14 @@ public class gameScreen implements Screen {
         buildingList = new BuildingList(stage, skin, world);
 
         boxes = new ArrayList<>();
+
+        manager = new AssetManager();
+        manager.load("music/sakura.mp3", Music.class);
+        manager.finishLoading();
+
+        music = manager.get("music/sakura.mp3", Music.class);
+        music.setLooping(true);
+        music.play();
 
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
@@ -162,6 +175,7 @@ public class gameScreen implements Screen {
         renderer.setView(camera);
         handleInput(delta);
         moveRequest();
+        manager.update();
         //checkProximityToPlatform();
     }
 
