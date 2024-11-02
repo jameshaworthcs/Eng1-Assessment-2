@@ -57,6 +57,8 @@ public class gameScreen implements Screen {
 
     private ArrayList<StatsLabels> playerStatLabels;
 
+    private Hud hud;
+
     public gameScreen(UniSim game){
         this.game = game;
         characterTexture = new Texture("character-1.png");
@@ -102,6 +104,8 @@ public class gameScreen implements Screen {
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180, "CURRENCY: " + stats.getCurrency()));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue()));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
+
+        hud = new Hud(game.batch);
 
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
@@ -158,7 +162,8 @@ public class gameScreen implements Screen {
         buildingList.handleInput();
         buildingList.handleBuildingPlacement(game.batch, camera, fitViewport);
 
-
+        game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        hud.stage.draw();
 
         b2dr.render(world, camera.combined);
 
@@ -185,6 +190,7 @@ public class gameScreen implements Screen {
         handleInput(delta);
         moveRequest();
         manager.update();
+        hud.update(delta);
         //checkProximityToPlatform();
     }
 
