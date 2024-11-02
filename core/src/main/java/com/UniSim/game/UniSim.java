@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class UniSim extends Game {
     public SpriteBatch batch;
 
+    public static AssetManager manager;
+    private Music music;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
