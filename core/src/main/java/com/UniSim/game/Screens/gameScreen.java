@@ -273,7 +273,6 @@ public class gameScreen implements Screen {
             position.y = startY + height;
         }
         camera.position.set(position);
-        camera.update();
     }
 
     // Update camera position if the character moves into the border area

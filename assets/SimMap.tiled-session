@@ -27,11 +27,21 @@
                 "y": 406
             }
         },
+        "SimMap.tmx": {
+            "scale": 0.3218125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 222.17906389590212,
+                "y": 812.5849679549428
+            }
+        },
         "Tiles.tsx": {
-            "dynamicWrapping": true
+            "dynamicWrapping": true,
+            "scaleInDock": 1
         },
         "Water.tsx": {
-            "dynamicWrapping": false
+            "dynamicWrapping": false,
+            "scaleInDock": 1
         }
     },
     "last.imagePath": "G:/Computing School/Eng1-Assessment-1Matias/assets",
@@ -42,11 +52,13 @@
     "map.tileWidth": 16,
     "map.width": 100,
     "openFiles": [
-        "G:/Computing School/uniSimMap/unisimmap.tmx"
+        "G:/Computing School/uniSimMap/unisimmap.tmx",
+        "SimMap.tmx"
     ],
     "project": "SimMap.tiled-project",
     "recentFiles": [
-        "G:/Computing School/uniSimMap/unisimmap.tmx"
+        "G:/Computing School/uniSimMap/unisimmap.tmx",
+        "SimMap.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
