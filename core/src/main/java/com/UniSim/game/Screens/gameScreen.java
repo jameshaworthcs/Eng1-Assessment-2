@@ -1,9 +1,7 @@
 package com.UniSim.game.Screens;
 
-import com.UniSim.game.BoxEntity;
-import com.UniSim.game.BuildingList;
+import com.UniSim.game.*;
 import com.UniSim.game.Sprites.Character;
-import com.UniSim.game.UniSim;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -55,6 +53,9 @@ public class gameScreen implements Screen {
 
     public static AssetManager manager;
     private Music music;
+    private PlayerStats stats;
+
+    private ArrayList<StatsLabels> playerStatLabels;
 
     public gameScreen(UniSim game){
         this.game = game;
@@ -93,6 +94,14 @@ public class gameScreen implements Screen {
         music = manager.get("music/sakura.mp3", Music.class);
         music.setLooping(true);
         music.play();
+
+        stats = new PlayerStats();
+        playerStatLabels = new ArrayList<>();
+
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10,200, "SATISFACTION: " + stats.getSatisfaction()));
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180, "CURRENCY: " + stats.getCurrency()));
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue()));
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
 
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
