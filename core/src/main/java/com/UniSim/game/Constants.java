@@ -6,7 +6,7 @@ import com.badlogic.gdx.Screen;
 public final class Constants
 {
 
-    public static final float PPM = 1; // pixels per meter
+    public static final float PPM = 2; // pixels per meter
     public static final float CHARACTER_SIZE_X = 14;// Character size in pixels (50x50)
     public static final float CHARACTER_SIZE_Y = 18;
     public static final float CHARACTER_SPEED = 10000;// Movement speed in pixels per second
