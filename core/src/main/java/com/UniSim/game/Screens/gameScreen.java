@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -20,8 +21,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 import static com.UniSim.game.Constants.*;
@@ -55,6 +61,9 @@ public class gameScreen implements Screen {
     private Music music;
 
     private Hud hud;
+
+    private PauseMenu pauseMenu;
+    private Texture pauseIconTexture;
 
     public gameScreen(UniSim game){
         this.game = game;
@@ -96,6 +105,24 @@ public class gameScreen implements Screen {
 
         hud = new Hud(game.batch, skin, world);
 
+        // Load the pause icon texture
+        pauseIconTexture = new Texture(Gdx.files.internal("pause.png"));
+        TextureRegionDrawable drawable = new TextureRegionDrawable(new TextureRegion(pauseIconTexture));
+        ImageButton pauseButton = new ImageButton(drawable);
+        pauseButton.setPosition(10, Gdx.graphics.getHeight() - pauseButton.getHeight() - 10);
+        pauseButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                pauseMenu.togglePause();
+            }
+        });
+        stage.addActor(pauseButton);
+
+        // Initialize pause menu
+        pauseMenu = new PauseMenu(stage, skin);
+
+
+
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
@@ -131,9 +158,13 @@ public class gameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // Update character movement
-        update(delta);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            pauseMenu.togglePause();
+        }
 
+        if (!pauseMenu.isPaused()) {
+            update(delta);
+        }
 
 
         // Clear the screen and start rendering
