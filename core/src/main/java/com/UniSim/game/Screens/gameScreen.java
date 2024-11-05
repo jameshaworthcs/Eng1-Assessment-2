@@ -343,9 +343,15 @@ public class gameScreen implements Screen {
 
     // Update camera position if the character moves into the border area
     private void updateCamera() {
-        float screenX = (player.b2body.getPosition().x * PPM) - (camera.position.x - SCREEN_SIZE_X / 2);
-        float screenY = (player.b2body.getPosition().y * PPM) - (camera.position.y - SCREEN_SIZE_Y / 2);
-        //Adjust the camera if the character is outside the center area
+        // Calculate the player's position in the game world and adjust by PPM to convert to screen pixels
+        float playerScreenX = player.b2body.getPosition().x * PPM; 
+        float playerScreenY = player.b2body.getPosition().y * PPM;
+    
+        // Calculate the current screen position offset of the camera (in terms of pixels)
+        float screenX = playerScreenX - (camera.position.x * PPM - SCREEN_SIZE_X / 2);
+        float screenY = playerScreenY - (camera.position.y * PPM - SCREEN_SIZE_Y / 2);
+    
+        // Adjust the camera position based on screen bounds and player movement
         if (screenX < CENTER_MIN_X) {
             camera.position.x -= (CENTER_MIN_X - screenX) / PPM;
         } else if (screenX > CENTER_MAX_X) {
@@ -356,9 +362,15 @@ public class gameScreen implements Screen {
         } else if (screenY > CENTER_MAX_Y) {
             camera.position.y += (screenY - CENTER_MAX_Y) / PPM;
         }
-        float startX = camera.viewportWidth / 2;
-        float startY = camera.viewportHeight / 2;
-        boundary(camera, startX, startY, MAP_SIZE_X - startX * 2, MAP_SIZE_Y - startY * 2);
+    
+        // Set the boundaries within which the camera can move
+        float startX = (camera.viewportWidth / 2) / PPM;
+        float startY = (camera.viewportHeight / 2) / PPM;
+    
+        // Apply boundary restrictions to the camera to prevent it from going out of bounds
+        boundary(camera, startX, startY, (MAP_SIZE_X / PPM) - startX * 2, (MAP_SIZE_Y / PPM) - startY * 2);
+    
+        // Update the camera to apply the changes
         camera.update();
     }
 

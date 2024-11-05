@@ -36,7 +36,7 @@ public class BuildingList {
     private boolean isPlacingBuilding = false;
     private Vector3 mousePosition = new Vector3();
 
-    private ArrayList<Rectangle> placedBuildings = new ArrayList<>(); // Store placed buildings' rectangles
+    private ArrayList<PlacedBuilding> placedBuildings = new ArrayList<>(); // Store placed buildings
     private Label messageLabel;
 
     private float selectedBuildingWidth;
@@ -100,7 +100,6 @@ public class BuildingList {
         });
         buildingWindow.add(accommodationButton).padBottom(10).row();
 
-        // **Declare and initialize the Academic Button**
         TextButton academicButton = new TextButton("Academic", skin);
         academicButton.addListener(new ClickListener() {
             @Override
@@ -110,143 +109,34 @@ public class BuildingList {
         });
         buildingWindow.add(academicButton).padBottom(10).row();
 
-
-        // **Declare and initialize the Recreational Button**
-        TextButton RecreationalButton = new TextButton("Recreational", skin);
-        RecreationalButton.addListener(new ClickListener() {
+        TextButton recreationalButton = new TextButton("Recreational", skin);
+        recreationalButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 showFoodOptions();
             }
         });
-        buildingWindow.add(RecreationalButton).padBottom(10).row();
-
+        buildingWindow.add(recreationalButton).padBottom(10).row();
 
         if (!stage.getActors().contains(buildingWindow, true)) {
             stage.addActor(buildingWindow);
         }
     }
 
-    private void showAccommodationOptions() {
-        buildingWindow.clear();  // Clear previous content
-        buildingWindow.add(new Label("Select Accommodation", skin)).padBottom(20).row();
-
-        // Create a Table for building options
-        Table buildingTable = new Table();
-
-        // Add building options
-        addBuildingOption(buildingTable, "Accommodation 1", "accommodation_3.png", 5000, 64.0f, 64.0f);
-        addBuildingOption(buildingTable, "Accommodation 2", "accommodation_3.png", 6000, 32.0f, 32.0f);
-        addBuildingOption(buildingTable, "Accommodation 3", "accommodation_3.png", 6000, 128.0f, 128.0f);
-        // Create a ScrollPane and set it to only show vertical scrollbars
-        ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
-        scrollPane.setFadeScrollBars(false);         // Disable fade so scrollbars are always visible
-        scrollPane.setScrollingDisabled(true, false); // Disable horizontal scrolling, enable vertical scrolling
-        scrollPane.setForceScroll(false, true);       // Only force vertical scroll
-
-        // Add the scroll pane to the window
-        buildingWindow.add(scrollPane).expand().fill().row();
-
-        // Add the Back button at the bottom
-        TextButton backButton = new TextButton("Back", skin);
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                showBuildingSelectionWindow();  // Go back to the main menu
-            }
-        });
-
-        buildingWindow.add(backButton).padTop(20).row();  // Add the "Back" button at the bottom
-    }
-
-
-    // Add Academic options
-    private void showAcademicOptions() {
-        buildingWindow.clear();
-        buildingWindow.add(new Label("Select Academic Building", skin)).padBottom(20).row();
-
-        Table buildingTable = new Table();
-        addBuildingOption(buildingTable, "Library", "accommodation_3.png", 10000, 100.0f, 100.0f);
-        addBuildingOption(buildingTable, "Lab", "accommodation_3.png", 8000, 80.0f, 80.0f);
-
-        // Create a ScrollPane and set it to only show vertical scrollbars
-        ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
-        scrollPane.setFadeScrollBars(false);         // Disable fade so scrollbars are always visible
-        scrollPane.setScrollingDisabled(true, false); // Disable horizontal scrolling, enable vertical scrolling
-        scrollPane.setForceScroll(false, true);       // Only force vertical scroll
-
-        // Add the scroll pane to the window
-        buildingWindow.add(scrollPane).expand().fill().row();
-
-        // Add the Back button at the bottom
-        TextButton backButton = new TextButton("Back", skin);
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                showBuildingSelectionWindow();  // Go back to the main menu
-            }
-        });
-
-        buildingWindow.add(backButton).padTop(20).row();  // Add the "Back" button at the bottom
-    }
-
-    // Add Food options
-    private void showFoodOptions() {
-        buildingWindow.clear();
-        buildingWindow.add(new Label("Select Recreational Facility", skin)).padBottom(20).row();
-
-        Table buildingTable = new Table();
-        addBuildingOption(buildingTable, "Cafeteria", "accommodation_3.png", 7000, 70.0f, 70.0f);
-        addBuildingOption(buildingTable, "Restaurant", "accommodation_3.png", 12000, 120.0f, 120.0f);
-
-        // Create a ScrollPane and set it to only show vertical scrollbars
-        ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
-        scrollPane.setFadeScrollBars(false);         // Disable fade so scrollbars are always visible
-        scrollPane.setScrollingDisabled(true, false); // Disable horizontal scrolling, enable vertical scrolling
-        scrollPane.setForceScroll(false, true);       // Only force vertical scroll
-
-        // Add the scroll pane to the window
-        buildingWindow.add(scrollPane).expand().fill().row();
-
-        // Add the Back button at the bottom
-        TextButton backButton = new TextButton("Back", skin);
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                showBuildingSelectionWindow();  // Go back to the main menu
-            }
-        });
-
-        buildingWindow.add(backButton).padTop(20).row();  // Add the "Back" button at the bottom
-    }
-
-
-
-    private void addBuildingOption(Table buildingTable, String buildingName, String imagePath, int price, float width, float height) {
+    private void addBuildingOption(Table buildingTable, String buildingName, String imagePath, int price, float scaleFactor) {
         // Load the texture for the building
         Texture buildingTexture = new Texture(Gdx.files.internal(imagePath));
 
-        // Create the Image and maintain its aspect ratio
+        // Get the original width and height of the image
+        float originalWidth = buildingTexture.getWidth();
+        float originalHeight = buildingTexture.getHeight();
+
+        // Calculate the display size by scaling the original dimensions
+        float displayWidth = originalWidth * scaleFactor;
+        float displayHeight = originalHeight * scaleFactor;
+
+        // Create the Image and set its size
         Image buildingImage = new Image(buildingTexture);
-
-        // Set maximum width and height (for display in the selection window)
-        float maxWidth = 100;
-        float maxHeight = 100;
-
-        // Calculate aspect ratio
-        float aspectRatio = (float) buildingTexture.getWidth() / buildingTexture.getHeight();
-
-        // Adjust width and height to maintain the aspect ratio but within the max size
-        float displayWidth, displayHeight;
-        if (aspectRatio > 1) {
-            displayWidth = maxWidth;
-            displayHeight = maxWidth / aspectRatio;
-        } else {
-            displayHeight = maxHeight;
-            displayWidth = maxHeight * aspectRatio;
-        }
-
-        // Set the size of the image for the selection window
         buildingImage.setSize(displayWidth, displayHeight);
 
         // Add the building image and label to the table
@@ -259,20 +149,110 @@ public class BuildingList {
         selectButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Pass the size (width and height) when selecting the building
-                placeBuilding(buildingName, imagePath, price, width, height);
+                // Pass the size (original width and height scaled by the factor) when selecting the building
+                placeBuilding(buildingName, imagePath, price, displayWidth, displayHeight);
             }
         });
 
         buildingTable.add(selectButton).padBottom(20).row();
     }
 
+    // Usage examples with the modified addBuildingOption method
+    private void showAccommodationOptions() {
+        buildingWindow.clear();  // Clear previous content
+        buildingWindow.add(new Label("Select Accommodation", skin)).padBottom(20).row();
+
+        // Create a Table for building options
+        Table buildingTable = new Table();
+
+        // Add building options with the scale factor instead of specific sizes
+        addBuildingOption(buildingTable, "Accommodation 1", "accommodation_3.png", 5000, 0.08f);
+        addBuildingOption(buildingTable, "Accommodation 2", "accommodation_3.png", 6000, 0.06f);
+        addBuildingOption(buildingTable, "Accommodation 3", "accommodation_3.png", 6000, 0.09f);
+
+        // Create a ScrollPane and set it to only show vertical scrollbars
+        ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
+        scrollPane.setFadeScrollBars(false);         // Disable fade so scrollbars are always visible
+        scrollPane.setScrollingDisabled(true, false); // Disable horizontal scrolling, enable vertical scrolling
+        scrollPane.setForceScroll(false, true);       // Only force vertical scroll
+
+        // Add the scroll pane to the window
+        buildingWindow.add(scrollPane).expand().fill().row();
+
+        // Add the Back button at the bottom
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showBuildingSelectionWindow();  // Go back to the main menu
+            }
+        });
+
+        buildingWindow.add(backButton).padTop(20).row();  // Add the "Back" button at the bottom
+    }
+
+    // Update other similar methods to use the new addBuildingOption signature
+    private void showAcademicOptions() {
+        buildingWindow.clear();
+        buildingWindow.add(new Label("Select Academic Building", skin)).padBottom(20).row();
+
+        Table buildingTable = new Table();
+        addBuildingOption(buildingTable, "Library", "lectureroom.png", 10000, 0.07f);
+        addBuildingOption(buildingTable, "Lab", "accommodation_3.png", 8000, 0.08f);
+
+        ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollingDisabled(true, false);
+        scrollPane.setForceScroll(false, true);
+
+        buildingWindow.add(scrollPane).expand().fill().row();
+
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showBuildingSelectionWindow();
+            }
+        });
+
+        buildingWindow.add(backButton).padTop(20).row();
+    }
+
+    // Similarly, update the showFoodOptions method to use the new addBuildingOption signature
+    private void showFoodOptions() {
+        buildingWindow.clear();
+        buildingWindow.add(new Label("Select Recreational Facility", skin)).padBottom(20).row();
+
+        Table buildingTable = new Table();
+        addBuildingOption(buildingTable, "Cafeteria", "accommodation_3.png", 7000, 0.07f);
+        addBuildingOption(buildingTable, "Restaurant", "accommodation_3.png", 12000, 0.09f);
+
+        ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollingDisabled(true, false);
+        scrollPane.setForceScroll(false, true);
+
+        buildingWindow.add(scrollPane).expand().fill().row();
+
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showBuildingSelectionWindow();
+            }
+        });
+
+        buildingWindow.add(backButton).padTop(20).row();
+    }
+
     private void placeBuilding(String buildingName, String imagePath, int price, float width, float height) {
         try {
-            selectedBuildingTexture = new Texture(Gdx.files.internal(imagePath));
-            selectedBuildingWidth = width;  // Store the custom width
-            selectedBuildingHeight = height;  // Store the custom height
+            Texture newBuildingTexture = new Texture(Gdx.files.internal(imagePath));
+            selectedBuildingWidth = width / PPM;  // Store the custom width, adjusted for PPM
+            selectedBuildingHeight = height / PPM;  // Store the custom height, adjusted for PPM
+            System.out.println("Bounding box width: " + selectedBuildingWidth + ", height: " + selectedBuildingHeight);
             isPlacingBuilding = true;
+            selectedBuildingTexture = newBuildingTexture;
             closeBuildingWindow();
         } catch (Exception e) {
             Gdx.app.error("BuildingList", "Error loading texture: " + imagePath, e);
@@ -290,18 +270,28 @@ public class BuildingList {
 
             // Draw the building using the custom width and height
             batch.draw(selectedBuildingTexture, mousePosition.x - selectedBuildingWidth / 2,
-                       mousePosition.y - selectedBuildingHeight / 2,
-                       selectedBuildingWidth, selectedBuildingHeight);
+                    mousePosition.y - selectedBuildingHeight / 2,
+                    selectedBuildingWidth, selectedBuildingHeight);
 
             batch.setColor(1, 1, 1, 1);  // Reset to full opacity
             batch.end();
 
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 if (!checkOverlap(mousePosition.x, mousePosition.y, selectedBuildingWidth, selectedBuildingHeight)) {
-                    placedBuildings.add(new Rectangle(mousePosition.x - selectedBuildingWidth / 2,
-                                                      mousePosition.y - selectedBuildingHeight / 2,
-                                                      selectedBuildingWidth, selectedBuildingHeight));
-                    createBuildingBody(mousePosition.x, mousePosition.y, selectedBuildingWidth, selectedBuildingHeight); // Create Box2D body
+                    PlacedBuilding newBuilding = new PlacedBuilding(
+                            selectedBuildingTexture,
+                            mousePosition.x - selectedBuildingWidth / 2,
+                            mousePosition.y - selectedBuildingHeight / 2,
+                            selectedBuildingWidth,
+                            selectedBuildingHeight
+                    );
+
+                    placedBuildings.add(newBuilding);
+                    createBuildingBody(mousePosition.x - selectedBuildingWidth / 2,
+                            mousePosition.y - selectedBuildingHeight / 2,
+                            selectedBuildingWidth,
+                            selectedBuildingHeight); // Create Box2D body
+
                     isPlacingBuilding = false;
                     messageLabel.setVisible(false); // Hide error message after successful placement
                 } else {
@@ -312,9 +302,10 @@ public class BuildingList {
         }
 
         batch.begin();
-        for (Rectangle buildingPos : placedBuildings) {
-            // Draw placed buildings using the stored size
-            batch.draw(selectedBuildingTexture, buildingPos.x, buildingPos.y, buildingPos.width, buildingPos.height);
+        for (PlacedBuilding building : placedBuildings) {
+            // Draw each placed building individually using its own texture and size
+            batch.draw(building.texture, building.rectangle.x, building.rectangle.y,
+                    building.rectangle.width, building.rectangle.height);
         }
         batch.end();
     }
@@ -322,9 +313,9 @@ public class BuildingList {
     private boolean checkOverlap(float x, float y, float width, float height) {
         boolean overlap = false;
         Rectangle newBuildingRect = new Rectangle(x - width / 2, y - height / 2, width, height);
-        for (Rectangle placedBuilding : placedBuildings) {
-            if (newBuildingRect.overlaps(placedBuilding)) {
-                overlap =  true; // Overlap detected
+        for (PlacedBuilding placedBuilding : placedBuildings) {
+            if (newBuildingRect.overlaps(placedBuilding.rectangle)) {
+                overlap = true; // Overlap detected
             }
         }
 
@@ -335,10 +326,10 @@ public class BuildingList {
 
                     // Define object rectangle for overlap check
                     Rectangle objectRect = new Rectangle(
-                        rect.getX() / PPM,
-                        rect.getY() / PPM,
-                        rect.getWidth() / PPM,
-                        rect.getHeight() / PPM
+                            rect.getX() / PPM,
+                            rect.getY() / PPM,
+                            rect.getWidth() / PPM,
+                            rect.getHeight() / PPM
                     );
 
                     // Check for overlap
@@ -351,19 +342,18 @@ public class BuildingList {
             if (overlap) break; // Stop checking other layers if overlap is detected
         }
 
-
         return overlap;
     }
 
     private void createBuildingBody(float x, float y, float width, float height) {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(x / PPM, y / PPM);
+        bodyDef.position.set((x + width / 2), (y + height / 2)); // Adjust position correctly for PPM
         bodyDef.type = BodyDef.BodyType.StaticBody;
 
         Body buildingBody = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width / 2 / PPM, height / 2 / PPM);
+        shape.setAsBox((width / 2), (height / 2));
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -389,5 +379,15 @@ public class BuildingList {
             buildingWindow.remove();
         }
         isWindowOpen = false;
+    }
+}
+
+class PlacedBuilding {
+    public Texture texture;
+    public Rectangle rectangle;
+
+    public PlacedBuilding(Texture texture, float x, float y, float width, float height) {
+        this.texture = texture;
+        this.rectangle = new Rectangle(x, y, width, height);
     }
 }
