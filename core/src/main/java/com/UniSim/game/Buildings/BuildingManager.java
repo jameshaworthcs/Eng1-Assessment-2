@@ -29,7 +29,7 @@ public class BuildingManager {
     private Stage stage;
     private Skin skin;
     private World world;
-    private static Window buildingWindow;
+    private Window buildingWindow;
     private boolean isWindowOpen = false;
 
     private static ArrayList<Accommodation> accommodations;
@@ -99,8 +99,8 @@ public class BuildingManager {
     private void showBuildingSelectionWindow() {
         if (buildingWindow == null) {
             buildingWindow = new Window("Select Building Type", skin);
-            buildingWindow.setSize(300, 400);
-            buildingWindow.setPosition(300, 200);
+            buildingWindow.setSize(450, 600);
+            buildingWindow.setPosition(1700, 400);
         } else {
             buildingWindow.clear(); // Clear existing content
         }

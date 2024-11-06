@@ -401,8 +401,9 @@ public class GameScreen implements Screen {
                     (fixtureA.getUserData() == "player" && fixtureB.getUserData() == "sensor")) {
                     // Trigger an action for when the player exits the sensor area
                     playerNearReseption = false;
-                    showFullMapView();
-
+                    if (showFullMap) {
+                        showFullMapView();
+                    }
                     if (buildingManager.getIsWindowOpen()) {
                         buildingManager.closeBuildingWindow();
                     }
@@ -422,7 +423,12 @@ public class GameScreen implements Screen {
     private void placingBuilding() {
         showFullMapView();
         camera.update();
-        buildingManager.openBuildingWindow();
+        if (showFullMap && !buildingManager.getIsWindowOpen()) {
+            buildingManager.openBuildingWindow();
+        }else {
+            buildingManager.closeBuildingWindow();
+        }
+
     }
 
     private void showFullMapView() {
