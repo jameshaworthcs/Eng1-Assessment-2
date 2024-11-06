@@ -1,7 +1,9 @@
 package com.UniSim.game.Screens;
 
 import com.UniSim.game.*;
+import com.UniSim.game.Buildings.BuildingManager;
 import com.UniSim.game.Sprites.Character;
+import com.UniSim.game.Sprites.SpeechBubble;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -26,16 +28,18 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 import static com.UniSim.game.Constants.*;
 
-public class gameScreen implements Screen {
+public class GameScreen implements Screen {
     private UniSim game;
     private Stage stage;
 
-    private BuildingList buildingList;
+    private BuildingManager buildingManager;
 
     private Texture characterTexture;
+    private Texture speechBubbleTexture;
 
     private World world;
     private Character player;
+    private SpeechBubble speechBubbleReception;
     private Texture map;
     private OrthographicCamera camera;
 
@@ -56,9 +60,17 @@ public class gameScreen implements Screen {
 
     private Hud hud;
 
-    public gameScreen(UniSim game){
+    private boolean playerNearReseption;
+
+    private boolean showFullMap = false;
+    private Vector3 originalCameraPosition;
+    private float originalZoom;
+
+    public GameScreen(UniSim game) {
         this.game = game;
+        playerNearReseption = false;
         characterTexture = new Texture("character-1.png");
+        speechBubbleTexture = new Texture("question.png");
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Initialize the stage
@@ -70,6 +82,7 @@ public class gameScreen implements Screen {
 
         b2dr = new Box2DDebugRenderer();
         player = new Character(world, this);
+        speechBubbleReception = new SpeechBubble(world, this, 845, 365);
 
         //boxes.add(new BoxEntity(world, stage, skin, 1500, 1500, 64, 32, true, "TEST"));
         //boxes.add(new BoxEntity(world, stage, skin, 1000, 1000, 64, 32, true, "TEST"));
@@ -82,7 +95,7 @@ public class gameScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(tiledMap, 1 / PPM);
         camera.position.set(fitViewport.getWorldWidth() / 2, fitViewport.getWorldHeight() / 2, 0);
 
-        buildingList = new BuildingList(stage, skin, world, tiledMap);
+        buildingManager = new BuildingManager(stage, skin, world, tiledMap);
 
         boxes = new ArrayList<>();
 
@@ -92,7 +105,7 @@ public class gameScreen implements Screen {
 
         music = manager.get("music/sakura.mp3", Music.class);
         music.setLooping(true);
-        music.play();
+        //dwmusic.play();
 
         hud = new Hud(game.batch, skin, world);
 
@@ -101,7 +114,7 @@ public class gameScreen implements Screen {
         FixtureDef fdef = new FixtureDef();
         Body body;
 
-        for(MapObject object : tiledMap.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)){
+        for (MapObject object : tiledMap.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -114,7 +127,7 @@ public class gameScreen implements Screen {
             body.createFixture(fdef);
         }
 
-        for(MapObject object : tiledMap.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)){
+        for (MapObject object : tiledMap.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -127,13 +140,28 @@ public class gameScreen implements Screen {
             body.createFixture(fdef);
         }
 
+        for (MapObject object : tiledMap.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.StaticBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / PPM, (rect.getY() + rect.getHeight() / 2) / PPM);
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox(rect.getWidth() / 2 / PPM, rect.getHeight() / 2 / PPM);
+            fdef.shape = shape;
+            fdef.isSensor = true;
+            Fixture sensorFixture = body.createFixture(fdef);
+            sensorFixture.setUserData("sensor");
+            shape.dispose();
+        }
+        setupCollisionListener();
     }
 
     @Override
     public void render(float delta) {
         // Update character movement
         update(delta);
-
 
 
         // Clear the screen and start rendering
@@ -148,8 +176,8 @@ public class gameScreen implements Screen {
 
         renderer.render();
 
-        buildingList.handleInput();
-        buildingList.handleBuildingPlacement(game.batch, camera, fitViewport);
+        buildingManager.handleInput();
+        buildingManager.handleBuildingPlacement(game.batch, camera, fitViewport);
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
@@ -164,6 +192,9 @@ public class gameScreen implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         player.draw(game.batch);
+        if (playerNearReseption) {
+            speechBubbleReception.draw(game.batch);
+        }
         game.batch.end();
 
         // Update the stage to process UI events
@@ -174,6 +205,7 @@ public class gameScreen implements Screen {
     public void update(float delta) {
         world.step(1 / 60f, 6, 2);
         player.update(delta);
+        speechBubbleReception.update(delta);
         updateCamera();
         renderer.setView(camera);
         handleInput(delta);
@@ -186,17 +218,17 @@ public class gameScreen implements Screen {
     /***
      * Checks if it is within the map borders
      */
-    private void moveRequest(){
+    private void moveRequest() {
         Vector2 vector = player.b2body.getLinearVelocity();
-        if(!vector.isZero()){
-            if(vector.x < 0 && player.b2body.getPosition().x * PPM - (CHARACTER_SIZE_X / 2) - 1 <= 0){
+        if (!vector.isZero()) {
+            if (vector.x < 0 && player.b2body.getPosition().x * PPM - (CHARACTER_SIZE_X / 2) - 1 <= 0) {
                 vector.x = 0;
             } else if (vector.x > 0 && player.b2body.getPosition().x * PPM + (CHARACTER_SIZE_X / 2) + 1 >= MAP_SIZE_X) {
                 vector.x = 0;
             }
-            if(vector.y < 0 && player.b2body.getPosition().y * PPM - (CHARACTER_SIZE_Y / 2) - 1 <= 0){
+            if (vector.y < 0 && player.b2body.getPosition().y * PPM - (CHARACTER_SIZE_Y / 2) - 1 <= 0) {
                 vector.y = 0;
-            } else if (vector.y > 0 && player.b2body.getPosition().y * PPM + (CHARACTER_SIZE_Y / 2 ) >= MAP_SIZE_Y) {
+            } else if (vector.y > 0 && player.b2body.getPosition().y * PPM + (CHARACTER_SIZE_Y / 2) >= MAP_SIZE_Y) {
                 vector.y = 0;
             }
             player.b2body.setLinearVelocity(vector);
@@ -209,7 +241,7 @@ public class gameScreen implements Screen {
         // Get player position (center of the player body)
         Vector2 playerPosition = player.b2body.getPosition().scl(PPM); // Scale to pixels
         // Get platform position (center of the platform body)
-        for (BoxEntity box : boxes){
+        for (BoxEntity box : boxes) {
             Vector2 platformPosition = box.getBody().getPosition().scl(PPM); // Scale to pixels
             // Calculate the distance between the centers of player and platform
             float distance = playerPosition.dst(platformPosition);
@@ -262,6 +294,10 @@ public class gameScreen implements Screen {
         return characterTexture;
     }
 
+    public Texture getSpeechBubbleTexture() {
+        return speechBubbleTexture;
+    }
+
     @Override
     public void dispose() {
         game.batch.dispose();
@@ -275,19 +311,19 @@ public class gameScreen implements Screen {
     /***
      * Keeps camera in the map
      */
-    public void boundary(Camera camera, float startX, float startY, float width, float height){
+    public void boundary(Camera camera, float startX, float startY, float width, float height) {
         Vector3 position = camera.position;
 
-        if(position.x < startX){
+        if (position.x < startX) {
             position.x = startX;
         }
-        if(position.y < startY){
+        if (position.y < startY) {
             position.y = startY;
         }
-        if(position.x > startX + width){
+        if (position.x > startX + width) {
             position.x = startX + width;
         }
-        if(position.y > startY + height){
+        if (position.y > startY + height) {
             position.y = startY + height;
         }
         camera.position.set(position);
@@ -295,23 +331,25 @@ public class gameScreen implements Screen {
 
     // Update camera position if the character moves into the border area
     private void updateCamera() {
-        float screenX = (player.b2body.getPosition().x * PPM) - (camera.position.x - SCREEN_SIZE_X / 2);
-        float screenY = (player.b2body.getPosition().y * PPM) - (camera.position.y - SCREEN_SIZE_Y / 2);
-        //Adjust the camera if the character is outside the center area
-        if (screenX < CENTER_MIN_X) {
-            camera.position.x -= (CENTER_MIN_X - screenX) / PPM;
-        } else if (screenX > CENTER_MAX_X) {
-            camera.position.x += (screenX - CENTER_MAX_X) / PPM;
+        if(!showFullMap) {
+            float screenX = (player.b2body.getPosition().x * PPM) - (camera.position.x - SCREEN_SIZE_X / 2);
+            float screenY = (player.b2body.getPosition().y * PPM) - (camera.position.y - SCREEN_SIZE_Y / 2);
+            //Adjust the camera if the character is outside the center area
+            if (screenX < CENTER_MIN_X) {
+                camera.position.x -= (CENTER_MIN_X - screenX) / PPM;
+            } else if (screenX > CENTER_MAX_X) {
+                camera.position.x += (screenX - CENTER_MAX_X) / PPM;
+            }
+            if (screenY < CENTER_MIN_Y) {
+                camera.position.y -= (CENTER_MIN_Y - screenY) / PPM;
+            } else if (screenY > CENTER_MAX_Y) {
+                camera.position.y += (screenY - CENTER_MAX_Y) / PPM;
+            }
+            float startX = camera.viewportWidth / 2;
+            float startY = camera.viewportHeight / 2;
+            boundary(camera, startX, startY, MAP_SIZE_X - startX * 2, MAP_SIZE_Y - startY * 2);
+            camera.update();
         }
-        if (screenY < CENTER_MIN_Y) {
-            camera.position.y -= (CENTER_MIN_Y - screenY) / PPM;
-        } else if (screenY > CENTER_MAX_Y) {
-            camera.position.y += (screenY - CENTER_MAX_Y) / PPM;
-        }
-        float startX = camera.viewportWidth / 2;
-        float startY = camera.viewportHeight / 2;
-        boundary(camera, startX, startY, MAP_SIZE_X - startX * 2, MAP_SIZE_Y - startY * 2);
-        camera.update();
     }
 
 
@@ -332,27 +370,78 @@ public class gameScreen implements Screen {
             horizontalForce = CHARACTER_SPEED;
         }
         player.b2body.setLinearVelocity(horizontalForce, verticalForce);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && playerNearReseption) {
+            placingBuilding();
+        }
     }
 
+    private void setupCollisionListener() {
+        world.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+                Fixture fixtureA = contact.getFixtureA();
+                Fixture fixtureB = contact.getFixtureB();
 
-//    public Body createBox(int x, int y, int width, int height, boolean isStatic, boolean isBuilding) {  // creates boxes that can interact
-//        Body pBody;
-//        BodyDef def = new BodyDef();
-//        if (isStatic) {
-//            def.type = BodyDef.BodyType.StaticBody;
-//        } else {
-//            def.type = BodyDef.BodyType.DynamicBody;
-//        }
-//        def.position.set(x / PPM, y / PPM);
-//        def.fixedRotation = true;
-//        pBody = world.createBody(def);
-//
-//        PolygonShape shape = new PolygonShape();
-//        shape.setAsBox(width / 2 / PPM, height / 2 / PPM); // 2 as 32 in each diriection
-//
-//        pBody.createFixture(shape, 1.0f);
-//        shape.dispose();
-//
-//        return pBody;
-//    }
+                // Check if one of the fixtures is a sensor and the other is the player
+                if ((fixtureA.getUserData() == "sensor" && fixtureB.getUserData() == "player") ||
+                    (fixtureA.getUserData() == "player" && fixtureB.getUserData() == "sensor")) {
+                    // Trigger an action here, e.g., display a message or perform some event
+                    playerNearReseption = true;
+                }
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+                Fixture fixtureA = contact.getFixtureA();
+                Fixture fixtureB = contact.getFixtureB();
+
+                // Check if the player is exiting the sensor area
+                if ((fixtureA.getUserData() == "sensor" && fixtureB.getUserData() == "player") ||
+                    (fixtureA.getUserData() == "player" && fixtureB.getUserData() == "sensor")) {
+                    // Trigger an action for when the player exits the sensor area
+                    playerNearReseption = false;
+                    showFullMapView();
+
+                    if (buildingManager.getIsWindowOpen()) {
+                        buildingManager.closeBuildingWindow();
+                    }
+                }
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+            }
+        });
+    }
+
+    private void placingBuilding() {
+        showFullMapView();
+        camera.update();
+        buildingManager.openBuildingWindow();
+    }
+
+    private void showFullMapView() {
+        if (!showFullMap) {
+            // Save original position and zoom level to revert back
+            originalCameraPosition = new Vector3(camera.position);
+            originalZoom = camera.zoom;
+
+            // Adjust the camera to show the whole map
+            camera.zoom = Math.min(MAP_SIZE_X / camera.viewportWidth, MAP_SIZE_Y / camera.viewportHeight);
+            camera.position.set(MAP_SIZE_X / 2, MAP_SIZE_Y / 2, 0);
+            camera.update();
+            showFullMap = true;
+        } else {
+            // Revert to original camera view (player view)
+            camera.zoom = originalZoom;
+            camera.position.set(originalCameraPosition);
+            camera.update();
+            showFullMap = false;
+        }
+    }
 }

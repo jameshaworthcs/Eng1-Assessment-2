@@ -1,7 +1,7 @@
 package com.UniSim.game;
 
 
-import com.UniSim.game.Screens.gameScreen;
+import com.UniSim.game.Screens.GameScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -11,7 +11,7 @@ public class UniSim extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        setScreen(new gameScreen(this));
+        setScreen(new GameScreen(this));
     }
 
     @Override

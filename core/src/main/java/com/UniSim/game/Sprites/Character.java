@@ -1,6 +1,6 @@
 package com.UniSim.game.Sprites;
 
-import com.UniSim.game.Screens.gameScreen;
+import com.UniSim.game.Screens.GameScreen;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,7 +24,7 @@ public class Character extends Sprite {
     private boolean isGoingRight;
     private float stateTimer;
 
-    public Character(World world, gameScreen screen) {
+    public Character(World world, GameScreen screen) {
         super(screen.getCharacterTexture());
         this.world = world;
         currentState = State.STAND_DOWN;
@@ -57,7 +57,7 @@ public class Character extends Sprite {
 
     private void defineCharacter() {
         BodyDef bdef = new BodyDef();
-        bdef.position.set(50 / PPM, 50 / PPM);
+        bdef.position.set(800 / PPM, 250 / PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         bdef.fixedRotation = true;
         b2body = world.createBody(bdef);
@@ -67,7 +67,8 @@ public class Character extends Sprite {
         shape.setAsBox( CHARACTER_SIZE_X / 2 / PPM, CHARACTER_SIZE_Y / 2 / PPM); // 2 as 32 in each diriection
 
         fdef.shape = shape;
-        b2body.createFixture(fdef);
+        Fixture characterFixture = b2body.createFixture(fdef);
+        characterFixture.setUserData("player");
         shape.dispose();
     }
 

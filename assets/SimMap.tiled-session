@@ -5,10 +5,12 @@
     },
     "activeFile": "SimMap.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "G:/Computing School/uniSimMap/Tiles.tsx": {
+            "dynamicWrapping": true,
             "scaleInDock": 1
         },
         "G:/Computing School/uniSimMap/Water.tsx": {
@@ -23,21 +25,22 @@
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 800.5,
-                "y": 399.5
+                "x": 738,
+                "y": 494
             }
         },
         "SimMap.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 5,
+            "scale": 1.5,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 1111.3333333333333,
-                "y": 428.66666666666663
+                "x": 766.6666666666666,
+                "y": 507.33333333333337
             }
         },
         "Tiles.tsx": {
             "dynamicWrapping": true,
-            "scaleInDock": 1
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
         },
         "Water.tsx": {
             "dynamicWrapping": false,
@@ -52,13 +55,14 @@
     "map.tileWidth": 16,
     "map.width": 100,
     "openFiles": [
-        "G:/Computing School/uniSimMap/unisimmap.tmx",
-        "SimMap.tmx"
+        "SimMap.tmx",
+        "Tiles.tsx"
     ],
     "project": "SimMap.tiled-project",
     "recentFiles": [
-        "G:/Computing School/uniSimMap/unisimmap.tmx",
-        "SimMap.tmx"
+        "Tiles.tsx",
+        "SimMap.tmx",
+        "G:/Computing School/uniSimMap/unisimmap.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

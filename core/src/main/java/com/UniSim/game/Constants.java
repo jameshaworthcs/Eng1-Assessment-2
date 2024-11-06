@@ -1,7 +1,6 @@
 package com.UniSim.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 
 public final class Constants
 {
@@ -14,6 +13,8 @@ public final class Constants
     public static final float MAP_SIZE_X = 1600;
     public static final float MAP_SIZE_Y = 800;
     public static final float SCALE = 4;
+
+    public static final float GRID_SIZE = 8;
 
     // Screen size and camera border calculations
     public static final float SCREEN_SIZE_X = (Gdx.graphics.getWidth() - 100) / SCALE;
