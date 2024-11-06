@@ -116,7 +116,6 @@ public class BuildingManager {
         });
         buildingWindow.add(accommodationButton).padBottom(10).row();
 
-        // **Declare and initialize the Academic Button**
         TextButton academicButton = new TextButton("Academic", skin);
         academicButton.addListener(new ClickListener() {
             @Override
@@ -126,17 +125,14 @@ public class BuildingManager {
         });
         buildingWindow.add(academicButton).padBottom(10).row();
 
-
-        // **Declare and initialize the Recreational Button**
-        TextButton RecreationalButton = new TextButton("Recreational", skin);
-        RecreationalButton.addListener(new ClickListener() {
+        TextButton recreationalButton = new TextButton("Recreational", skin);
+        recreationalButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 showRecreationalOptions();
             }
         });
-        buildingWindow.add(RecreationalButton).padBottom(10).row();
-
+        buildingWindow.add(recreationalButton).padBottom(10).row();
 
         if (!stage.getActors().contains(buildingWindow, true)) {
             stage.addActor(buildingWindow);
@@ -325,19 +321,18 @@ public class BuildingManager {
             if (overlap) break; // Stop checking other layers if overlap is detected
         }
 
-
         return overlap;
     }
 
     private void createBuildingBody(float x, float y, float width, float height) {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(x / PPM, y / PPM);
+        bodyDef.position.set((x + width / 2), (y + height / 2)); // Adjust position correctly for PPM
         bodyDef.type = BodyDef.BodyType.StaticBody;
 
         Body buildingBody = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width / 2 / PPM, height / 2 / PPM);
+        shape.setAsBox((width / 2), (height / 2));
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -381,5 +376,15 @@ public class BuildingManager {
     }
     public boolean getIsWindowOpen(){
         return isWindowOpen;
+    }
+}
+
+class PlacedBuilding {
+    public Texture texture;
+    public Rectangle rectangle;
+
+    public PlacedBuilding(Texture texture, float x, float y, float width, float height) {
+        this.texture = texture;
+        this.rectangle = new Rectangle(x, y, width, height);
     }
 }
