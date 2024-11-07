@@ -1,6 +1,10 @@
 package com.UniSim.game.Buildings;
 
 import java.util.ArrayList;
+
+import com.UniSim.game.Buildings.Types.Academic;
+import com.UniSim.game.Buildings.Types.Accommodation;
+import com.UniSim.game.Buildings.Types.Recreational;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;

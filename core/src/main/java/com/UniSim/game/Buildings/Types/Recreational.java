@@ -1,4 +1,6 @@
-package com.UniSim.game.Buildings;
+package com.UniSim.game.Buildings.Types;
+
+import com.UniSim.game.Buildings.Building;
 
 public class Recreational extends Building {
 
