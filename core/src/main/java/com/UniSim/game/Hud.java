@@ -1,5 +1,7 @@
 package com.UniSim.game;
 
+import com.UniSim.game.Stats.PlayerStats;
+import com.UniSim.game.Stats.StatsLabels;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;

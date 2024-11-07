@@ -1,6 +1,7 @@
 package com.UniSim.game.Screens;
 
 import com.UniSim.game.*;
+import com.UniSim.game.Bin.BoxEntity;
 import com.UniSim.game.Buildings.BuildingManager;
 import com.UniSim.game.Sprites.Character;
 import com.UniSim.game.Sprites.SpeechBubble;
@@ -27,7 +28,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -230,7 +230,7 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
-        b2dr.render(world, camera.combined);
+        //b2dr.render(world, camera.combined);
 
         // Update the text box positions to be static and fixed above the bodies
         for (BoxEntity textBox : boxes) {

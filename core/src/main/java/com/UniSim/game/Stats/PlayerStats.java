@@ -1,4 +1,4 @@
-package com.UniSim.game;
+package com.UniSim.game.Stats;
 
 public class PlayerStats {
 

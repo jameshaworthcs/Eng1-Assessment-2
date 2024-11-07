@@ -1,4 +1,4 @@
-package com.UniSim.game;
+package com.UniSim.game.Bin;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
