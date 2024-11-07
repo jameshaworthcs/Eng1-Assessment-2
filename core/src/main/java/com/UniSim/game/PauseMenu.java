@@ -1,6 +1,6 @@
 package com.UniSim.game;
 
-import com.UniSim.game.Screens.gameScreen;
+import com.UniSim.game.Screens.GameScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -23,9 +23,9 @@ public class PauseMenu {
     private Window howToPlayMenu;
     private Image blurOverlay;
     private boolean isPaused = false;
-    private gameScreen gameScreen;
+    private GameScreen gameScreen;
 
-    public PauseMenu(Stage stage, Skin skin, gameScreen gameScreen) {
+    public PauseMenu(Stage stage, Skin skin, GameScreen gameScreen) {
         this.gameScreen = gameScreen;
 
         // Create a blur overlay (semi-transparent black for a blurring effect)

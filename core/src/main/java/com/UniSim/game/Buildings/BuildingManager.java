@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -379,12 +378,3 @@ public class BuildingManager {
     }
 }
 
-class PlacedBuilding {
-    public Texture texture;
-    public Rectangle rectangle;
-
-    public PlacedBuilding(Texture texture, float x, float y, float width, float height) {
-        this.texture = texture;
-        this.rectangle = new Rectangle(x, y, width, height);
-    }
-}
