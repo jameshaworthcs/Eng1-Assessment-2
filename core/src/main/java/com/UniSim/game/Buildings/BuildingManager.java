@@ -63,28 +63,10 @@ public class BuildingManager {
         createMessageLabel(); // Initialize the message label
     }
 
-    // Create the button in the game that opens the building selection window
-//    private void createBuildingButton() {
-//        TextButton buildingButton = new TextButton("Building", skin);
-//        buildingButton.setSize(200, 50);
-//        buildingButton.setPosition(10, 10);
-//
-//        buildingButton.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                if (!isWindowOpen) {  // Prevent opening multiple windows
-//                    showBuildingSelectionWindow();
-//                }
-//            }
-//        });
-//
-//        stage.addActor(buildingButton);
-//    }
-
     private void makeBuildingTypes() {
         accommodations.add(new Accommodation("Langwith", 24000f, "Accommodation_3.png", 4f, 64f, 64f, 200));
         recreationals.add(new Recreational("Food Hall", 50000f, "accommodation_3.png", 2f, 120f,120f));
-        academics.add(new Academic("Lecture Theater", 20000f, "accommodation_3.png", 1.5f, 100f, 100f, 50));
+        academics.add(new Academic("Lecture Theater", 20000f, "lectureroom.png", 1.5f, 100f, 100f, 50));
     }
 
     // Create the message label for invalid placement
@@ -271,6 +253,7 @@ public class BuildingManager {
                     createBuildingBody(mousePosition.x, mousePosition.y, placingBuilding.width, placingBuilding.height); // Create Box2D body
                     isPlacingBuilding = false;
                     messageLabel.setVisible(false); // Hide error message after successful placement
+                    showBuildingSelectionWindow();
                 } else {
                     messageLabel.setText("Cannot place building here!");
                     messageLabel.setVisible(true); // Show error message
@@ -280,7 +263,6 @@ public class BuildingManager {
 
         batch.begin();
         for (Placed building : placed) {
-            // Draw placed buildings using the stored size
             building.drawBuilding(batch);
         }
         batch.end();
@@ -325,7 +307,7 @@ public class BuildingManager {
 
     private void createBuildingBody(float x, float y, float width, float height) {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set((x + width / 2), (y + height / 2)); // Adjust position correctly for PPM
+        bodyDef.position.set((x / PPM), (y / PPM)); // Adjust position correctly for PPM
         bodyDef.type = BodyDef.BodyType.StaticBody;
 
         Body buildingBody = world.createBody(bodyDef);
