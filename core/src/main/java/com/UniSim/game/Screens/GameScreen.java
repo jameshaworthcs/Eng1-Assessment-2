@@ -114,7 +114,8 @@ public class GameScreen implements Screen {
 
         music = manager.get("music/sakura.mp3", Music.class);
         music.setLooping(true);
-        //dwmusic.play();
+        music.setVolume(1.0f);
+        music.play();
 
         hud = new Hud(game.batch, skin, world);
 
