@@ -104,7 +104,7 @@ public class GameScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(tiledMap, 1 / PPM);
         camera.position.set(fitViewport.getWorldWidth() / 2, fitViewport.getWorldHeight() / 2, 0);
 
-        buildingManager = new BuildingManager(stage, skin, world, tiledMap);
+        buildingManager = new BuildingManager(stage, skin, world, tiledMap, this);
 
         boxes = new ArrayList<>();
 
@@ -489,7 +489,7 @@ public class GameScreen implements Screen {
 
     }
 
-    private void showFullMapView() {
+    public void showFullMapView() {
         if (!showFullMap) {
             // Save original position and zoom level to revert back
             originalCameraPosition = new Vector3(camera.position);

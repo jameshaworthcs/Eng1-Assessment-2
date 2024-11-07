@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.UniSim.game.Buildings.Types.Academic;
 import com.UniSim.game.Buildings.Types.Accommodation;
 import com.UniSim.game.Buildings.Types.Recreational;
+import com.UniSim.game.Buildings.Types.Workplace;
+import com.UniSim.game.Screens.GameScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -38,6 +40,7 @@ public class BuildingManager {
     private static ArrayList<Accommodation> accommodations;
     private static ArrayList<Academic> academics;
     private static ArrayList<Recreational> recreationals;
+    private static ArrayList<Workplace> workplaces;
 
     private ArrayList<Placed> placed;
 
@@ -48,12 +51,16 @@ public class BuildingManager {
 
     private TiledMap tiledMap;
 
-    public BuildingManager(Stage stage, Skin skin, World world, TiledMap tiledMap) {
+    private GameScreen gameScreen;
+
+    public BuildingManager(Stage stage, Skin skin, World world, TiledMap tiledMap, GameScreen gameScreen) {
         accommodations = new ArrayList<Accommodation>();
         academics = new ArrayList<Academic>();
         recreationals = new ArrayList<Recreational>();
+        workplaces= new ArrayList<Workplace>();
         placed =  new ArrayList<Placed>();
 
+        this.gameScreen = gameScreen;
         this.stage = stage;
         this.skin = skin;
         this.world = world;
@@ -71,6 +78,7 @@ public class BuildingManager {
         accommodations.add(new Accommodation("Langwith", 24000f, "Accommodation_3.png", 4f, 64f, 64f, 200));
         recreationals.add(new Recreational("Food Hall", 50000f, "accommodation_3.png", 2f, 120f,120f));
         academics.add(new Academic("Lecture Theater", 20000f, "lectureroom.png", 1.5f, 100f, 100f, 50));
+        workplaces.add(new Workplace("Pizza Hut", 50000f, "Accommodation_3.png", 1.5f, 80f, 80f));
     }
 
     // Create the message label for invalid placement
@@ -135,6 +143,7 @@ public class BuildingManager {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 closeBuildingWindow();
+                gameScreen.showFullMapView();
             }
         });
 
@@ -171,6 +180,21 @@ public class BuildingManager {
     private void showAccommodationOptions() {
         buildingWindow.clear();  // Clear previous content
         buildingWindow.add(new Label("Select Accommodation", skin)).padBottom(20).row();
+
+        // Create a Table for building options
+        Table buildingTable = new Table();
+
+        // Add building options
+        for (Accommodation accommodation : accommodations)
+        {
+            addBuildingOption(buildingTable, accommodation);
+        }
+        setScrollAndBack(buildingTable);
+    }
+
+    private void showWorkOptions(){
+        buildingWindow.clear();
+        buildingWindow.add(new Label("Select Workplace", skin)).padBottom(20).row();
 
         // Create a Table for building options
         Table buildingTable = new Table();
