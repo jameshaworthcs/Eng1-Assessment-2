@@ -119,6 +119,28 @@ public class BuildingManager {
         });
         buildingWindow.add(recreationalButton).padBottom(10).row();
 
+        // **Declare and initialize the Workplace Button**
+        TextButton WorkplaceButton = new TextButton("Workplace", skin);
+        WorkplaceButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showWorkOptions();
+            }
+        });
+        buildingWindow.add(WorkplaceButton).padBottom(10).row();
+
+        // Add the Back button at the bottom
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                closeBuildingWindow();
+            }
+        });
+
+        buildingWindow.add(backButton).padTop(100).row();  // Add the "Back" button at the bottom
+
+
         if (!stage.getActors().contains(buildingWindow, true)) {
             stage.addActor(buildingWindow);
         }
