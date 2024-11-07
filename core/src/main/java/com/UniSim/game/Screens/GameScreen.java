@@ -109,10 +109,10 @@ public class GameScreen implements Screen {
         boxes = new ArrayList<>();
 
         manager = new AssetManager();
-        manager.load("music/sakura.mp3", Music.class);
+        manager.load("music/awesomeness.wav", Music.class);
         manager.finishLoading();
 
-        music = manager.get("music/sakura.mp3", Music.class);
+        music = manager.get("music/awesomeness.wav", Music.class);
         music.setLooping(true);
         music.setVolume(1.0f);
         music.play();
