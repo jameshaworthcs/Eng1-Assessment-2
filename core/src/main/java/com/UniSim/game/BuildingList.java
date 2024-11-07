@@ -56,7 +56,7 @@ public class BuildingList {
 
     // Create the button in the game that opens the building selection window
     private void createBuildingButton() {
-        TextButton buildingButton = new TextButton("Building", skin);
+        TextButton buildingButton = new TextButton("BUILDINGS", skin);
         buildingButton.setSize(200, 50);
         buildingButton.setPosition(10, 10);
 
@@ -121,6 +121,27 @@ public class BuildingList {
         });
         buildingWindow.add(RecreationalButton).padBottom(10).row();
 
+        // **Declare and initialize the Workplace Button**
+        TextButton WorkplaceButton = new TextButton("Workplace", skin);
+        WorkplaceButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showWorkOptions();
+            }
+        });
+        buildingWindow.add(WorkplaceButton).padBottom(10).row();
+
+        // Add the Back button at the bottom
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                closeBuildingWindow();
+            }
+        });
+
+        buildingWindow.add(backButton).padTop(100).row();  // Add the "Back" button at the bottom
+
 
         if (!stage.getActors().contains(buildingWindow, true)) {
             stage.addActor(buildingWindow);
@@ -135,9 +156,7 @@ public class BuildingList {
         Table buildingTable = new Table();
 
         // Add building options
-        addBuildingOption(buildingTable, "Accommodation 1", "accommodation_3.png", 5000, 64.0f, 64.0f);
-        addBuildingOption(buildingTable, "Accommodation 2", "accommodation_3.png", 6000, 32.0f, 32.0f);
-        addBuildingOption(buildingTable, "Accommodation 3", "accommodation_3.png", 6000, 128.0f, 128.0f);
+        addBuildingOption(buildingTable, "David Kato", "accommodation_3.png", 3000, 64.0f, 64.0f);
         // Create a ScrollPane and set it to only show vertical scrollbars
         ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
         scrollPane.setFadeScrollBars(false);         // Disable fade so scrollbars are always visible
@@ -166,9 +185,7 @@ public class BuildingList {
         buildingWindow.add(new Label("Select Academic Building", skin)).padBottom(20).row();
 
         Table buildingTable = new Table();
-        addBuildingOption(buildingTable, "Library", "accommodation_3.png", 10000, 100.0f, 100.0f);
-        addBuildingOption(buildingTable, "Lab", "accommodation_3.png", 8000, 80.0f, 80.0f);
-
+        addBuildingOption(buildingTable, "Library", "accommodation_3.png", 9000, 100.0f, 100.0f);
         // Create a ScrollPane and set it to only show vertical scrollbars
         ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
         scrollPane.setFadeScrollBars(false);         // Disable fade so scrollbars are always visible
@@ -196,8 +213,36 @@ public class BuildingList {
         buildingWindow.add(new Label("Select Recreational Facility", skin)).padBottom(20).row();
 
         Table buildingTable = new Table();
-        addBuildingOption(buildingTable, "Cafeteria", "accommodation_3.png", 7000, 70.0f, 70.0f);
-        addBuildingOption(buildingTable, "Restaurant", "accommodation_3.png", 12000, 120.0f, 120.0f);
+        addBuildingOption(buildingTable, "Piazza Restaurant", "accommodation_3.png", 6000, 70.0f, 70.0f);
+
+        // Create a ScrollPane and set it to only show vertical scrollbars
+        ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
+        scrollPane.setFadeScrollBars(false);         // Disable fade so scrollbars are always visible
+        scrollPane.setScrollingDisabled(true, false); // Disable horizontal scrolling, enable vertical scrolling
+        scrollPane.setForceScroll(false, true);       // Only force vertical scroll
+
+        // Add the scroll pane to the window
+        buildingWindow.add(scrollPane).expand().fill().row();
+
+        // Add the Back button at the bottom
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showBuildingSelectionWindow();  // Go back to the main menu
+            }
+        });
+
+        buildingWindow.add(backButton).padTop(20).row();  // Add the "Back" button at the bottom
+    }
+
+    // Add Workplace options
+    private void showWorkOptions() {
+        buildingWindow.clear();
+        buildingWindow.add(new Label("Select Workplace", skin)).padBottom(20).row();
+
+        Table buildingTable = new Table();
+        addBuildingOption(buildingTable, "Greggs", "accommodation_3.png", 2000, 70.0f, 70.0f);
 
         // Create a ScrollPane and set it to only show vertical scrollbars
         ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
