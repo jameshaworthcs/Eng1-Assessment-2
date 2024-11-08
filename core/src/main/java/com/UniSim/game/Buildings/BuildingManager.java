@@ -145,7 +145,7 @@ public class BuildingManager {
         });
         buildingWindow.add(academicButton).padBottom(10).row();
 
-        TextButton foodButton = new TextButton("Food Halls", skin);
+        TextButton foodButton = new TextButton("Food Hall", skin);
         foodButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
