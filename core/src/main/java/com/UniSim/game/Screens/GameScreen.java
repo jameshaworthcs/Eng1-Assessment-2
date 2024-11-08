@@ -91,6 +91,8 @@ public class GameScreen implements Screen {
         speechBubbleTexture = new Texture("question.png");
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
+
+
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Initialize the stage
         Gdx.input.setInputProcessor(stage); // Set the stage as the input processor
 

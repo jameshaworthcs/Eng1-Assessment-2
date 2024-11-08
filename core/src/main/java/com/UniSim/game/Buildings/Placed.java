@@ -98,20 +98,26 @@ public class Placed {
         if (isInteractable) {
             // Convert world position to screen position for the button
             Vector3 screenPosition = camera.project(new Vector3(position.x, position.y + height / 2, 0));
+
+            // Adjust the position to match the screen coordinates used by the stage
             interactButton.setPosition(screenPosition.x, screenPosition.y);
         }
+
         if (cooldownTimer > 0) {
             cooldownTimer -= deltaTime;
             interactButton.setText(String.format("Wait %.1f", Math.max(0, cooldownTimer)));
         } else {
             interactButton.setText(buttonText);
         }
-        if (isPressed){
+
+        if (isPressed) {
             isPressed = false;
             return name;
         }
         return "none";
     }
+
+
 
     private Texture getTexture() {
         ArrayList<Building> allBuildings = BuildingManager.combineBuildings();
