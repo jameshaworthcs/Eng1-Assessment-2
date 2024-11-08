@@ -51,17 +51,20 @@ public class Placed {
         this.cooldownTimer = 0;
 
         switch (name) {
-            case "Langwith":
+            case "David Kato":
                 this.buttonText = "Sleep";
                 break;
-            case "Pizza Hut":
+            case "Greggs":
                 this.buttonText = "Work";
                 break;
-            case "Lecture Theater":
+            case "Library":
                 this.buttonText = "Learn";
                 break;
-            case "Food Hall":
+            case "Piazza Restaurant":
                 this.buttonText = "Eat";
+                break;
+            case "Glasshouse Bar":
+                this.buttonText = "Relax";
 
         }
 
