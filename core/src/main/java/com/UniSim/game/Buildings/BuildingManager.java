@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.UniSim.game.Buildings.Types.Academic;
 import com.UniSim.game.Buildings.Types.Accommodation;
+import com.UniSim.game.Buildings.Types.Food;
 import com.UniSim.game.Buildings.Types.Recreational;
 import com.UniSim.game.Buildings.Types.Workplace;
 import com.UniSim.game.Screens.GameScreen;
@@ -42,6 +43,7 @@ public class BuildingManager {
 
     private static ArrayList<Accommodation> accommodations;
     private static ArrayList<Academic> academics;
+    private static ArrayList<Food> foods;
     private static ArrayList<Recreational> recreationals;
     private static ArrayList<Workplace> workplaces;
 
@@ -63,6 +65,7 @@ public class BuildingManager {
     public BuildingManager(Stage stage, Skin skin, World world, TiledMap tiledMap, GameScreen gameScreen) {
         accommodations = new ArrayList<Accommodation>();
         academics = new ArrayList<Academic>();
+        foods = new ArrayList<Food>();
         recreationals = new ArrayList<Recreational>();
         workplaces= new ArrayList<Workplace>();
         placed =  new ArrayList<Placed>();
@@ -98,10 +101,11 @@ public class BuildingManager {
 
 
     private void makeBuildingTypes() {
-        accommodations.add(new Accommodation("Langwith", 24000f, "Accommodation_3.png", 4f, 64f, 64f, 200));
-        recreationals.add(new Recreational("Food Hall", 50000f, "accommodation_3.png", 2f, 120f,120f));
-        academics.add(new Academic("Lecture Theater", 20000f, "lectureroom.png", 1.5f, 100f, 100f, 50));
-        workplaces.add(new Workplace("Pizza Hut", 50000f, "Accommodation_3.png", 1.5f, 80f, 80f));
+        accommodations.add(new Accommodation("David Kato", 24000f, "Accommodation_3.png", 4f, 64f, 64f, 200));
+        foods.add(new Food("Piazza Restaurant", 50000f, "accommodation_3.png", 2f, 120f,120f));
+        recreationals.add(new Recreational("Glasshouse Bar", 50000f, "accommodation_3.png", 2f, 120f,120f));
+        academics.add(new Academic("Library", 20000f, "lectureroom.png", 1.5f, 100f, 100f, 50));
+        workplaces.add(new Workplace("Greggs", 50000f, "Accommodation_3.png", 1.5f, 80f, 80f));
     }
 
     // Create the message label for invalid placement
@@ -140,6 +144,15 @@ public class BuildingManager {
             }
         });
         buildingWindow.add(academicButton).padBottom(10).row();
+
+        TextButton foodButton = new TextButton("Food Hall", skin);
+        foodButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showFoodOptions();
+            }
+        });
+        buildingWindow.add(foodButton).padBottom(10).row();
 
         TextButton recreationalButton = new TextButton("Recreational", skin);
         recreationalButton.addListener(new ClickListener() {
@@ -243,6 +256,18 @@ public class BuildingManager {
     }
 
     // Add Food options
+    private void showFoodOptions() {
+        buildingWindow.clear();
+        buildingWindow.add(new Label("Select Food Hall", skin)).padBottom(20).row();
+
+        Table buildingTable = new Table();
+        for(Food food : foods) {
+            addBuildingOption(buildingTable, food);
+        }
+        setScrollAndBack(buildingTable);
+    }
+
+    // Add Recreational options
     private void showRecreationalOptions() {
         buildingWindow.clear();
         buildingWindow.add(new Label("Select Recreational Facility", skin)).padBottom(20).row();
@@ -403,6 +428,7 @@ public class BuildingManager {
         allBuildings.addAll(accommodations);
         allBuildings.addAll(academics);
         allBuildings.addAll(recreationals);
+        allBuildings.addAll(foods);
         return allBuildings;
     }
 
