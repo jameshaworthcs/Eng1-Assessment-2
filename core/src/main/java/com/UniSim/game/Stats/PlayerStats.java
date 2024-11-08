@@ -9,7 +9,7 @@ public class PlayerStats {
 
     public PlayerStats(){
         satisfaction = 0;
-        currency = 0;
+        currency = 200000;
         fatigue = 0;
         knowledge = 0;
     }

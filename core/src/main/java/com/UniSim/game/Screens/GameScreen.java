@@ -5,6 +5,7 @@ import com.UniSim.game.Bin.BoxEntity;
 import com.UniSim.game.Buildings.BuildingManager;
 import com.UniSim.game.Sprites.Character;
 import com.UniSim.game.Sprites.SpeechBubble;
+import com.UniSim.game.Stats.PlayerStats;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -32,8 +33,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
-import static com.UniSim.game.Constants.*;
+import java.util.Objects;
 
+import static com.UniSim.game.Constants.*;
+import static com.UniSim.game.Hud.*;
 public class GameScreen implements Screen {
     private UniSim game;
     private Stage stage;
@@ -74,6 +77,8 @@ public class GameScreen implements Screen {
     private boolean showFullMap = false;
     private Vector3 originalCameraPosition;
     private float originalZoom;
+
+    private String buildingInteractedWith;
 
     public GameScreen(UniSim game) {
         this.game = game;
@@ -118,6 +123,7 @@ public class GameScreen implements Screen {
         music.play();
 
         hud = new Hud(game.batch, skin, world);
+
 
         // Load the pause icon texture
         pauseIconTexture = new Texture(Gdx.files.internal("pause.png"));
@@ -260,7 +266,36 @@ public class GameScreen implements Screen {
         moveRequest();
         manager.update();
         hud.update(delta);
+        buildingInteraction(buildingManager.updateBuildingInteractions(player.b2body.getPosition(), camera));
+
+        hud.updateStats(skin, world);
         //checkProximityToPlatform();
+    }
+    private void buildingInteraction(String buildingType){
+        if (Objects.equals(buildingType, "Langwith")){
+            sleep();
+        }
+        if (Objects.equals(buildingType, "Food Hall")){
+            eat();
+        }
+        if (Objects.equals(buildingType, "Lecture Theater")){
+            learn();
+        }
+        if (Objects.equals(buildingType, "Pizza hut")){
+            work();
+        }
+    }
+    private void sleep(){
+        hud.getStats().decreaseFatigue(5);
+    }
+    private void eat(){
+        hud.getStats().decreaseFatigue(5);
+    }
+    private void learn(){
+        hud.getStats().increaseKnowledge(5);
+    }
+    private void work(){
+        hud.getStats().increaseCurrency(1000);
     }
 
     /***
@@ -293,7 +328,7 @@ public class GameScreen implements Screen {
             Vector2 platformPosition = box.getBody().getPosition().scl(PPM); // Scale to pixels
             // Calculate the distance between the centers of player and platform
             float distance = playerPosition.dst(platformPosition);
-
+            System.out.println(distance);
             // Check if the distance is within 10 pixels
             box.setIsVisible(distance <= 50);
 
@@ -488,6 +523,8 @@ public class GameScreen implements Screen {
         }
 
     }
+
+
 
     public void showFullMapView() {
         if (!showFullMap) {

@@ -1,6 +1,7 @@
 package com.UniSim.game.Buildings;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import com.UniSim.game.Buildings.Types.Academic;
 import com.UniSim.game.Buildings.Types.Accommodation;
@@ -27,11 +28,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.math.Vector2;
 
 import static com.UniSim.game.Constants.*;
 
 public class BuildingManager {
     private Stage stage;
+
     private Skin skin;
     private World world;
     private Window buildingWindow;
@@ -52,6 +55,10 @@ public class BuildingManager {
     private TiledMap tiledMap;
 
     private GameScreen gameScreen;
+    private TextButton interactButton;
+    private boolean isInteractable;
+
+    private String buildingPressed;
 
     public BuildingManager(Stage stage, Skin skin, World world, TiledMap tiledMap, GameScreen gameScreen) {
         accommodations = new ArrayList<Accommodation>();
@@ -68,11 +75,27 @@ public class BuildingManager {
         this.isWindowOpen = false;
         this.placingBuilding = null;
 
+
         makeBuildingTypes();
 
         //createBuildingButton();
         createMessageLabel(); // Initialize the message label
+
+
     }
+
+
+    // Method to handle proximity check and show button if near
+    public String updateBuildingInteractions(Vector2 playerPosition, OrthographicCamera camera) {
+        buildingPressed = "none";
+        for (Placed building : placed) {
+            buildingPressed = building.updateInteraction(playerPosition, camera);
+
+        }
+        return buildingPressed;
+    }
+
+
 
     private void makeBuildingTypes() {
         accommodations.add(new Accommodation("Langwith", 24000f, "Accommodation_3.png", 4f, 64f, 64f, 200));
@@ -299,7 +322,7 @@ public class BuildingManager {
 
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 if (!checkOverlap(mousePosition.x, mousePosition.y)) {
-                    placed.add(new Placed(placingBuilding.name, mousePosition.x, mousePosition.y, placingBuilding.width, placingBuilding.height));
+                    placed.add(new Placed(placingBuilding.name, mousePosition.x, mousePosition.y, placingBuilding.width, placingBuilding.height, stage));
                     createBuildingBody(mousePosition.x, mousePosition.y, placingBuilding.width, placingBuilding.height); // Create Box2D body
                     isPlacingBuilding = false;
                     messageLabel.setVisible(false); // Hide error message after successful placement
@@ -320,7 +343,7 @@ public class BuildingManager {
 
     private boolean checkOverlap(float x, float y) {
         boolean overlap = false;
-        Placed newBuildingPla = new Placed (placingBuilding.name, x, y, placingBuilding.width, placingBuilding.height);
+        Placed newBuildingPla = new Placed (placingBuilding.name, x, y, placingBuilding.width, placingBuilding.height, stage);
         for (Placed building : placed) {
             if (newBuildingPla.overlaps(building)) {
                 overlap =  true; // Overlap detected
@@ -339,7 +362,8 @@ public class BuildingManager {
                         rect.getX() / PPM,
                         rect.getY() / PPM,
                         rect.getWidth() / PPM,
-                        rect.getHeight() / PPM
+                        rect.getHeight() / PPM,
+                        stage
                     );
 
                     // Check for overlap
@@ -405,6 +429,7 @@ public class BuildingManager {
             showBuildingSelectionWindow();
         }
     }
+
     public boolean getIsWindowOpen(){
         return isWindowOpen;
     }

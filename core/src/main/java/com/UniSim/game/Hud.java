@@ -36,7 +36,9 @@ public class Hud {
         setTimer(sb);
         setStats(skin, world);
     }
-
+    public PlayerStats getStats(){
+        return stats;
+    }
     private void setStats(Skin skin, World world) {
         stats = new PlayerStats();
         playerStatLabels = new ArrayList<>();
@@ -45,6 +47,15 @@ public class Hud {
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180, "CURRENCY: " + stats.getCurrency()));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue()));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
+    }
+    public void updateStats(Skin skin, World world){
+        //playerStatLabels = new ArrayList<>();
+        //playerStatLabels.clear();
+
+        //playerStatLabels.add(new StatsLabels(world, stage, skin, 10,200, "SATISFACTION: " + stats.getSatisfaction()));
+        //playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180, "CURRENCY: " + stats.getCurrency()));
+        //playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue()));
+        //playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
     }
 
     private void setTimer(SpriteBatch sb) {
@@ -82,4 +93,7 @@ public class Hud {
     }
 
     public boolean isTimeUp() { return timeUp; }
+
+
+
 }
