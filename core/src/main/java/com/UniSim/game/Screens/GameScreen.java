@@ -143,7 +143,7 @@ public class GameScreen implements Screen {
         stage.addActor(pauseButton);
 
         // Initialize pause menu
-        pauseMenu = new PauseMenu(stage, skin, this);
+        pauseMenu = new PauseMenu(stage, skin, this, game, music);
 
 
 
@@ -391,6 +391,13 @@ public class GameScreen implements Screen {
         // Update game world viewport (like FitViewport) if you're using one
         if (fitViewport != null) {
             fitViewport.update(width, height, true); // 'true' ensures the camera stays centered
+        }
+
+        //if showing full map resize correctly
+        if(showFullMap) {
+            camera.zoom = Math.min(MAP_SIZE_X / camera.viewportWidth, MAP_SIZE_Y / camera.viewportHeight);
+            camera.position.set(MAP_SIZE_X / 2, MAP_SIZE_Y / 2, 0);
+            camera.update();
         }
     }
 

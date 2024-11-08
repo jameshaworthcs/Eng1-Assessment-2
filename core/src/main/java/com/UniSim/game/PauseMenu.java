@@ -1,7 +1,10 @@
 package com.UniSim.game;
 
+import com.UniSim.game.Screens.CreditsScreen;
 import com.UniSim.game.Screens.GameScreen;
+import com.UniSim.game.Screens.LandingScreen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,9 +27,12 @@ public class PauseMenu {
     private Image blurOverlay;
     private boolean isPaused = false;
     private GameScreen gameScreen;
+    private UniSim game;
+    private Music music;
 
-    public PauseMenu(Stage stage, Skin skin, GameScreen gameScreen) {
+    public PauseMenu(Stage stage, Skin skin, GameScreen gameScreen, UniSim game, Music music) {
         this.gameScreen = gameScreen;
+        this.game = game;
 
         // Create a blur overlay (semi-transparent black for a blurring effect)
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -75,6 +81,17 @@ public class PauseMenu {
             }
         });
         pauseMenu.add(howToPlayButton).pad(10).row();
+
+        //Add quit
+        TextButton mainMenu = new TextButton("Main Menu", skin);
+        mainMenu.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                music.pause();
+                game.setScreen(new LandingScreen(game));
+            }
+        });
+        pauseMenu.add(mainMenu).pad(10).row();
 
         stage.addActor(pauseMenu);
 

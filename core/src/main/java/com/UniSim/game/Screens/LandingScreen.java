@@ -82,6 +82,7 @@ public class LandingScreen implements Screen {
         TextButton settingsButton = new TextButton("Settings", skin);
         TextButton howToPlayButton = new TextButton("How to Play", skin);
         TextButton creditsButton = new TextButton("Credits", skin);
+        TextButton quitButton = new TextButton("Quit", skin);
 
         // Set up button listeners
         playGameButton.addListener(new ClickListener() {
@@ -109,6 +110,13 @@ public class LandingScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new CreditsScreen(game));  // Switch to credits screen
+            }
+        });
+
+        quitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
             }
         });
 
@@ -196,15 +204,19 @@ public class LandingScreen implements Screen {
 
         // Set size and position for Settings button
         settingsButton.setSize(500, 140);
-        settingsButton.setPosition(50, 650);
+        settingsButton.setPosition(50, 700);
 
         // Set size and position for How to Play button
         howToPlayButton.setSize(500, 140);
-        howToPlayButton.setPosition(50, 450);
+        howToPlayButton.setPosition(50, 550);
 
         // Set size and position for Credits button
         creditsButton.setSize(500, 140);
-        creditsButton.setPosition(50, 250);
+        creditsButton.setPosition(50, 400);
+
+        //set size and position for Quit button
+        quitButton.setSize(500, 140);
+        quitButton.setPosition(50, 250);
 
         // Add all actors to the stage
 
@@ -212,6 +224,7 @@ public class LandingScreen implements Screen {
         stage.addActor(settingsButton);
         stage.addActor(howToPlayButton);
         stage.addActor(creditsButton);
+        stage.addActor(quitButton);
         stage.addActor(scrollPane); // Add the scrollable leaderboard
 
         // Add main UI table to the stage
