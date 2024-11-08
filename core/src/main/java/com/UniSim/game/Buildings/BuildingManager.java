@@ -236,9 +236,9 @@ public class BuildingManager {
         Table buildingTable = new Table();
 
         // Add building options
-        for (Accommodation accommodation : accommodations)
+        for (Workplace workplace : workplaces)
         {
-            addBuildingOption(buildingTable, accommodation);
+            addBuildingOption(buildingTable, workplace);
         }
         setScrollAndBack(buildingTable);
     }
