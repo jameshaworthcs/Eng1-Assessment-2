@@ -30,5 +30,9 @@ public class StatsLabels {
         messageLabel.setVisible(true); // Initially hidden
         stage.addActor(messageLabel); // Add the label to the stage
     }
+
+    public void setText(String newText) {
+        messageLabel.setText(newText);
+    }
 }
 
