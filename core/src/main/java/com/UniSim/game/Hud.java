@@ -91,6 +91,9 @@ public class Hud {
             timeCount = 0;
         }
     }
+    public float getTimeCount(){
+        return worldTimer;
+    }
 
     public boolean isTimeUp() { return timeUp; }
 

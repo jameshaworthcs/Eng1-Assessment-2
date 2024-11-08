@@ -41,13 +41,7 @@ public class CreditsScreen implements Screen {
 
         // Large text box with credits
         Label creditsLabel = new Label("Credits:\n\n" +
-            "Game Design: Your Name\n" +
-            "Programming: Your Name\n" +
-            "Art: Your Name\n" +
-            "Music: Your Name\n" +
-            "Special Thanks: Everyone who helped!\n\n" +
-            "This game was developed using LibGDX.\n" +
-            "For more information, visit the LibGDX website.", skin);
+            "WRITE CREDITS HERE", skin);
         creditsLabel.setWrap(true); // Enable text wrapping
 
         // Add elements to the table

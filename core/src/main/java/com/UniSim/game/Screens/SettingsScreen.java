@@ -3,8 +3,10 @@ package com.UniSim.game.Screens;
 import com.UniSim.game.UniSim;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -16,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class SettingsScreen implements Screen {
     private UniSim game;
@@ -37,9 +41,15 @@ public class SettingsScreen implements Screen {
 
         backgroundTexture = new Texture("LoadScreenBackground.png");
 
+        BitmapFont customFont = new BitmapFont();
+        customFont.getData().setScale(2.5f);
+
+        LabelStyle customLabelStyle = new LabelStyle();
+        customLabelStyle.font = customFont;
+
         // Back button
         Button backButton = new Button(skin);
-        backButton.add(new Label("Back", skin)); // Add label to the button
+        backButton.add(new Label("Back", customLabelStyle)); // Add label to the button
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -49,7 +59,7 @@ public class SettingsScreen implements Screen {
 
         // Resolution buttons
         Button res720Button = new Button(skin);
-        res720Button.add(new Label("1280x720", skin));
+        res720Button.add(new Label("1280x720", customLabelStyle));
         res720Button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -58,7 +68,7 @@ public class SettingsScreen implements Screen {
         });
 
         Button res1080Button = new Button(skin);
-        res1080Button.add(new Label("1920x1080", skin));
+        res1080Button.add(new Label("1920x1080", customLabelStyle));
         res1080Button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -67,7 +77,7 @@ public class SettingsScreen implements Screen {
         });
 
         Button res1440Button = new Button(skin);
-        res1440Button.add(new Label("2560x1440", skin));
+        res1440Button.add(new Label("2560x1440", customLabelStyle));
         res1440Button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -76,14 +86,15 @@ public class SettingsScreen implements Screen {
         });
 
         // Music volume slider
-        Label musicLabel = new Label("Music Volume", skin);
+        LabelStyle musicLabelStyle = new LabelStyle();
+        musicLabelStyle.font = customFont;  // Reuse the custom font with the desired size
+        musicLabelStyle.fontColor = Color.BLACK; // Set the font color to black
+        Label musicLabel = new Label("Music Volume", musicLabelStyle);
+
         Slider musicSlider = new Slider(0, 1, 0.01f, false, skin);
         musicSlider.setValue(0.5f); // Set default value (50%)
 
-        // Sound volume slider
-        Label soundLabel = new Label("Sound Volume", skin);
-        Slider soundSlider = new Slider(0, 1, 0.01f, false, skin);
-        soundSlider.setValue(0.5f); // Set default value (50%)
+
 
         // Add elements to the table
         //table.add(backButton).pad(10);
@@ -105,19 +116,29 @@ public class SettingsScreen implements Screen {
         backButton.setSize(200, 100);
         backButton.setPosition(10, 1320);
 
-        res720Button.setSize(200, 60);
-        res720Button.setPosition(200, 1200);
+        res720Button.setSize(300, 100);
+        res720Button.setPosition(703, 1200);
 
-        res1080Button.setSize(200, 60);
-        res1080Button.setPosition(500, 1200);
+        res1080Button.setSize(300, 100);
+        res1080Button.setPosition(1130, 1200);
 
-        res1440Button.setSize(200, 60);
-        res1440Button.setPosition(800, 1200);
+        res1440Button.setSize(300, 100);
+        res1440Button.setPosition(1556, 1200);
+
+        //musicLabel.setSize(800, 100);
+        musicLabel.setPosition(1170, 1000);
+
+        musicSlider.setSize(703, 100);
+        musicSlider.setPosition(930, 930);
+
+
 
         stage.addActor(backButton);
         stage.addActor(res720Button);
         stage.addActor(res1080Button);
         stage.addActor(res1440Button);
+        stage.addActor(musicLabel);
+        stage.addActor(musicSlider);
     }
 
     @Override

@@ -11,10 +11,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -27,13 +25,17 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Timer;
 
 import static com.UniSim.game.Constants.*;
 import static com.UniSim.game.Hud.*;
@@ -77,11 +79,13 @@ public class GameScreen implements Screen {
     private boolean showFullMap = false;
     private Vector3 originalCameraPosition;
     private float originalZoom;
+    private ArrayList<Float> loggedMinutes;
 
     private String buildingInteractedWith;
 
     public GameScreen(UniSim game) {
         this.game = game;
+        loggedMinutes = new ArrayList<>();
         playerNearReseption = false;
         characterTexture = new Texture("character-1.png");
         speechBubbleTexture = new Texture("question.png");
@@ -270,8 +274,39 @@ public class GameScreen implements Screen {
         buildingInteraction(buildingManager.updateBuildingInteractions(player.b2body.getPosition(), camera, deltaTime));
 
         hud.updateStats(skin, world);
-        //checkProximityToPlatform();
+        float worldTime = hud.getTimeCount();
+        if (worldTime % 60== 0 && !loggedMinutes.contains(worldTime) && worldTime != 0 && worldTime != 300){
+            loggedMinutes.add(worldTime);
+            studentLoan();
+        }
+
     }
+    private void studentLoan() {
+        // Increase the currency
+        hud.getStats().increaseCurrency(10000);
+
+        // Create the pop-up label with the message
+        Label loanMessage = new Label("Student Loan: \n+   £10,000", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        loanMessage.setFontScale(4); // Make the text larger for visibility
+
+
+        loanMessage.setPosition((float) Gdx.graphics.getWidth() / 2 - loanMessage.getWidth(), Gdx.graphics.getHeight() / 4 * 3);
+
+
+        stage.addActor(loanMessage);
+
+
+        float fadeDuration = 5f;  // Duration for the fade-out effect
+
+
+        // Create a temporary action to fade out the label
+        loanMessage.addAction(Actions.sequence(
+            Actions.alpha(1f, 0f),  // Initial alpha 1 (fully visible)
+            Actions.fadeOut(fadeDuration), // Fades out over the specified duration
+            Actions.removeActor() // Removes the label after fading out
+        ));
+    }
+
     private void buildingInteraction(String buildingType){
         if (Objects.equals(buildingType, "Langwith")){
             sleep();

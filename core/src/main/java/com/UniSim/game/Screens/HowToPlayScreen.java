@@ -41,11 +41,7 @@ public class HowToPlayScreen implements Screen {
 
         // Large text box with instructions
         Label instructionsLabel = new Label("How to Play:\n\n" +
-            "1. Start by selecting a game mode.\n" +
-            "2. Follow the on-screen instructions to navigate through the game.\n" +
-            "3. Use the mouse or keyboard to interact with various elements.\n" +
-            "4. Manage resources effectively to succeed.\n" +
-            "5. Enjoy and explore the university simulation experience!", skin);
+            "1. WRITE INSTRUCTIONS HERE", skin);
         instructionsLabel.setWrap(true); // Enable text wrapping
 
         // Add elements to the table
@@ -61,7 +57,7 @@ public class HowToPlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);  // Set a background color for the How to Play screen
+        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.act();
@@ -88,6 +84,6 @@ public class HowToPlayScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose(); // Dispose the skin
+        skin.dispose();
     }
 }
