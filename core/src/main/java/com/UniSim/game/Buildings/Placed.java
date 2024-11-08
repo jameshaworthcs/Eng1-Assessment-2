@@ -1,6 +1,7 @@
 package com.UniSim.game.Buildings;
 
 import com.UniSim.game.Hud;
+import java.util.HashMap;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -31,6 +32,9 @@ public class Placed {
     private Skin skin;
 
     private boolean isPressed;
+    private float cooldownTimer;
+
+    String buttonText;
 
 
 
@@ -44,6 +48,22 @@ public class Placed {
         this.isInteractable = isInteractable;
         this.stage = stage;
         this.isPressed = false;
+        this.cooldownTimer = 0;
+
+        switch (name) {
+            case "Langwith":
+                this.buttonText = "Sleep";
+                break;
+            case "Pizza Hut":
+                this.buttonText = "Work";
+                break;
+            case "Lecture Theater":
+                this.buttonText = "Learn";
+                break;
+            case "Food Hall":
+                this.buttonText = "Eat";
+
+        }
 
 
         //stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Initialize the stage
@@ -52,13 +72,16 @@ public class Placed {
         initializeInteractButton(skin);
     }
     private void initializeInteractButton(Skin skin) {
-        interactButton = new TextButton("Interact", skin);
+
+        interactButton = new TextButton(buttonText, skin);
         interactButton.setPosition(position.x, position.y + height / 2); // Position above the building
         interactButton.setVisible(false); // Initially hidden
         interactButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                isPressed = true;
+                if(cooldownTimer<=0){
+                    isPressed = true;
+                    cooldownTimer = 5;}
 
 
 
@@ -67,7 +90,7 @@ public class Placed {
         stage.addActor(interactButton);
     }
 
-    public String updateInteraction(Vector2 playerPosition, OrthographicCamera camera) {
+    public String updateInteraction(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
         float distance = playerPosition.dst(position);
         isInteractable = distance < (width + 50); // Set proximity range (adjust as needed)
         interactButton.setVisible(isInteractable);
@@ -76,6 +99,12 @@ public class Placed {
             // Convert world position to screen position for the button
             Vector3 screenPosition = camera.project(new Vector3(position.x, position.y + height / 2, 0));
             interactButton.setPosition(screenPosition.x, screenPosition.y);
+        }
+        if (cooldownTimer > 0) {
+            cooldownTimer -= deltaTime;
+            interactButton.setText(String.format("Wait %.1f", Math.max(0, cooldownTimer)));
+        } else {
+            interactButton.setText(buttonText);
         }
         if (isPressed){
             isPressed = false;

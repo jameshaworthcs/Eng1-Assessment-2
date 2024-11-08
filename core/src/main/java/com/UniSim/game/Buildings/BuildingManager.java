@@ -86,10 +86,10 @@ public class BuildingManager {
 
 
     // Method to handle proximity check and show button if near
-    public String updateBuildingInteractions(Vector2 playerPosition, OrthographicCamera camera) {
+    public String updateBuildingInteractions(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
         buildingPressed = "none";
         for (Placed building : placed) {
-            buildingPressed = building.updateInteraction(playerPosition, camera);
+            buildingPressed = building.updateInteraction(playerPosition, camera, deltaTime);
 
         }
         return buildingPressed;

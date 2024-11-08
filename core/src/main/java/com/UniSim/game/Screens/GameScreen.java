@@ -266,7 +266,8 @@ public class GameScreen implements Screen {
         moveRequest();
         manager.update();
         hud.update(delta);
-        buildingInteraction(buildingManager.updateBuildingInteractions(player.b2body.getPosition(), camera));
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        buildingInteraction(buildingManager.updateBuildingInteractions(player.b2body.getPosition(), camera, deltaTime));
 
         hud.updateStats(skin, world);
         //checkProximityToPlatform();
