@@ -283,12 +283,8 @@ public class GameScreen implements Screen {
         }
 
     }
-    private void studentLoan() {
-        // Increase the currency
-        hud.getStats().increaseCurrency(10000);
-
-        // Create the pop-up label with the message
-        Label loanMessage = new Label("Student Loan: \n+   £10,000", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+    private void popUp(String text, float time){
+        Label loanMessage = new Label(text, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         loanMessage.setFontScale(4); // Make the text larger for visibility
 
 
@@ -298,7 +294,7 @@ public class GameScreen implements Screen {
         stage.addActor(loanMessage);
 
 
-        float fadeDuration = 5f;  // Duration for the fade-out effect
+        float fadeDuration = time;  // Duration for the fade-out effect
 
 
         // Create a temporary action to fade out the label
@@ -307,6 +303,16 @@ public class GameScreen implements Screen {
             Actions.fadeOut(fadeDuration), // Fades out over the specified duration
             Actions.removeActor() // Removes the label after fading out
         ));
+
+    }
+
+    private void studentLoan() {
+        // Increase the currency
+        hud.getStats().increaseCurrency(10000);
+
+        // Create the pop-up label with the message
+        popUp("Student Loan: \n+   £10,000", 5);
+
     }
 
     private void buildingInteraction(String buildingType){
@@ -328,18 +334,25 @@ public class GameScreen implements Screen {
     }
     private void sleep(){
         hud.getStats().decreaseFatigue(5);
+        popUp("-5 fatigue", 3);
     }
     private void relax(){
         hud.getStats().increaseSatisfaction(5);
+        popUp("+5 Satisfaction", 3);
     }
     private void eat(){
         hud.getStats().decreaseFatigue(5);
+        hud.getStats().increaseSatisfaction(5);
+        popUp("-5 Fatigue\n" +
+            "+5 Satisfaction", 3);
     }
     private void learn(){
         hud.getStats().increaseKnowledge(5);
+        popUp("+5 Knowledge", 3);
     }
     private void work(){
         hud.getStats().increaseCurrency(1000);
+        popUp("+1000 Currency", 3);
     }
 
     /***
