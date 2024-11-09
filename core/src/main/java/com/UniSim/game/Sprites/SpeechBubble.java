@@ -16,7 +16,7 @@ public class SpeechBubble extends Sprite {
     private float stateTime;
 
 
-    public SpeechBubble(World world, GameScreen screen, int x, int y) {
+    public SpeechBubble(World world, GameScreen screen, float x, float y) {
         super(screen.getSpeechBubbleTexture());
         this.world = world;
 

@@ -102,10 +102,7 @@ public class GameScreen implements Screen {
 
         b2dr = new Box2DDebugRenderer();
         player = new Character(world, this);
-        speechBubbleReception = new SpeechBubble(world, this, 845, 365);
-
-        //boxes.add(new BoxEntity(world, stage, skin, 1500, 1500, 64, 32, true, "TEST"));
-        //boxes.add(new BoxEntity(world, stage, skin, 1000, 1000, 64, 32, true, "TEST"));
+        speechBubbleReception = new SpeechBubble(world, this, 845 / PPM, 365 / PPM);
 
         camera = new OrthographicCamera();
         fitViewport = new FitViewport(Gdx.graphics.getWidth() / SCALE / PPM, Gdx.graphics.getHeight() / SCALE / PPM, camera);
@@ -120,10 +117,10 @@ public class GameScreen implements Screen {
         boxes = new ArrayList<>();
 
         manager = new AssetManager();
-        manager.load("music/awesomeness.wav", Music.class);
+        manager.load("music/harbor.mp3", Music.class);
         manager.finishLoading();
 
-        music = manager.get("music/awesomeness.wav", Music.class);
+        music = manager.get("music/harbor.mp3", Music.class);
         music.setLooping(true);
         music.setVolume(1.0f);
         music.play();
@@ -228,6 +225,8 @@ public class GameScreen implements Screen {
             update(delta);
         }
 
+        System.out.println(player.b2body.getPosition());
+
         // Clear the screen and start rendering
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -246,7 +245,7 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
-        //b2dr.render(world, camera.combined);
+        b2dr.render(world, camera.combined);
 
         // Update the text box positions to be static and fixed above the bodies
         for (BoxEntity textBox : boxes) {
@@ -367,33 +366,17 @@ public class GameScreen implements Screen {
         if (!vector.isZero()) {
             if (vector.x < 0 && player.b2body.getPosition().x * PPM - (CHARACTER_SIZE_X / 2) - 1 <= 0) {
                 vector.x = 0;
-            } else if (vector.x > 0 && player.b2body.getPosition().x * PPM + (CHARACTER_SIZE_X / 2) + 1 >= MAP_SIZE_X) {
+            } else if (vector.x > 0 && player.b2body.getPosition().x * PPM + (CHARACTER_SIZE_X / 2) + 2>= MAP_SIZE_X / PPM) {
                 vector.x = 0;
             }
             if (vector.y < 0 && player.b2body.getPosition().y * PPM - (CHARACTER_SIZE_Y / 2) - 1 <= 0) {
                 vector.y = 0;
-            } else if (vector.y > 0 && player.b2body.getPosition().y * PPM + (CHARACTER_SIZE_Y / 2) >= MAP_SIZE_Y) {
+            } else if (vector.y > 0 && player.b2body.getPosition().y * PPM + (CHARACTER_SIZE_Y / 2) >= MAP_SIZE_Y / PPM) {
                 vector.y = 0;
             }
             player.b2body.setLinearVelocity(vector);
         }
 
-
-    }
-
-    private void checkProximityToPlatform() {
-        // Get player position (center of the player body)
-        Vector2 playerPosition = player.b2body.getPosition().scl(PPM); // Scale to pixels
-        // Get platform position (center of the platform body)
-        for (BoxEntity box : boxes) {
-            Vector2 platformPosition = box.getBody().getPosition().scl(PPM); // Scale to pixels
-            // Calculate the distance between the centers of player and platform
-            float distance = playerPosition.dst(platformPosition);
-            System.out.println(distance);
-            // Check if the distance is within 10 pixels
-            box.setIsVisible(distance <= 50);
-
-        }
 
     }
 
@@ -471,11 +454,11 @@ public class GameScreen implements Screen {
         if (position.y < startY) {
             position.y = startY;
         }
-        if (position.x > startX + width) {
-            position.x = startX + width;
+        if (position.x > width - startX) {
+            position.x = width - startX;
         }
-        if (position.y > startY + height) {
-            position.y = startY + height;
+        if (position.y > height - startY) {
+            position.y = height - startY;
         }
         camera.position.set(position);
     }
@@ -503,11 +486,11 @@ public class GameScreen implements Screen {
                 camera.position.y += (screenY - CENTER_MAX_Y) / PPM;
             }
             // Set the boundaries within which the camera can move
-            float startX = (camera.viewportWidth / 2) / PPM;
-            float startY = (camera.viewportHeight / 2) / PPM;
+            float startX = (camera.viewportWidth / 2);
+            float startY = (camera.viewportHeight / 2);
 
             // Apply boundary restrictions to the camera to prevent it from going out of bounds
-            boundary(camera, startX, startY, (MAP_SIZE_X / PPM) - startX * 2, (MAP_SIZE_Y / PPM) - startY * 2);
+            boundary(camera, startX, startY, 100, 50);
 
             // Update the camera to apply the changes
             camera.update();

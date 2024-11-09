@@ -72,10 +72,11 @@ public class SettingsScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (pauseMenu != null) {
                     // Return to PauseMenu if accessed from there
-                    game.setScreen(pauseMenu.getGameScreen()); // Switch to GameScreen first
-                    pauseMenu.togglePause(); // Show the PauseMenu overlay
+                    pauseMenu.returnToPauseMenu();  // Return to PauseMenu
+                    Gdx.input.setInputProcessor(pauseMenu.getStage()); // Show the PauseMenu overlay
                 } else if (landingScreen != null) {
-                    game.setScreen(landingScreen); // Go back to LandingScreen
+                    game.setScreen(landingScreen);  // Return to LandingScreen
+                    Gdx.input.setInputProcessor(landingScreen.getStage());  // Reset input processor for LandingScreen
                 }
             }
         });
