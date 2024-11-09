@@ -5,19 +5,25 @@ import com.UniSim.game.UniSim;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+
+import java.awt.*;
 
 public class HowToPlayScreen implements Screen {
     private UniSim game;
@@ -38,7 +44,7 @@ public class HowToPlayScreen implements Screen {
         initialize();
     }
 
-  
+
 
     // Constructor for HowToPlayScreen accessed from PauseMenu
     public HowToPlayScreen(UniSim game, PauseMenu pauseMenu, Music music) {
@@ -79,24 +85,27 @@ public class HowToPlayScreen implements Screen {
 
         // Large text box with instructions
         BitmapFont customFont = new BitmapFont(Gdx.files.internal("Font1.fnt"));
-        customFont.getData().setScale(0.5f);
+        customFont.getData().setScale(0.9f);
 
         LabelStyle customLabelStyle = new LabelStyle();
         customLabelStyle.font = customFont;
+        customLabelStyle.fontColor = Color.BLACK;
 
         BitmapFont customFont1 = new BitmapFont(Gdx.files.internal("Font1.fnt"));
-        customFont1.getData().setScale(0.08f);
+        customFont1.getData().setScale(0.14f);
+
 
         LabelStyle customLabelStyle1 = new LabelStyle();
         customLabelStyle1.font = customFont1;
+        customLabelStyle1.fontColor = Color.BLACK;
 
         Label howToPlayLabel = new Label("How to play:", customLabelStyle);
         Label instructionsLabel = new Label(
-            "You are given £10,000 to start with \n" +
-            "An additional £10,000 is given each minute \n" +
+            "You are given 10,000 pounds to start with \n" +
+            "An additional 10,000 pounds is given each minute \n" +
             "You have five minutes to get the highest satisfaction possible\n" +
             "This can be achieved by placing buildings and interacting with them\n" +
-            "Buildings can be bought and placed by pressing escape near the reception building\n" +
+            "Buildings can be bought and placed by inpressing escape near the reception building\n" +
             "You can work, increasing currency, by placing work buildings and then interacting with them\n" +
             "You can sleep, decreasing fatigue, by placing accommodation buildings and interacting with them\n" +
             "You can study, increasing knowledge, by placing academic building and interacting with them\n" +
@@ -105,16 +114,20 @@ public class HowToPlayScreen implements Screen {
             "Each building has a five second cooldown between each use ",
             customLabelStyle1);
         instructionsLabel.setWrap(true);
+        instructionsLabel.setAlignment(Align.center);
 
         // Positioning and adding elements to the stage
-        howToPlayLabel.setPosition(600, 600);
+        howToPlayLabel.setPosition((float) Gdx.graphics.getWidth() / 2 - howToPlayLabel.getWidth() / 2, 1000);
+        instructionsLabel.setPosition((float) Gdx.graphics.getWidth() / 2 - instructionsLabel.getWidth() / 2, 460);
+
+        backButton.setPosition(10, Gdx.graphics.getHeight() - 80);
+        backButton.setSize(150, 70);
 
         stage.addActor(howToPlayLabel);
+        stage.addActor(instructionsLabel);
+        stage.addActor(backButton);
 
-        // Add elements to the table for layout management
-        table.add(backButton).pad(10).top().left(); // Position back button at the top left
-        table.row();
-        table.add(instructionsLabel).expand().fill(); // Fill the rest of the screen with instructions
+
     }
 
     @Override
@@ -127,7 +140,13 @@ public class HowToPlayScreen implements Screen {
 
         SpriteBatch batch = new SpriteBatch();
         batch.begin();
+
         batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        batch.setColor(Color.WHITE);  // Set the color to white
+        batch.draw(new TextureRegion(new Texture(1, 1, Pixmap.Format.RGBA8888)), 200, 200, 500, 500);
+
+
         batch.end();
 
         stage.act();
