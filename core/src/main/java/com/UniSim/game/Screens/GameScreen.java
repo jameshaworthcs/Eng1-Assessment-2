@@ -136,6 +136,12 @@ public class GameScreen implements Screen {
         pauseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (showFullMap) {
+                    showFullMapView();
+                }
+                if (buildingManager.getIsWindowOpen()) {
+                    buildingManager.closeBuildingWindow();
+                }
                 pauseMenu.togglePause();
             }
         });
@@ -212,6 +218,8 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            buildingManager.closeBuildingWindow();
+            showFullMapView();
             pauseMenu.togglePause();
         }
 

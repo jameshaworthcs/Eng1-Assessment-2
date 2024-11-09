@@ -102,9 +102,9 @@ public class BuildingManager {
 
     private void makeBuildingTypes() {
         accommodations.add(new Accommodation("David Kato", 8000f, "accommodation_3.png", 4f, 64f, 64f, 200));
-        foods.add(new Food("Piazza Restaurant", 5000f, "accommodation_3.png", 2f, 120f,120f));
-        recreationals.add(new Recreational("Glasshouse Bar", 5000f, "accommodation_3.png", 2f, 120f,120f));
-        academics.add(new Academic("Library", 1000f, "lectureroom.png", 1.5f, 100f, 100f, 50));
+        foods.add(new Food("Piazza Restaurant", 5000f, "accommodation_3.png", 2f, 128f,128f));
+        recreationals.add(new Recreational("Glasshouse Bar", 5000f, "accommodation_3.png", 2f, 128f,128f));
+        academics.add(new Academic("Library", 1000f, "lectureroom.png", 1.5f, 96f, 96f, 50));
         workplaces.add(new Workplace("Greggs", 5000f, "accommodation_3.png", 1.5f, 80f, 80f));
     }
 
