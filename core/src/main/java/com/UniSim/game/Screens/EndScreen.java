@@ -1,10 +1,12 @@
 package com.UniSim.game.Screens;
 
+import com.UniSim.game.Stats.PlayerStats;
 import com.UniSim.game.UniSim;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -29,14 +31,18 @@ public class EndScreen implements Screen {
     private BitmapFont titleFont;
     private Label.LabelStyle labelStyle;
     private Label.LabelStyle titleLabelStyle;
+    private PlayerStats finalStats;
 
-    public EndScreen(UniSim game, Music music) {
+    public EndScreen(UniSim game, Music music, PlayerStats finalStats) {
         this.game = game;
         this.manager = new AssetManager();
+        this.finalStats = finalStats;
 
         initializeMusic(music);
         initializeStage();
         initializeUI();
+
+        saveSatisfaction();
     }
 
     private void initializeMusic(Music music) {
@@ -118,6 +124,14 @@ public class EndScreen implements Screen {
         titleFont.dispose();
         skin.dispose();
         manager.dispose();
+    }
+
+    private void saveSatisfaction() {
+        // Get a handle to the file in the local storage
+        FileHandle file = Gdx.files.local("leaderboard.txt");
+        System.out.println("Saving to: " + file.file().getAbsolutePath());
+        // Append the satisfaction value to the file, followed by a newline for readability
+        file.writeString(finalStats.getSatisfaction() + "\n", true);
     }
 }
 

@@ -78,7 +78,7 @@ public class Hud {
     }
 
     private void setTimer(SpriteBatch sb) {
-        worldTimer = 300;
+        worldTimer = 1;
         timeCount = 0;
 
         viewport = new FitViewport(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f, new OrthographicCamera());
@@ -153,7 +153,7 @@ public class Hud {
         if (worldTimer == 0 && !endOnce){
             endOnce = true;
             music.stop();
-            game.setScreen(new EndScreen(game, music));
+            game.setScreen(new EndScreen(game, music, stats));
         }
     }
 
