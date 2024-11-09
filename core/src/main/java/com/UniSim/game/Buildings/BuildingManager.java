@@ -345,12 +345,14 @@ public class BuildingManager {
                         gameScreen.hud.stats.incrementBuildingCounter();
                     }
                     else {
-                        gameScreen.hud.sendMessage("Can't Afford Building.");
+
+                        gameScreen.popUp("Cannot Afford Building", 4);
                         showBuildingSelectionWindow();
                     }
                     isPlacingBuilding = false;
                 } else {
-                    gameScreen.hud.sendMessage("Cannot place building here!");
+
+                    gameScreen.popUp("Cannot place building here!", 4);
                 }
             }
         }

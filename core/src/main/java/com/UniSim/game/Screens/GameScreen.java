@@ -276,7 +276,7 @@ public class GameScreen implements Screen {
         }
 
     }
-    private void popUp(String text, float time){
+    public void popUp(String text, float time){
         Label loanMessage = new Label(text, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         loanMessage.setFontScale(4); // Make the text larger for visibility
 
