@@ -31,10 +31,12 @@ public class Hud {
     private PlayerStats stats;
 
     private ArrayList<StatsLabels> playerStatLabels;
+    private Label messageLabel;
 
     public Hud(SpriteBatch sb, Skin skin, World world) {
         setTimer(sb);
         setStats(skin, world);
+        createMessageLabel(skin);
     }
     public PlayerStats getStats(){
         return stats;
@@ -76,6 +78,13 @@ public class Hud {
         stage.addActor(table);
     }
 
+    private void createMessageLabel(Skin skin) {
+        messageLabel = new Label("", skin);
+        messageLabel.setPosition(10, 20); // Set the position for the message
+        messageLabel.setVisible(false); // Initially hidden
+        stage.addActor(messageLabel); // Add the label to the stage
+    }
+
     public void update(float dt){
         timeCount += dt;
         if(timeCount >= 1){
@@ -94,6 +103,14 @@ public class Hud {
 
     public boolean isTimeUp() { return timeUp; }
 
+    public void sendMessage(String message){
+        messageLabel.setText(message);
+        messageLabel.setVisible(true); // Show error message
+    }
+
+    public void hideMessage(){
+        messageLabel.setVisible(false);
+    }
 
 
 }

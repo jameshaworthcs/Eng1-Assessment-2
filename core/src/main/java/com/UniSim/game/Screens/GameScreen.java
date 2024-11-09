@@ -69,7 +69,7 @@ public class GameScreen implements Screen {
     public static AssetManager manager;
     private Music music;
 
-    private Hud hud;
+    public Hud hud;
 
     private PauseMenu pauseMenu;
     private Texture pauseIconTexture;
@@ -83,7 +83,7 @@ public class GameScreen implements Screen {
 
     private String buildingInteractedWith;
 
-    public GameScreen(UniSim game) {
+    public GameScreen(UniSim game, Music music) {
         this.game = game;
         loggedMinutes = new ArrayList<>();
         playerNearReseption = false;
@@ -116,13 +116,15 @@ public class GameScreen implements Screen {
 
         boxes = new ArrayList<>();
 
+        this.music = music;
+        float volume = music.getVolume();
         manager = new AssetManager();
         manager.load("music/harbor.mp3", Music.class);
         manager.finishLoading();
 
         music = manager.get("music/harbor.mp3", Music.class);
         music.setLooping(true);
-        music.setVolume(1.0f);
+        music.setVolume(volume);
         music.play();
 
         hud = new Hud(game.batch, skin, world);
@@ -219,7 +221,9 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             buildingManager.closeBuildingWindow();
-            showFullMapView();
+            if (showFullMap) {
+                showFullMapView();
+            }
             pauseMenu.togglePause();
         }
 
@@ -246,7 +250,7 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
-        b2dr.render(world, camera.combined);
+        //b2dr.render(world, camera.combined);
 
         // Update the text box positions to be static and fixed above the bodies
         for (BoxEntity textBox : boxes) {

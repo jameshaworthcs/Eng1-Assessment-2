@@ -53,7 +53,7 @@ public class LandingScreen implements Screen {
         // Set up stage and UI elements
         stage = new Stage(new FitViewport(2560, 1440));
         Gdx.input.setInputProcessor(stage);
-        
+
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         backgroundTexture = new Texture("LoadScreenBackground.png");
 
@@ -61,12 +61,12 @@ public class LandingScreen implements Screen {
         font.getData().setScale(0.8f); // Adjusted scale to increase button text size
         labelStyle = new Label.LabelStyle();
         labelStyle.font = font;
-    
+
         titleFont = new BitmapFont(Gdx.files.internal("titleFont.fnt"));
         titleFont.getData().setScale(1f);
         titleLabelStyle = new Label.LabelStyle();
         titleLabelStyle.font = titleFont;
-    
+
         // Apply this font to your buttons
         skin.getFont("default-font").getData().setScale(2f); // Scale up default font size for all buttons in skin
 
@@ -84,7 +84,7 @@ public class LandingScreen implements Screen {
                 if (music.isPlaying()) {
                     music.stop();  // Stop LandingScreen's music completely before switching to GameScreen
                 }
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game, music));
             }
         });
 

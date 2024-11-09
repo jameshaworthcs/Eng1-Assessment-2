@@ -352,11 +352,10 @@ public class BuildingManager {
                     placed.add(new Placed(placingBuilding.name, snappedPosition.x, snappedPosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM, stage));
                     createBuildingBody(snappedPosition.x, snappedPosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM); // Create Box2D body
                     isPlacingBuilding = false;
-                    messageLabel.setVisible(false); // Hide error message after successful placement
+                    gameScreen.hud.hideMessage(); // Hide error message after successful placement
                     showBuildingSelectionWindow();
                 } else {
-                    messageLabel.setText("Cannot place building here!");
-                    messageLabel.setVisible(true); // Show error message
+                    gameScreen.hud.sendMessage("Cannot place building here!");
                 }
             }
         }
