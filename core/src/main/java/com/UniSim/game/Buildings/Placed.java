@@ -32,6 +32,7 @@ public class Placed {
     private boolean isInteractable;
     private Stage stage;
     private Skin skin;
+    private String type;
 
     private boolean isPressed;
     private float cooldownTimer;
@@ -52,28 +53,28 @@ public class Placed {
         this.isPressed = false;
         this.cooldownTimer = 0;
 
-        switch (name) {
-            case "David Kato":
-                this.buttonText = "Sleep";
-                break;
-            case "Greggs":
-                this.buttonText = "Work";
-                break;
-            case "Library":
-                this.buttonText = "Learn";
-                break;
-            case "Piazza Restaurant":
-                this.buttonText = "Eat";
-                break;
-            case "Glasshouse Bar":
-                this.buttonText = "Relax";
-
-        }
-
-
         //stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Initialize the stage
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         this.cornerPosition = new Vector2(position.x - width / 2, position.y - height / 2);
+        this.type = getType();
+
+        switch (type) {
+            case "Accommodation":
+                this.buttonText = "Sleep";
+                break;
+            case "Workplace":
+                this.buttonText = "Work";
+                break;
+            case "Academic":
+                this.buttonText = "Learn";
+                break;
+            case "Food":
+                this.buttonText = "Eat";
+                break;
+            case "Recreational":
+                this.buttonText = "Relax";
+        }
+
         initializeInteractButton(skin);
     }
     private void initializeInteractButton(Skin skin) {
@@ -144,5 +145,16 @@ public class Placed {
             && this.cornerPosition.x + width > p.cornerPosition.x
             && this.cornerPosition.y < p.cornerPosition.y + p.height
             && this.cornerPosition.y + height > p.cornerPosition.y;
+    }
+
+    private String getType(){
+        ArrayList<Building> allBuildings = BuildingManager.combineBuildings();
+
+        for (Building building : allBuildings) {
+            if (building.name.equals(this.name)) {
+                return building.getType();
+            }
+        }
+        return "null";
     }
 }

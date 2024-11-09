@@ -78,13 +78,7 @@ public class BuildingManager {
         this.isWindowOpen = false;
         this.placingBuilding = null;
 
-
         makeBuildingTypes();
-
-        //createBuildingButton();
-        createMessageLabel(); // Initialize the message label
-
-
     }
 
 
@@ -106,14 +100,6 @@ public class BuildingManager {
         recreationals.add(new Recreational("Glasshouse Bar", 5000f, "accommodation_3.png", 2f, 128f,128f));
         academics.add(new Academic("Library", 1000f, "lectureroom.png", 1.5f, 96f, 96f, 50));
         workplaces.add(new Workplace("Greggs", 5000f, "accommodation_3.png", 1.5f, 80f, 80f));
-    }
-
-    // Create the message label for invalid placement
-    private void createMessageLabel() {
-        messageLabel = new Label("", skin);
-        messageLabel.setPosition(10, 20); // Set the position for the message
-        messageLabel.setVisible(false); // Initially hidden
-        stage.addActor(messageLabel); // Add the label to the stage
     }
 
     private void showBuildingSelectionWindow() {
@@ -180,6 +166,7 @@ public class BuildingManager {
             public void clicked(InputEvent event, float x, float y) {
                 closeBuildingWindow();
                 gameScreen.showFullMapView();
+                gameScreen.hud.sendMessage("Press ENTER to go into build mode.");
             }
         });
 
@@ -349,11 +336,19 @@ public class BuildingManager {
 
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 if (!checkOverlap(snappedPosition.x, snappedPosition.y)) {
-                    placed.add(new Placed(placingBuilding.name, snappedPosition.x, snappedPosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM, stage));
-                    createBuildingBody(snappedPosition.x, snappedPosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM); // Create Box2D body
+                    if(canAffordBuilding()) {
+                        placed.add(new Placed(placingBuilding.name, snappedPosition.x, snappedPosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM, stage));
+                        createBuildingBody(snappedPosition.x, snappedPosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM); // Create Box2D body
+                        gameScreen.hud.hideMessage(); // Hide error message after successful placement
+                        showBuildingSelectionWindow();
+                        gameScreen.hud.stats.takeOffBuildingCost(placingBuilding.cost);
+                        gameScreen.hud.stats.incrementBuildingCounter();
+                    }
+                    else {
+                        gameScreen.hud.sendMessage("Can't Afford Building.");
+                        showBuildingSelectionWindow();
+                    }
                     isPlacingBuilding = false;
-                    gameScreen.hud.hideMessage(); // Hide error message after successful placement
-                    showBuildingSelectionWindow();
                 } else {
                     gameScreen.hud.sendMessage("Cannot place building here!");
                 }
@@ -365,6 +360,10 @@ public class BuildingManager {
             building.drawBuilding(batch);
         }
         batch.end();
+    }
+
+    private boolean canAffordBuilding() {
+        return !(placingBuilding.cost > gameScreen.hud.stats.getCurrency());
     }
 
     private boolean checkOverlap(float x, float y) {

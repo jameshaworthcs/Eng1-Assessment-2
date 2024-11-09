@@ -14,4 +14,9 @@ public class Accommodation extends Building {
     public int getStudents() {
         return students;
     }
+
+    @Override
+    public String getType(){
+        return "Accommodation";
+    }
 }

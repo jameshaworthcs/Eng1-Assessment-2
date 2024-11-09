@@ -34,7 +34,7 @@ public class LandingScreen implements Screen {
     private BitmapFont font;
     private BitmapFont titleFont;
 
-    private List<Float> leaderboardTimes = List.of(15.3f, 10.5f, 20.7f, 12.0f, 8.5f, 11.2f, 14.0f, 9.1f, 17.5f, 13.3f, 19.8f, 7.4f);
+    private List<Float> leaderboardTimes = List.of();
 
     public Stage getStage() {
         return stage;

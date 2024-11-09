@@ -1,11 +1,9 @@
 package com.UniSim.game.Screens;
 
 import com.UniSim.game.*;
-import com.UniSim.game.Bin.BoxEntity;
 import com.UniSim.game.Buildings.BuildingManager;
 import com.UniSim.game.Sprites.Character;
 import com.UniSim.game.Sprites.SpeechBubble;
-import com.UniSim.game.Stats.PlayerStats;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -31,11 +29,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Timer;
 
 import static com.UniSim.game.Constants.*;
 import static com.UniSim.game.Hud.*;
@@ -57,8 +53,6 @@ public class GameScreen implements Screen {
     private Box2DDebugRenderer b2dr;
 
     private FitViewport fitViewport;
-
-    private ArrayList<BoxEntity> boxes;
 
     private Skin skin;           // Skin for UI styling
 
@@ -96,8 +90,6 @@ public class GameScreen implements Screen {
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Initialize the stage
         Gdx.input.setInputProcessor(stage); // Set the stage as the input processor
 
-        boxes = new ArrayList<>();
-
         world = new World(new Vector2(0, 0), false);
 
         b2dr = new Box2DDebugRenderer();
@@ -113,8 +105,6 @@ public class GameScreen implements Screen {
         camera.position.set(fitViewport.getWorldWidth() / 2, fitViewport.getWorldHeight() / 2, 0);
 
         buildingManager = new BuildingManager(stage, skin, world, tiledMap, this);
-
-        boxes = new ArrayList<>();
 
         this.music = music;
         float volume = music.getVolume();
@@ -252,11 +242,6 @@ public class GameScreen implements Screen {
 
         //b2dr.render(world, camera.combined);
 
-        // Update the text box positions to be static and fixed above the bodies
-        for (BoxEntity textBox : boxes) {
-            textBox.updatePosition(camera);
-        }
-
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         player.draw(game.batch);
@@ -283,7 +268,6 @@ public class GameScreen implements Screen {
         float deltaTime = Gdx.graphics.getDeltaTime();
         buildingInteraction(buildingManager.updateBuildingInteractions(player.b2body.getPosition(), camera, deltaTime));
 
-        hud.updateStats(skin, world);
         float worldTime = hud.getTimeCount();
         if (worldTime % 60== 0 && !loggedMinutes.contains(worldTime) && worldTime != 0 && worldTime != 300){
             loggedMinutes.add(worldTime);
@@ -537,6 +521,7 @@ public class GameScreen implements Screen {
                     (fixtureA.getUserData() == "player" && fixtureB.getUserData() == "sensor")) {
                     // Trigger an action here, e.g., display a message or perform some event
                     playerNearReseption = true;
+                    hud.sendMessage("Press ENTER to go into build mode.");
                 }
             }
 
@@ -556,6 +541,7 @@ public class GameScreen implements Screen {
                     if (buildingManager.getIsWindowOpen()) {
                         buildingManager.closeBuildingWindow();
                     }
+                    hud.hideMessage();
                 }
             }
 
@@ -572,10 +558,12 @@ public class GameScreen implements Screen {
     private void placingBuilding() {
         showFullMapView();
         camera.update();
+        hud.hideMessage();
         if (showFullMap && !buildingManager.getIsWindowOpen()) {
             buildingManager.openBuildingWindow();
         }else {
             buildingManager.closeBuildingWindow();
+            hud.sendMessage("Press ENTER to go into build mode.");
         }
 
     }

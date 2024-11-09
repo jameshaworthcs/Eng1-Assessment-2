@@ -20,6 +20,8 @@ import java.util.ArrayList;
 public class Hud {
     public Stage stage;
     private Viewport viewport;
+    private Skin skin;
+    private World world;
 
     private Integer worldTimer;
     private float timeCount;
@@ -28,12 +30,14 @@ public class Hud {
     Label countdownLabel;
     Label timeLabel;
 
-    private PlayerStats stats;
+    public PlayerStats stats;
 
     private ArrayList<StatsLabels> playerStatLabels;
     private Label messageLabel;
 
     public Hud(SpriteBatch sb, Skin skin, World world) {
+        this.world = world;
+        this.skin = skin;
         setTimer(sb);
         setStats(skin, world);
         createMessageLabel(skin);
@@ -45,16 +49,18 @@ public class Hud {
         stats = new PlayerStats();
         playerStatLabels = new ArrayList<>();
 
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 220, "BUILDINGS: " + stats.getBuildingCounter()));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10,200, "SATISFACTION: " + stats.getSatisfaction()));
-        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180, "CURRENCY: " + stats.getCurrency()));
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180, "CURRENCY: " + String.format("$%.2f", stats.getCurrency())));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue()));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
     }
     public void updateStats(Skin skin, World world){
-        playerStatLabels.get(0).setText("SATISFACTION: " + stats.getSatisfaction());
-        playerStatLabels.get(1).setText("CURRENCY: " + stats.getCurrency());
-        playerStatLabels.get(2).setText("FATIGUE: " + stats.getFatigue());
-        playerStatLabels.get(3).setText("KNOWLEDGE: " + stats.getKnowledge());
+        playerStatLabels.get(0).setText("BUILDINGS: " + stats.getBuildingCounter());
+        playerStatLabels.get(1).setText("SATISFACTION: " + stats.getSatisfaction());
+        playerStatLabels.get(2).setText("CURRENCY: " + String.format("$%.2f", stats.getCurrency()));
+        playerStatLabels.get(3).setText("FATIGUE: " + stats.getFatigue());
+        playerStatLabels.get(4).setText("KNOWLEDGE: " + stats.getKnowledge());
     }
 
     private void setTimer(SpriteBatch sb) {
@@ -86,6 +92,7 @@ public class Hud {
     }
 
     public void update(float dt){
+        updateStats(skin, world);
         timeCount += dt;
         if(timeCount >= 1){
             if (worldTimer > 0) {

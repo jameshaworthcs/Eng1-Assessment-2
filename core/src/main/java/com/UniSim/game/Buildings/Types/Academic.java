@@ -10,4 +10,9 @@ public class Academic extends Building {
         super(name, cost, picture, lakeBonus, width, height);
         this.intelegence = intelegence;
     }
+
+    @Override
+    public String getType(){
+        return "Academic";
+    }
 }

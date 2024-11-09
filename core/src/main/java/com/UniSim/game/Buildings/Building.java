@@ -2,9 +2,10 @@ package com.UniSim.game.Buildings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
-public class Building {
+public abstract class Building {
 
     protected String name;
     protected float cost;
@@ -31,11 +32,5 @@ public class Building {
         }
     }
 
-
-    /*
-    need to find a way to match the box with the building (idk if needed)
-    true if in lake bonus
-    class that holds classes with position and see if it has a bonus. if so then good.
-     */
-
+    abstract public String getType();
 }
