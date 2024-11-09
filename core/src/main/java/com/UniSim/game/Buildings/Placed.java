@@ -39,7 +39,7 @@ public class Placed {
 
     String buttonText;
 
-
+    private Vector3 buildingScreenPosition = new Vector3();
 
 
     public Placed(String name, float x, float y, float width, float height, Stage stage) {
@@ -53,7 +53,13 @@ public class Placed {
         this.isPressed = false;
         this.cooldownTimer = 0;
 
-        //stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Initialize the stage
+
+
+        //this.stage = new Stage(new FitViewport(1280, 720));
+
+
+
+        //this.stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Initialize the stage
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         this.cornerPosition = new Vector2(position.x - width / 2, position.y - height / 2);
         this.type = getType();
@@ -77,6 +83,10 @@ public class Placed {
 
         initializeInteractButton(skin);
     }
+
+    public void resolutionScale(Stage stage){
+        this.stage = stage;
+    }
     private void initializeInteractButton(Skin skin) {
 
         interactButton = new TextButton(buttonText, skin);
@@ -97,16 +107,18 @@ public class Placed {
     }
 
     public String updateInteraction(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
+
         float distance = playerPosition.dst(position);
         isInteractable = distance < (width + 50 / PPM); // Set proximity range (adjust as needed)
         interactButton.setVisible(isInteractable);
 
         if (isInteractable) {
-            // Convert world position to screen position for the button
+            // Convert world position to screen position for the button, factoring in screen size
             Vector3 screenPosition = camera.project(new Vector3(position.x, position.y + height / 2, 0));
 
-            // Adjust the position to match the screen coordinates used by the stage
-            interactButton.setPosition(screenPosition.x, screenPosition.y);
+            // Adjust interactButton to match stage coordinates
+            interactButton.setPosition(screenPosition.x / stage.getViewport().getScreenWidth() * stage.getWidth(),
+                screenPosition.y / stage.getViewport().getScreenHeight() * stage.getHeight());
         }
 
         if (cooldownTimer > 0) {
@@ -138,6 +150,7 @@ public class Placed {
 
     public void drawBuilding(SpriteBatch batch) {
         batch.draw(getTexture(), this.cornerPosition.x, this.cornerPosition.y, width, height);
+
     }
 
     public boolean overlaps (Placed p) {

@@ -2,6 +2,7 @@ package com.UniSim.game.Screens;
 
 import com.UniSim.game.*;
 import com.UniSim.game.Buildings.BuildingManager;
+import com.UniSim.game.Buildings.Placed;
 import com.UniSim.game.Sprites.Character;
 import com.UniSim.game.Sprites.SpeechBubble;
 import com.badlogic.gdx.Gdx;
@@ -286,13 +287,13 @@ public class GameScreen implements Screen {
         stage.addActor(loanMessage);
 
 
-        float fadeDuration = time;  // Duration for the fade-out effect
+
 
 
         // Create a temporary action to fade out the label
         loanMessage.addAction(Actions.sequence(
             Actions.alpha(1f, 0f),  // Initial alpha 1 (fully visible)
-            Actions.fadeOut(fadeDuration), // Fades out over the specified duration
+            Actions.fadeOut(time), // Fades out over the specified duration
             Actions.removeActor() // Removes the label after fading out
         ));
 
@@ -396,6 +397,10 @@ public class GameScreen implements Screen {
             camera.position.set(MAP_SIZE_X / 2, MAP_SIZE_Y / 2, 0);
             camera.update();
         }
+
+
+
+
     }
 
     @Override
