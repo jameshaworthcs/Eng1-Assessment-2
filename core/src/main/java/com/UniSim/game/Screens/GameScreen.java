@@ -280,15 +280,8 @@ public class GameScreen implements Screen {
         Label loanMessage = new Label(text, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         loanMessage.setFontScale(4); // Make the text larger for visibility
 
-
         loanMessage.setPosition((float) Gdx.graphics.getWidth() / 2 - loanMessage.getWidth(), Gdx.graphics.getHeight() / 4 * 3);
-
-
         stage.addActor(loanMessage);
-
-
-
-
 
         // Create a temporary action to fade out the label
         loanMessage.addAction(Actions.sequence(

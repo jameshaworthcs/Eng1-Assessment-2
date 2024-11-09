@@ -91,6 +91,8 @@ public class Placed {
 
         interactButton = new TextButton(buttonText, skin);
         interactButton.setPosition(position.x, position.y + height / 2); // Position above the building
+        interactButton.setSize(80, 30);
+
         interactButton.setVisible(false); // Initially hidden
         interactButton.addListener(new ClickListener() {
             @Override

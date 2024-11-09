@@ -87,8 +87,12 @@ public class BuildingManager {
         buildingPressed = "none";
         for (Placed building : placed) {
             buildingPressed = building.updateInteraction(playerPosition, camera, deltaTime);
+            if (!Objects.equals(buildingPressed, "none")){
+                break;
+            }
 
         }
+
         return buildingPressed;
     }
 

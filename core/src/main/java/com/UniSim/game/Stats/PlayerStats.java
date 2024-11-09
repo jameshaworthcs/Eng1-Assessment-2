@@ -1,5 +1,7 @@
 package com.UniSim.game.Stats;
 
+import static java.lang.Math.max;
+
 public class PlayerStats {
 
     private int buildingCounter;
@@ -41,7 +43,7 @@ public class PlayerStats {
     }
 
     public void decreaseSatisfaction(int amount){
-        satisfaction = satisfaction - amount;
+        satisfaction = max(satisfaction - amount, 0);
     }
 
     public void increaseCurrency(int amount){
@@ -57,7 +59,7 @@ public class PlayerStats {
     }
 
     public void decreaseFatigue(int amount){
-        fatigue = fatigue - amount;
+        fatigue = max(fatigue - amount, 0);
     }
 
     //assume knowledge doesn't decrease
