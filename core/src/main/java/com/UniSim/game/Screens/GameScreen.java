@@ -213,6 +213,10 @@ public class GameScreen implements Screen {
         return 0;
     }
 
+    public Stage getStage() {
+        return stage;
+    }
+
 
     @Override
     public void render(float delta) {
