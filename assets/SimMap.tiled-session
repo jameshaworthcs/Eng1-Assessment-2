@@ -30,11 +30,11 @@
             }
         },
         "SimMap.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 2,
+            "scale": 1,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 766.6666666666666,
-                "y": 507.33333333333337
+                "x": 655,
+                "y": 500
             }
         },
         "Tiles.tsx": {

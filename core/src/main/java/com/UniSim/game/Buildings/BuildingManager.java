@@ -101,11 +101,11 @@ public class BuildingManager {
 
 
     private void makeBuildingTypes() {
-        accommodations.add(new Accommodation("David Kato", 8000f, "Accommodation_3.png", 4f, 64f, 64f, 200));
+        accommodations.add(new Accommodation("David Kato", 8000f, "accommodation_3.png", 4f, 64f, 64f, 200));
         foods.add(new Food("Piazza Restaurant", 5000f, "accommodation_3.png", 2f, 120f,120f));
         recreationals.add(new Recreational("Glasshouse Bar", 5000f, "accommodation_3.png", 2f, 120f,120f));
         academics.add(new Academic("Library", 1000f, "lectureroom.png", 1.5f, 100f, 100f, 50));
-        workplaces.add(new Workplace("Greggs", 5000f, "Accommodation_3.png", 1.5f, 80f, 80f));
+        workplaces.add(new Workplace("Greggs", 5000f, "accommodation_3.png", 1.5f, 80f, 80f));
     }
 
     // Create the message label for invalid placement
@@ -337,18 +337,20 @@ public class BuildingManager {
             batch.begin();
             batch.setColor(1, 1, 1, 0.5f);  // Semi-transparent
 
+            Vector3 snappedPosition = snapToGrid(mousePosition.x, mousePosition.y);
+
             // Draw the building using the custom width and height
-            batch.draw(placingBuilding.texture, mousePosition.x - placingBuilding.width / 2 / PPM,
-                       mousePosition.y - placingBuilding.height / 2 / PPM,
+            batch.draw(placingBuilding.texture, snappedPosition.x - placingBuilding.width / 2 / PPM,
+                snappedPosition.y - placingBuilding.height / 2 / PPM,
                        placingBuilding.width / PPM, placingBuilding.height / PPM);
 
             batch.setColor(1, 1, 1, 1);  // Reset to full opacity
             batch.end();
 
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                if (!checkOverlap(mousePosition.x, mousePosition.y)) {
-                    placed.add(new Placed(placingBuilding.name, mousePosition.x, mousePosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM, stage));
-                    createBuildingBody(mousePosition.x, mousePosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM); // Create Box2D body
+                if (!checkOverlap(snappedPosition.x, snappedPosition.y)) {
+                    placed.add(new Placed(placingBuilding.name, snappedPosition.x, snappedPosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM, stage));
+                    createBuildingBody(snappedPosition.x, snappedPosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM); // Create Box2D body
                     isPlacingBuilding = false;
                     messageLabel.setVisible(false); // Hide error message after successful placement
                     showBuildingSelectionWindow();
@@ -384,10 +386,10 @@ public class BuildingManager {
                     // Define object rectangle for overlap check
                     Placed temp = new Placed(
                         "Borders",
-                        rect.getX() / PPM,
-                        rect.getY() / PPM,
-                        rect.getWidth() / PPM,
-                        rect.getHeight() / PPM,
+                        (rect.getX() + (rect.getWidth() / 2)) / PPM,
+                        (rect.getY() + (rect.getHeight() / 2))  / PPM,
+                        rect.getWidth()  / PPM,
+                        rect.getHeight()  / PPM,
                         stage
                     );
 
@@ -429,6 +431,7 @@ public class BuildingManager {
         allBuildings.addAll(academics);
         allBuildings.addAll(recreationals);
         allBuildings.addAll(foods);
+        allBuildings.addAll(workplaces);
         return allBuildings;
     }
 

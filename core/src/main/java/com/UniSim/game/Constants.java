@@ -14,7 +14,7 @@ public final class Constants
     public static final float MAP_SIZE_Y = 800 * PPM;
     public static final float SCALE = 4;
 
-    public static final float GRID_SIZE = 8;
+    public static final float GRID_SIZE = 1;
 
     // Screen size and camera border calculations
     public static final float SCREEN_SIZE_X = (Gdx.graphics.getWidth()) / SCALE / PPM;
