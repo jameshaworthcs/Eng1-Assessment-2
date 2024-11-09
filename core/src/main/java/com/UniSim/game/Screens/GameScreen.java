@@ -308,19 +308,19 @@ public class GameScreen implements Screen {
     }
 
     private void buildingInteraction(String buildingType){
-        if (Objects.equals(buildingType, "David Kato")){
+        if (Objects.equals(buildingType, "Accommodation")){
             sleep();
         }
-        else if (Objects.equals(buildingType, "Piazza Restaurant")){
+        else if (Objects.equals(buildingType, "Food")){
             eat();
         }
-        else if (Objects.equals(buildingType, "Library")){
+        else if (Objects.equals(buildingType, "Academic")){
             learn();
         }
-        else if (Objects.equals(buildingType, "Greggs")){
+        else if (Objects.equals(buildingType, "Workplace")){
             work();
         }
-        else if (Objects.equals(buildingType, "Glasshouse Bar")){
+        else if (Objects.equals(buildingType, "Recreational")){
             relax();
         }
     }

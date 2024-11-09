@@ -118,7 +118,7 @@ public class Placed {
 
         if (isPressed) {
             isPressed = false;
-            return name;
+            return type;
         }
         return "none";
     }
