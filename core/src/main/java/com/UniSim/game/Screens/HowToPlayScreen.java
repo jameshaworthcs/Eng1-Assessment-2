@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -56,7 +57,7 @@ public class HowToPlayScreen implements Screen {
 
     // Common initialization method
     private void initialize() {
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage(new FitViewport(2560, 1440));
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         Gdx.input.setInputProcessor(stage);
 
@@ -139,14 +140,9 @@ public class HowToPlayScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         SpriteBatch batch = new SpriteBatch();
+
         batch.begin();
-
         batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        batch.setColor(Color.WHITE);  // Set the color to white
-        batch.draw(new TextureRegion(new Texture(1, 1, Pixmap.Format.RGBA8888)), 200, 200, 500, 500);
-
-
         batch.end();
 
         stage.act();
