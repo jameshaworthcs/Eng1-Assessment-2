@@ -128,6 +128,7 @@ public class SettingsScreen implements Screen {
         musicLabelStyle.font = customFont;
         musicLabelStyle.fontColor = Color.BLACK;
         Label musicLabel = new Label("Music Volume", musicLabelStyle);
+        Label resolutionLabel = new Label("Resolution", musicLabelStyle);
 
         Slider musicSlider = new Slider(0, 1, 0.01f, false, skin);
         musicSlider.setValue(music.getVolume());  // Initialize slider with current volume
@@ -142,20 +143,22 @@ public class SettingsScreen implements Screen {
         backButton.setSize(200, 100);
         backButton.setPosition(10, 1320);
         res720Button.setSize(300, 100);
-        res720Button.setPosition(703, 1200);
+        res720Button.setPosition(703, 1100);
         res1080Button.setSize(300, 100);
-        res1080Button.setPosition(1130, 1200);
+        res1080Button.setPosition(1130, 1100);
         res1440Button.setSize(300, 100);
-        res1440Button.setPosition(1556, 1200);
-        musicLabel.setPosition(1170, 1000);
+        res1440Button.setPosition(1556, 1100);
+        musicLabel.setPosition(1170, 900);
         musicSlider.setSize(703, 100);
-        musicSlider.setPosition(930, 930);
+        musicSlider.setPosition(930, 830);
+        resolutionLabel.setPosition(1190, 1250);
 
         stage.addActor(backButton);
         stage.addActor(res720Button);
         stage.addActor(res1080Button);
         stage.addActor(res1440Button);
         stage.addActor(musicLabel);
+        stage.addActor(resolutionLabel);
         stage.addActor(musicSlider);
     }
 
