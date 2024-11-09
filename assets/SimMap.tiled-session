@@ -31,7 +31,7 @@
         },
         "SimMap.tmx": {
             "scale": 1,
-            "selectedLayer": 4,
+            "selectedLayer": 6,
             "viewCenter": {
                 "x": 655,
                 "y": 500
