@@ -78,7 +78,7 @@ public class Hud {
     }
 
     private void setTimer(SpriteBatch sb) {
-        worldTimer = 1;
+        worldTimer = 300;
         timeCount = 0;
 
         viewport = new FitViewport(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f, new OrthographicCamera());
