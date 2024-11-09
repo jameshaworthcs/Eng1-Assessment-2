@@ -242,7 +242,7 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
-        b2dr.render(world, camera.combined);
+        //b2dr.render(world, camera.combined);
 
         // Update the text box positions to be static and fixed above the bodies
         for (BoxEntity textBox : boxes) {
