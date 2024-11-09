@@ -542,6 +542,7 @@ public class GameScreen implements Screen {
                         buildingManager.closeBuildingWindow();
                     }
                     hud.hideMessage();
+                    buildingManager.setIsPlacingBuilding(false);
                 }
             }
 

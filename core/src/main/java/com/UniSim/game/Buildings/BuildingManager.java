@@ -460,5 +460,9 @@ public class BuildingManager {
     public boolean getIsWindowOpen(){
         return isWindowOpen;
     }
+
+    public void setIsPlacingBuilding(boolean isPlacingBuilding) {
+        this.isPlacingBuilding = isPlacingBuilding;
+    }
 }
 
