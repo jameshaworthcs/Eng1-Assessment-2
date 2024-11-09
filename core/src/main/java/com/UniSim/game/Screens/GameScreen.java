@@ -119,7 +119,7 @@ public class GameScreen implements Screen {
         music.setVolume(volume);
         music.play();
 
-        hud = new Hud(game.batch, skin, world);
+        hud = new Hud(game.batch, skin, world, this, game, music);
 
 
         // Load the pause icon texture
@@ -357,7 +357,7 @@ public class GameScreen implements Screen {
     }
     private void learn(Building building){
         Academic academic = (Academic) building;
-        int fatigueIncrease = academic.getIntelligenceGain();
+        int fatigueIncrease = academic.getFatigueGain();
         int knowledgeIncrease = academic.getIntelligenceGain();
 
         if (hud.getStats().increaseFatigue(fatigueIncrease)) {

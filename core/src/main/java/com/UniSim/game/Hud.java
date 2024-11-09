@@ -1,8 +1,11 @@
 package com.UniSim.game;
 
+import com.UniSim.game.Screens.EndScreen;
+import com.UniSim.game.Screens.GameScreen;
 import com.UniSim.game.Stats.PlayerStats;
 import com.UniSim.game.Stats.StatsLabels;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -26,6 +29,11 @@ public class Hud {
     private Integer worldTimer;
     private float timeCount;
     private boolean timeUp;
+    private GameScreen gameScreen;
+    private boolean satUpdateOnce;
+    private boolean endOnce;
+    private UniSim game;
+    private Music music;
 
     Label countdownLabel;
     Label timeLabel;
@@ -35,9 +43,14 @@ public class Hud {
     private ArrayList<StatsLabels> playerStatLabels;
     private Label messageLabel;
 
-    public Hud(SpriteBatch sb, Skin skin, World world) {
+    public Hud(SpriteBatch sb, Skin skin, World world, GameScreen gameScreen, UniSim game, Music music) {
         this.world = world;
         this.skin = skin;
+        this.gameScreen = gameScreen;
+        this.satUpdateOnce = false;
+        this.endOnce = false;
+        this.game = game;
+        this.music = music;
         setTimer(sb);
         setStats(skin, world);
         createMessageLabel(skin);
@@ -45,6 +58,7 @@ public class Hud {
     public PlayerStats getStats(){
         return stats;
     }
+
     private void setStats(Skin skin, World world) {
         stats = new PlayerStats();
         playerStatLabels = new ArrayList<>();
@@ -55,7 +69,7 @@ public class Hud {
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue() + "/ 50"));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
     }
-    public void updateStats(Skin skin, World world){
+    public void updateStats(){
         playerStatLabels.get(0).setText("BUILDINGS: " + stats.getBuildingCounter());
         playerStatLabels.get(1).setText("SATISFACTION: " + stats.getSatisfaction());
         playerStatLabels.get(2).setText("CURRENCY: " + String.format("$%.2f", stats.getCurrency()));
@@ -92,7 +106,8 @@ public class Hud {
     }
 
     public void update(float dt){
-        updateStats(skin, world);
+        updateStats();
+        satisfactionUpdate(dt);
         timeCount += dt;
         if(timeCount >= 1){
             if (worldTimer > 0) {
@@ -102,6 +117,7 @@ public class Hud {
             }
             countdownLabel.setText(String.format("%03d", worldTimer));
             timeCount = 0;
+            checkIfEnd();
         }
     }
     public float getTimeCount(){
@@ -117,6 +133,28 @@ public class Hud {
 
     public void hideMessage(){
         messageLabel.setVisible(false);
+    }
+
+    private void satisfactionUpdate(float dt){
+        if (worldTimer % 30 == 0 && worldTimer != 300 && !satUpdateOnce) {
+            int increase = stats.calculateSatisfaction();
+            gameScreen.popUp("+" + increase + " Satisfaction", 3);
+            stats.increaseSatisfaction(increase);
+            satUpdateOnce = true;
+        }
+
+        // Reset `satUpdateOnce` once we're past the 30-second mark
+        if (worldTimer % 30 != 0) {
+            satUpdateOnce = false;
+        }
+    }
+
+    private void checkIfEnd(){
+        if (worldTimer == 0 && !endOnce){
+            endOnce = true;
+            music.stop();
+            game.setScreen(new EndScreen(game, music));
+        }
     }
 
 

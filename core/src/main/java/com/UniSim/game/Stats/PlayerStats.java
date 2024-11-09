@@ -83,8 +83,10 @@ public class PlayerStats {
         buildingCounter++;
     }
 
-    private float calculateSatisfaction(){
-        return 1f;
+    public int calculateSatisfaction(){
+        double fatiguePenalty = (fatigue / 50.0) * 10;
+        double increase = (buildingCounter * 1.5) + (knowledge * 2) - (fatiguePenalty);
+        return (int) increase;
     }
 
     public void takeOffBuildingCost(float currency){

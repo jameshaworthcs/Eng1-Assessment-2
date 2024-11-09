@@ -43,7 +43,7 @@ public class CreditsScreen implements Screen {
 
     // UI initialization logic in a separate method
     private void initialize() {
-        stage = new Stage(new FitViewport(2560, 1440));
+        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         Gdx.input.setInputProcessor(stage);
 
