@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import static com.UniSim.game.Constants.PPM;
 import static com.UniSim.game.Hud.*;
 
 import java.util.ArrayList;
@@ -95,7 +97,7 @@ public class Placed {
 
     public String updateInteraction(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
         float distance = playerPosition.dst(position);
-        isInteractable = distance < (width + 50); // Set proximity range (adjust as needed)
+        isInteractable = distance < (width + 50 / PPM); // Set proximity range (adjust as needed)
         interactButton.setVisible(isInteractable);
 
         if (isInteractable) {

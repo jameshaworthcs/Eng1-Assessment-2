@@ -225,7 +225,6 @@ public class GameScreen implements Screen {
             update(delta);
         }
 
-        System.out.println(player.b2body.getPosition());
 
         // Clear the screen and start rendering
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -584,8 +583,8 @@ public class GameScreen implements Screen {
             originalZoom = camera.zoom;
 
             // Adjust the camera to show the whole map
-            camera.zoom = Math.min(MAP_SIZE_X / camera.viewportWidth, MAP_SIZE_Y / camera.viewportHeight);
-            camera.position.set(MAP_SIZE_X / 2, MAP_SIZE_Y / 2, 0);
+            camera.zoom = Math.min(MAP_SIZE_X / PPM / camera.viewportWidth / PPM, MAP_SIZE_Y / PPM / camera.viewportHeight / PPM);
+            camera.position.set(MAP_SIZE_X / PPM / 2 / PPM, MAP_SIZE_Y / PPM /  2 / PPM, 0);
             camera.update();
             showFullMap = true;
         } else {

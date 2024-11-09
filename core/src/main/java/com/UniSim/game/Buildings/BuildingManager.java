@@ -331,24 +331,24 @@ public class BuildingManager {
     public void handleBuildingPlacement(SpriteBatch batch, OrthographicCamera camera, Viewport viewport) {
         if (isPlacingBuilding && placingBuilding != null) {
             Vector3 mousePosition = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(mousePosition, viewport.getScreenX(), viewport.getScreenY(),
-                    viewport.getScreenWidth(), viewport.getScreenHeight());
+            camera.unproject(mousePosition , viewport.getScreenX(), viewport.getScreenY(),
+                    viewport.getScreenWidth() , viewport.getScreenHeight());
 
             batch.begin();
             batch.setColor(1, 1, 1, 0.5f);  // Semi-transparent
 
             // Draw the building using the custom width and height
-            batch.draw(placingBuilding.texture, mousePosition.x - placingBuilding.width / 2,
-                       mousePosition.y - placingBuilding.height / 2,
-                       placingBuilding.width, placingBuilding.height);
+            batch.draw(placingBuilding.texture, mousePosition.x - placingBuilding.width / 2 / PPM,
+                       mousePosition.y - placingBuilding.height / 2 / PPM,
+                       placingBuilding.width / PPM, placingBuilding.height / PPM);
 
             batch.setColor(1, 1, 1, 1);  // Reset to full opacity
             batch.end();
 
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 if (!checkOverlap(mousePosition.x, mousePosition.y)) {
-                    placed.add(new Placed(placingBuilding.name, mousePosition.x, mousePosition.y, placingBuilding.width, placingBuilding.height, stage));
-                    createBuildingBody(mousePosition.x, mousePosition.y, placingBuilding.width, placingBuilding.height); // Create Box2D body
+                    placed.add(new Placed(placingBuilding.name, mousePosition.x, mousePosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM, stage));
+                    createBuildingBody(mousePosition.x, mousePosition.y, placingBuilding.width / PPM, placingBuilding.height / PPM); // Create Box2D body
                     isPlacingBuilding = false;
                     messageLabel.setVisible(false); // Hide error message after successful placement
                     showBuildingSelectionWindow();
@@ -368,7 +368,7 @@ public class BuildingManager {
 
     private boolean checkOverlap(float x, float y) {
         boolean overlap = false;
-        Placed newBuildingPla = new Placed (placingBuilding.name, x, y, placingBuilding.width, placingBuilding.height, stage);
+        Placed newBuildingPla = new Placed (placingBuilding.name, x, y, placingBuilding.width / PPM, placingBuilding.height / PPM, stage);
         for (Placed building : placed) {
             if (newBuildingPla.overlaps(building)) {
                 overlap =  true; // Overlap detected
@@ -406,7 +406,7 @@ public class BuildingManager {
 
     private void createBuildingBody(float x, float y, float width, float height) {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set((x / PPM), (y / PPM)); // Adjust position correctly for PPM
+        bodyDef.position.set((x), (y)); // Adjust position correctly for PPM
         bodyDef.type = BodyDef.BodyType.StaticBody;
 
         Body buildingBody = world.createBody(bodyDef);
