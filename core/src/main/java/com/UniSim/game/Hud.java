@@ -52,14 +52,14 @@ public class Hud {
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 220, "BUILDINGS: " + stats.getBuildingCounter()));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10,200, "SATISFACTION: " + stats.getSatisfaction()));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180, "CURRENCY: " + String.format("$%.2f", stats.getCurrency())));
-        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue()));
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue() + "/ 50"));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
     }
     public void updateStats(Skin skin, World world){
         playerStatLabels.get(0).setText("BUILDINGS: " + stats.getBuildingCounter());
         playerStatLabels.get(1).setText("SATISFACTION: " + stats.getSatisfaction());
         playerStatLabels.get(2).setText("CURRENCY: " + String.format("$%.2f", stats.getCurrency()));
-        playerStatLabels.get(3).setText("FATIGUE: " + stats.getFatigue());
+        playerStatLabels.get(3).setText("FATIGUE: " + stats.getFatigue() + "/50");
         playerStatLabels.get(4).setText("KNOWLEDGE: " + stats.getKnowledge());
     }
 

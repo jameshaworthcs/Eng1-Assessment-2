@@ -60,7 +60,7 @@ public class BuildingManager {
     private TextButton interactButton;
     private boolean isInteractable;
 
-    private String buildingPressed;
+    private Building buildingPressed;
 
     public BuildingManager(Stage stage, Skin skin, World world, TiledMap tiledMap, GameScreen gameScreen) {
         accommodations = new ArrayList<Accommodation>();
@@ -83,11 +83,11 @@ public class BuildingManager {
 
 
     // Method to handle proximity check and show button if near
-    public String updateBuildingInteractions(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
-        buildingPressed = "none";
+    public Building updateBuildingInteractions(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
+        buildingPressed = null;
         for (Placed building : placed) {
             buildingPressed = building.updateInteraction(playerPosition, camera, deltaTime);
-            if (!Objects.equals(buildingPressed, "none")){
+            if (!Objects.equals(buildingPressed, null)){
                 break;
             }
 
@@ -99,11 +99,11 @@ public class BuildingManager {
 
 
     private void makeBuildingTypes() {
-        accommodations.add(new Accommodation("David Kato", 8000f, "accommodation_3.png", 4f, 64f, 64f, 200));
-        foods.add(new Food("Piazza Restaurant", 5000f, "accommodation_3.png", 2f, 128f,128f));
-        recreationals.add(new Recreational("Glasshouse Bar", 5000f, "accommodation_3.png", 2f, 128f,128f));
-        academics.add(new Academic("Library", 1000f, "lectureroom.png", 1.5f, 96f, 96f, 50));
-        workplaces.add(new Workplace("Greggs", 5000f, "accommodation_3.png", 1.5f, 80f, 80f));
+        accommodations.add(new Accommodation("David Kato", 8000f, "accommodation_3.png", 4f, 64f, 64f, 10));
+        foods.add(new Food("Piazza Restaurant", 5000f, "accommodation_3.png", 2f, 128f,128f, 200, 2, 2));
+        recreationals.add(new Recreational("Glasshouse Bar", 5000f, "accommodation_3.png", 2f, 128f,128f, 500, 5, 5));
+        academics.add(new Academic("Library", 1000f, "lectureroom.png", 1.5f, 96f, 96f, 5, 5));
+        workplaces.add(new Workplace("Greggs", 5000f, "accommodation_3.png", 1.5f, 80f, 80f, 10, 1000));
     }
 
     private void showBuildingSelectionWindow() {

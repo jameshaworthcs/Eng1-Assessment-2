@@ -4,15 +4,25 @@ import com.UniSim.game.Buildings.Building;
 
 public class Academic extends Building {
 
-    private int intelegence;
+    private int intelegenceGain;
+    private int fatigueGain;
 
-    public Academic(String name, float cost, String picture, float lakeBonus, float width, float height, int intelegence) {
+    public Academic(String name, float cost, String picture, float lakeBonus, float width, float height, int intelegenceGain, int fatigueGain) {
         super(name, cost, picture, lakeBonus, width, height);
-        this.intelegence = intelegence;
+        this.intelegenceGain = intelegenceGain;
+        this.fatigueGain = fatigueGain;
     }
 
     @Override
     public String getType(){
         return "Academic";
+    }
+
+    public int getIntelligenceGain() {
+        return intelegenceGain;
+    }
+
+    public int getFatigueGain() {
+        return fatigueGain;
     }
 }

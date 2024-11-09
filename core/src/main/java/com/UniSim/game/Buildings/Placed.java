@@ -99,7 +99,7 @@ public class Placed {
             public void clicked(InputEvent event, float x, float y) {
                 if(cooldownTimer<=0){
                     isPressed = true;
-                    cooldownTimer = 5;}
+                    cooldownTimer = 10;}
 
 
 
@@ -108,7 +108,7 @@ public class Placed {
         stage.addActor(interactButton);
     }
 
-    public String updateInteraction(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
+    public Building updateInteraction(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
 
         float distance = playerPosition.dst(position);
         isInteractable = distance < (width + 50 / PPM); // Set proximity range (adjust as needed)
@@ -132,12 +132,21 @@ public class Placed {
 
         if (isPressed) {
             isPressed = false;
-            return type;
+            return getPlacedBuilding();
         }
-        return "none";
+        return null;
     }
 
+    public Building getPlacedBuilding(){
+        ArrayList<Building> allBuildings = BuildingManager.combineBuildings();
 
+        for (Building building : allBuildings) {
+            if (building.name.equals(this.name)) {
+                return building;
+            }
+        }
+        throw new RuntimeException("No building with name " + this.name + " found");
+    }
 
     private Texture getTexture() {
         ArrayList<Building> allBuildings = BuildingManager.combineBuildings();

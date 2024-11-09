@@ -50,12 +50,24 @@ public class PlayerStats {
         currency = currency + amount;
     }
 
-    public void decreaseCurrency(int amount){
-        currency = currency - amount;
+    public boolean decreaseCurrency(int amount){
+        if (currency - amount < 0)
+        {
+            return false;
+        }else {
+            currency -= amount;
+            return true;
+        }
     }
 
-    public void increaseFatigue(int amount){
-        fatigue = fatigue + amount;
+    public boolean increaseFatigue(int amount){
+        if (fatigue + amount > 50)
+        {
+            return false;
+        }else {
+            fatigue += amount;
+            return true;
+        }
     }
 
     public void decreaseFatigue(int amount){

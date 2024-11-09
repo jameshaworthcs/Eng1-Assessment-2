@@ -1,8 +1,9 @@
 package com.UniSim.game.Screens;
 
 import com.UniSim.game.*;
+import com.UniSim.game.Buildings.Building;
 import com.UniSim.game.Buildings.BuildingManager;
-import com.UniSim.game.Buildings.Placed;
+import com.UniSim.game.Buildings.Types.*;
 import com.UniSim.game.Sprites.Character;
 import com.UniSim.game.Sprites.SpeechBubble;
 import com.badlogic.gdx.Gdx;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static com.UniSim.game.Constants.*;
-import static com.UniSim.game.Hud.*;
+
 public class GameScreen implements Screen {
     private UniSim game;
     private Stage stage;
@@ -301,44 +302,85 @@ public class GameScreen implements Screen {
 
     }
 
-    private void buildingInteraction(String buildingType){
-        if (Objects.equals(buildingType, "Accommodation")){
-            sleep();
-        }
-        else if (Objects.equals(buildingType, "Food")){
-            eat();
-        }
-        else if (Objects.equals(buildingType, "Academic")){
-            learn();
-        }
-        else if (Objects.equals(buildingType, "Workplace")){
-            work();
-        }
-        else if (Objects.equals(buildingType, "Recreational")){
-            relax();
+    private void buildingInteraction(Building building){
+        if(building != null) {
+            if (Objects.equals(building.getType(), "Accommodation")) {
+                sleep(building);
+            } else if (Objects.equals(building.getType(), "Food")) {
+                eat(building);
+            } else if (Objects.equals(building.getType(), "Academic")) {
+                learn(building);
+            } else if (Objects.equals(building.getType(), "Workplace")) {
+                work(building);
+            } else if (Objects.equals(building.getType(), "Recreational")) {
+                relax(building);
+            }
         }
     }
-    private void sleep(){
-        hud.getStats().decreaseFatigue(5);
-        popUp("-5 fatigue", 3);
+    private void sleep(Building building){
+        Accommodation accommodation = (Accommodation) building;
+        int fatigueDecrease = accommodation.getFatigueDecrease();
+        hud.getStats().decreaseFatigue(fatigueDecrease);
+        popUp("-" + fatigueDecrease + " Fatigue", 3);
     }
-    private void relax(){
-        hud.getStats().increaseSatisfaction(5);
-        popUp("+5 Satisfaction", 3);
+    private void relax(Building building){
+        Recreational relax = (Recreational) building;
+        int currencyDecrease = relax.getDecreaseCurrency();
+        int fatigueDecrease = relax.getDecreaseFatigue();
+        int satisfactionIncrease = relax.getIncreaseSatisfaction();
+
+        if (hud.getStats().decreaseCurrency(currencyDecrease)) {
+            hud.getStats().decreaseFatigue(fatigueDecrease);
+            hud.getStats().increaseSatisfaction(satisfactionIncrease);
+            popUp("-" + fatigueDecrease + " Fatigue\n" +
+                "+" + satisfactionIncrease + " Satisfaction\n" +
+                "-" + currencyDecrease + " Currency", 3);
+        }else {
+            popUp("Not enough money!", 3);
+        }
     }
-    private void eat(){
-        hud.getStats().decreaseFatigue(5);
-        hud.getStats().increaseSatisfaction(5);
-        popUp("-5 Fatigue\n" +
-            "+5 Satisfaction", 3);
+    private void eat(Building building){
+        Food food = (Food) building;
+        int currencyDecrease = food.getDecreaseCurrency();
+        int fatigueDecrease = food.getDecreaseFatigue();
+        int satisfactionIncrease = food.getIncreaseSatisfaction();
+
+        if (hud.getStats().decreaseCurrency(currencyDecrease)) {
+            hud.getStats().decreaseFatigue(fatigueDecrease);
+            hud.getStats().increaseSatisfaction(satisfactionIncrease);
+            popUp("-" + fatigueDecrease + " Fatigue\n" +
+                "+" + satisfactionIncrease + " Satisfaction\n" +
+                "-" + currencyDecrease + " Currency", 3);
+        }else {
+            popUp("Not enough money!", 3);
+        }
     }
-    private void learn(){
-        hud.getStats().increaseKnowledge(5);
-        popUp("+5 Knowledge", 3);
+    private void learn(Building building){
+        Academic academic = (Academic) building;
+        int fatigueIncrease = academic.getIntelligenceGain();
+        int knowledgeIncrease = academic.getIntelligenceGain();
+
+        if (hud.getStats().increaseFatigue(fatigueIncrease)) {
+            hud.getStats().increaseKnowledge(knowledgeIncrease);
+            popUp("+" + knowledgeIncrease + " Knowledge\n" +
+                "+" + fatigueIncrease + " Fatigue", 3);
+        }else {
+            popUp("Too tired!", 3);
+        }
     }
-    private void work(){
-        hud.getStats().increaseCurrency(1000);
-        popUp("+1000 Currency", 3);
+    private void work(Building building){
+        Workplace workplace = (Workplace) building;
+        int fatigueIncrease = workplace.getIncreaseFatigue();
+        int currencyIncrease = workplace.getIncreaseCurrency();
+
+        if (hud.getStats().increaseFatigue(fatigueIncrease)) {
+            hud.getStats().increaseCurrency(currencyIncrease);
+            popUp("+" + currencyIncrease + " Currency\n" +
+                "+" + fatigueIncrease + " Fatigue", 3);
+        }else {
+            popUp("Too tired!", 3);
+        }
+
     }
 
     /***
