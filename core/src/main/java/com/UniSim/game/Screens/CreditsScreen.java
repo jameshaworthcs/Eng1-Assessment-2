@@ -43,7 +43,7 @@ public class CreditsScreen implements Screen {
 
     // UI initialization logic in a separate method
     private void initialize() {
-        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        stage = new Stage(new FitViewport(2560, 1440));
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         Gdx.input.setInputProcessor(stage);
 
@@ -91,8 +91,8 @@ public class CreditsScreen implements Screen {
         creditsLabel.setAlignment(Align.center);
 
         // Positioning and adding elements to the stage
-        creditTitleLabel.setPosition((float) Gdx.graphics.getWidth() / 2 - creditTitleLabel.getWidth() / 2, 1000);
-        creditsLabel.setPosition((float) Gdx.graphics.getWidth() / 2 - creditsLabel.getWidth() / 2, 460);
+        creditTitleLabel.setPosition(500, 1000);
+        creditsLabel.setPosition(500, 460);
 
         backButton.setPosition(10, Gdx.graphics.getHeight() - 80);
         backButton.setSize(150, 70);

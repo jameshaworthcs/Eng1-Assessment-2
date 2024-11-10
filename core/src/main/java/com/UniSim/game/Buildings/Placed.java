@@ -84,9 +84,7 @@ public class Placed {
         initializeInteractButton(skin);
     }
 
-    public void resolutionScale(Stage stage){
-        this.stage = stage;
-    }
+
     private void initializeInteractButton(Skin skin) {
 
         interactButton = new TextButton(buttonText, skin);
@@ -111,7 +109,7 @@ public class Placed {
     public Building updateInteraction(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
 
         float distance = playerPosition.dst(position);
-        isInteractable = distance < (width + 50 / PPM); // Set proximity range (adjust as needed)
+        isInteractable = distance < ((width / 2) + 50 / PPM); // Set proximity range (adjust as needed)
         interactButton.setVisible(isInteractable);
 
         if (isInteractable) {

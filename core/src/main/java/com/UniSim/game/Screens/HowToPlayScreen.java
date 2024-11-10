@@ -118,10 +118,10 @@ public class HowToPlayScreen implements Screen {
         instructionsLabel.setAlignment(Align.center);
 
         // Positioning and adding elements to the stage
-        howToPlayLabel.setPosition((float) Gdx.graphics.getWidth() / 2 - howToPlayLabel.getWidth() / 2, 1000);
-        instructionsLabel.setPosition((float) Gdx.graphics.getWidth() / 2 - instructionsLabel.getWidth() / 2, 460);
+        howToPlayLabel.setPosition(500, 1000);
+        instructionsLabel.setPosition(220, 460);
 
-        backButton.setPosition(10, Gdx.graphics.getHeight() - 80);
+        backButton.setPosition(10, 1360);
         backButton.setSize(150, 70);
 
         stage.addActor(howToPlayLabel);

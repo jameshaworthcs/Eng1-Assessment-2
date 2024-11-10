@@ -99,6 +99,7 @@ public class GameScreen implements Screen {
         speechBubbleReception = new SpeechBubble(world, this, 845 / PPM, 365 / PPM);
 
         camera = new OrthographicCamera();
+
         fitViewport = new FitViewport(Gdx.graphics.getWidth() / SCALE / PPM, Gdx.graphics.getHeight() / SCALE / PPM, camera);
 
         mapLoader = new TmxMapLoader();
