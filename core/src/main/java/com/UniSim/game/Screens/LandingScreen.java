@@ -214,9 +214,11 @@ public class LandingScreen implements Screen {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        game.batch.begin();
-        game.batch.draw(backgroundTexture, 0, 0, 2560, 1440);
-        game.batch.end();
+        SpriteBatch batch = new SpriteBatch();
+
+        batch.begin();
+        batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.end();
 
         stage.act(delta);
         stage.draw();

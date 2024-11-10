@@ -1,5 +1,5 @@
 package com.UniSim.game.Screens;
-
+import static com.UniSim.game.Constants.*;
 import com.UniSim.game.Stats.PlayerStats;
 import com.UniSim.game.UniSim;
 import com.badlogic.gdx.Gdx;
@@ -7,12 +7,19 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class EndScreen implements Screen {
@@ -33,10 +40,13 @@ public class EndScreen implements Screen {
     private Label.LabelStyle titleLabelStyle;
     private PlayerStats finalStats;
 
+    private float satisfactionLeft;
+
     public EndScreen(UniSim game, Music music, PlayerStats finalStats) {
         this.game = game;
         this.manager = new AssetManager();
         this.finalStats = finalStats;
+        this.satisfactionLeft = Float.parseFloat(finalStats.getSatisfaction());
 
         initializeMusic(music);
         initializeStage();
@@ -57,9 +67,10 @@ public class EndScreen implements Screen {
     }
 
     private void initializeStage() {
-        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        stage = new Stage(new FitViewport(2560, 1440));
         Gdx.input.setInputProcessor(stage);
         backgroundTexture = new Texture("LoadScreenBackground.png");
+
     }
 
     private void initializeUI() {
@@ -75,11 +86,77 @@ public class EndScreen implements Screen {
 
         // Adjust default skin font size
         skin.getFont("default-font").getData().setScale(2f);
+        //show();
     }
 
     @Override
     public void show() {
-        // Show logic here, if needed
+        // Create a table to organize UI elements
+        Table table = new Table();
+        table.setFillParent(true);
+        stage.addActor(table);
+
+        // Back button
+        Button backButton = new Button(skin);
+        backButton.add(new Label("Back", skin));
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new LandingScreen(game));
+            }
+        });
+
+
+        BitmapFont customFont = new BitmapFont(Gdx.files.internal("Font1.fnt"));
+        customFont.getData().setScale(0.9f);
+
+        Label.LabelStyle customLabelStyle = new Label.LabelStyle();
+        customLabelStyle.font = customFont;
+        customLabelStyle.fontColor = Color.BLACK;
+
+        BitmapFont customFont1 = new BitmapFont(Gdx.files.internal("Font1.fnt"));
+        customFont1.getData().setScale(0.15f);
+
+
+        Label.LabelStyle customLabelStyle1 = new Label.LabelStyle();
+        customLabelStyle1.font = customFont1;
+        customLabelStyle1.fontColor = Color.BLACK;
+
+        float currencyLeft = finalStats.getCurrency();
+        float fatigueLeft = finalStats.getFatigue();
+        float knowledgeLeft = finalStats.getKnowledge();
+
+        float currencyAddition = currencyLeft / 100;
+        float knowledgeAddition = knowledgeLeft * 2;
+        float fatigueSubtraction = fatigueLeft;
+
+        float beforeSatisfactionLeft = this.satisfactionLeft;
+
+        this.satisfactionLeft += currencyAddition + knowledgeAddition - fatigueSubtraction;
+
+
+        Label CongratulationsLabel = new Label("Congratulations", customLabelStyle);
+        Label endGameDetailLabel = new Label(
+            "You Finished with:\n" +
+                "You finished with " + beforeSatisfactionLeft + " satisfaction but you had\n" +
+                currencyLeft + " currency left which gave an additional "+ currencyAddition + " satisfaction\n" +
+                fatigueLeft + " fatigue which subtracted " + fatigueSubtraction +" satisfaction\n" +
+                knowledgeLeft + " knowledge which gave an additional " + knowledgeAddition + " satisfaction\n" +
+                "Resulting in a total of " + this.satisfactionLeft + " satisfaction",
+            customLabelStyle1);
+        endGameDetailLabel.setWrap(true);
+        endGameDetailLabel.setAlignment(Align.center);
+
+        // Positioning and adding elements to the stage
+        CongratulationsLabel.setPosition((stage.getViewport().getWorldWidth() - CongratulationsLabel.getWidth()) / 2, 1000);
+        endGameDetailLabel.setPosition((stage.getViewport().getWorldWidth() - endGameDetailLabel.getWidth()) / 2, 460);
+
+        backButton.setPosition(10, 1360);
+        backButton.setSize(150, 70);
+
+        stage.addActor(CongratulationsLabel);
+        stage.addActor(endGameDetailLabel);
+        stage.addActor(backButton);
     }
 
     @Override
@@ -87,9 +164,12 @@ public class EndScreen implements Screen {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        game.batch.begin();
-        game.batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        game.batch.end();
+
+        SpriteBatch batch = new SpriteBatch();
+
+        batch.begin();
+        batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.end();
 
         stage.act(delta);
         stage.draw();
@@ -131,7 +211,7 @@ public class EndScreen implements Screen {
         FileHandle file = Gdx.files.local("leaderboard.txt");
         System.out.println("Saving to: " + file.file().getAbsolutePath());
         // Append the satisfaction value to the file, followed by a newline for readability
-        file.writeString(finalStats.getSatisfaction() + "\n", true);
+        file.writeString(satisfactionLeft + "\n", true);
     }
 }
 

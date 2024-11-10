@@ -85,16 +85,26 @@ public class CreditsScreen implements Screen {
 
         Label creditTitleLabel = new Label("Credits:", customLabelStyle);
         Label creditsLabel = new Label(
-            "CREDITS\nCREDITS\nCREDITS",
+            "We used several 3rd-party libraries and assets to enhance functionality in the UniSim game system. Below is a list of these resources\n" +
+                "LibGDX\n" +
+                "Gradle" +
+                "Assets: \n" +
+                "Speech Bubble - https://opengameart.org/users/charlexmachina\n" +
+                "Map textures - https://opengameart.org/users/isaiah658\n" +
+                "Background music  https://opengameart.org/users/mrpoly\n" +
+                "Town music - https://opengameart.org/content/town-music\n" +
+                "Game icons - https://kenney.nl/assets/game-icons\n" +
+                "Ending Music - https://opengameart.org/content/rpg-towntravel-or-credits-song,%20end%20music%20cc-by%203.0\n" +
+                "\nGame Developed by: Juliet Urquhart, Katie Schilling, Matias Duplock, Mohammed Elijack, Nora Wu and Theo Coleman",
             customLabelStyle1);
         creditsLabel.setWrap(true);
         creditsLabel.setAlignment(Align.center);
 
         // Positioning and adding elements to the stage
-        creditTitleLabel.setPosition(500, 1000);
-        creditsLabel.setPosition(500, 460);
+        creditTitleLabel.setPosition((stage.getViewport().getWorldWidth() - creditTitleLabel.getWidth()) / 2, 1000);
+        creditsLabel.setPosition((stage.getViewport().getWorldWidth() - creditsLabel.getWidth()) / 2, 460);
 
-        backButton.setPosition(10, Gdx.graphics.getHeight() - 80);
+        backButton.setPosition(10, stage.getViewport().getWorldHeight() - 80);
         backButton.setSize(150, 70);
 
         stage.addActor(creditTitleLabel);

@@ -108,6 +108,7 @@ public class Hud {
     public void update(float dt){
         updateStats();
         satisfactionUpdate(dt);
+        //fatigueUpdaate(dt);
         timeCount += dt;
         if(timeCount >= 1){
             if (worldTimer > 0) {
@@ -134,6 +135,7 @@ public class Hud {
     public void hideMessage(){
         messageLabel.setVisible(false);
     }
+
 
     private void satisfactionUpdate(float dt){
         if (worldTimer % 30 == 0 && worldTimer != 300 && !satUpdateOnce) {
