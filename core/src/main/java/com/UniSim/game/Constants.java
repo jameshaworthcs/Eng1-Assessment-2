@@ -2,6 +2,11 @@ package com.UniSim.game;
 
 import com.badlogic.gdx.Gdx;
 
+/**
+ * The Constants class stores all the essential constant values used throughout the game.
+ * These constants define game settings, physics parameters, screen dimensions, and more.
+ * The values are used globally in the game to maintain consistency and allow for easy adjustments.
+ */
 public final class Constants
 {
 

@@ -22,6 +22,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+/**
+ * EndScreen class represents the screen shown when the game ends.
+ * It displays the final stats of the game, including satisfaction and other metrics,
+ * and allows the player to return to the main screen.
+ */
 public class EndScreen implements Screen {
 
     private static final float FONT_SCALE = 0.8f;
@@ -42,6 +47,13 @@ public class EndScreen implements Screen {
 
     private float satisfactionLeft;
 
+    /**
+     * Constructor for EndScreen.
+     *
+     * @param game The game instance.
+     * @param music The background music to play during the EndScreen.
+     * @param finalStats The final player stats to display on the EndScreen.
+     */
     public EndScreen(UniSim game, Music music, PlayerStats finalStats) {
         this.game = game;
         this.manager = new AssetManager();
@@ -51,10 +63,13 @@ public class EndScreen implements Screen {
         initializeMusic(music);
         initializeStage();
         initializeUI();
-
-        saveSatisfaction();
     }
 
+    /**
+     * Initializes the background music for the EndScreen.
+     *
+     * @param music The background music to be played.
+     */
     private void initializeMusic(Music music) {
         this.music = music;
         manager.load("music/Chippytoon.mp3", Music.class);
@@ -73,6 +88,9 @@ public class EndScreen implements Screen {
 
     }
 
+    /**
+     * Initializes the user interface for the EndScreen, including fonts, button styles, and labels.
+     */
     private void initializeUI() {
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
@@ -89,6 +107,9 @@ public class EndScreen implements Screen {
         //show();
     }
 
+    /**
+     * Initializes and displays UI elements such as labels and buttons on the screen.
+     */
     @Override
     public void show() {
         // Create a table to organize UI elements
@@ -102,6 +123,7 @@ public class EndScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                music.stop();
                 game.setScreen(new LandingScreen(game));
             }
         });
@@ -157,13 +179,14 @@ public class EndScreen implements Screen {
         stage.addActor(CongratulationsLabel);
         stage.addActor(endGameDetailLabel);
         stage.addActor(backButton);
+
+        saveSatisfaction();
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 
         SpriteBatch batch = new SpriteBatch();
 
@@ -206,6 +229,10 @@ public class EndScreen implements Screen {
         manager.dispose();
     }
 
+    /**
+     * Saves the final satisfaction score to a leaderboard file.
+     * This score is appended to the file for future reference.
+     */
     private void saveSatisfaction() {
         // Get a handle to the file in the local storage
         FileHandle file = Gdx.files.local("leaderboard.txt");

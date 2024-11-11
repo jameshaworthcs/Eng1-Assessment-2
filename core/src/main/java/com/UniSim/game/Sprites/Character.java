@@ -9,8 +9,18 @@ import com.badlogic.gdx.utils.Array;
 
 import static com.UniSim.game.Constants.*;
 
+/**
+ * The Character class represents the player's character in the game, including animations, physics,
+ * and movement logic. It extends the Sprite class to allow rendering the character's texture and updating
+ * its position based on the game world.
+ */
 public class Character extends Sprite {
+    /**
+     * Enum representing the different states of the character.
+     */
     public enum State {RUN_UP, RUN_DOWN, RUN_X, STAND_UP, STAND_DOWN, STAND_X}
+
+
     public State currentState;
     public State previousState;
     public World world;
@@ -24,6 +34,12 @@ public class Character extends Sprite {
     private boolean isGoingRight;
     private float stateTimer;
 
+    /**
+     * Constructs a new character in the game and sets animations for all states.
+     *
+     * @param world The Box2D world in which the character exists
+     * @param screen The GameScreen where the character will be displayed
+     */
     public Character(World world, GameScreen screen) {
         super(screen.getCharacterTexture());
         this.world = world;
@@ -55,6 +71,10 @@ public class Character extends Sprite {
         setRegion(characterStandDown);
     }
 
+    /**
+     * Defines the Box2D physics body for the character.
+     * This method sets the position, type, and shape of the character's physics body.
+     */
     private void defineCharacter() {
         BodyDef bdef = new BodyDef();
         bdef.position.set(800 / PPM, 250 / PPM);
@@ -72,11 +92,22 @@ public class Character extends Sprite {
         shape.dispose();
     }
 
+    /**
+     * Updates the character's position and animation frame based on the physics body.
+     *
+     * @param delta Time passed since the last update
+     */
     public void update(float delta) {
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y- getHeight() / 2);
         setRegion(getFrame(delta));
     }
 
+    /**
+     * Returns the correct animation frame for the current state of the character.
+     *
+     * @param delta Time passed since the last frame
+     * @return The correct animation frame for the current state
+     */
     public TextureRegion getFrame(float delta) {
         currentState = getState();
 
@@ -118,6 +149,11 @@ public class Character extends Sprite {
         return region;
     }
 
+    /**
+     * Determines the current state of the character based on its velocity.
+     *
+     * @return The current state of the character
+     */
     public State getState() {
         if (b2body.getLinearVelocity().y > 0) {
             return State.RUN_UP;

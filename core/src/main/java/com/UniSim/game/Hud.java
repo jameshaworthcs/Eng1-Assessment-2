@@ -20,6 +20,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
 
+/**
+ * The Hud class handles the display of the game's heads-up display,
+ * including player statistics (e.g., satisfaction, currency, fatigue),
+ * the countdown timer, and messages for the player.
+ * It also manages updates to the player's stats and the game timer.
+ */
 public class Hud {
     public Stage stage;
     private Viewport viewport;
@@ -43,6 +49,16 @@ public class Hud {
     private ArrayList<StatsLabels> playerStatLabels;
     private Label messageLabel;
 
+    /**
+     * Creates a new Hud instance.
+     *
+     * @param sb         the SpriteBatch used for rendering the HUD elements
+     * @param skin       the Skin used for styling the labels and UI elements
+     * @param world      the Box2D world used for game physics
+     * @param gameScreen the current game screen
+     * @param game       the main game instance
+     * @param music      the background music for the game
+     */
     public Hud(SpriteBatch sb, Skin skin, World world, GameScreen gameScreen, UniSim game, Music music) {
         this.world = world;
         this.skin = skin;
@@ -59,6 +75,12 @@ public class Hud {
         return stats;
     }
 
+    /**
+     * Sets up and initializes the player statistics display.
+     *
+     * @param skin the Skin used for styling the labels
+     * @param world the Box2D world used for physics
+     */
     private void setStats(Skin skin, World world) {
         stats = new PlayerStats();
         playerStatLabels = new ArrayList<>();
@@ -77,6 +99,11 @@ public class Hud {
         playerStatLabels.get(4).setText("KNOWLEDGE: " + stats.getKnowledge());
     }
 
+    /**
+     * Initializes the timer and UI elements for tracking and displaying time.
+     *
+     * @param sb the SpriteBatch used for rendering the timer
+     */
     private void setTimer(SpriteBatch sb) {
         worldTimer = 300;
         timeCount = 0;
@@ -98,6 +125,11 @@ public class Hud {
         stage.addActor(table);
     }
 
+    /**
+     * Creates the message label for displaying player notifications.
+     *
+     * @param skin the Skin used for styling the label
+     */
     private void createMessageLabel(Skin skin) {
         messageLabel = new Label("", skin);
         messageLabel.setPosition(10, 20); // Set the position for the message
@@ -137,6 +169,11 @@ public class Hud {
     }
 
 
+    /**
+     * Updates the satisfaction value of the player every 30 seconds.
+     *
+     * @param dt the time delta between frames
+     */
     private void satisfactionUpdate(float dt){
         if (worldTimer % 30 == 0 && worldTimer != 300 && !satUpdateOnce) {
             int increase = stats.calculateSatisfaction();
@@ -151,6 +188,9 @@ public class Hud {
         }
     }
 
+    /**
+     * Checks if the game has ended (when the timer runs out).
+     */
     private void checkIfEnd(){
         if (worldTimer == 0 && !endOnce){
             endOnce = true;

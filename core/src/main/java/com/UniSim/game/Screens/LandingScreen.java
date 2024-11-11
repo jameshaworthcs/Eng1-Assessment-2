@@ -24,6 +24,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.FileHandler;
 
+/**
+ * This screen is the landing page of the game. It allows the player to choose
+ * between starting a new game, accessing settings, viewing instructions, checking credits,
+ * or quitting the game. It also displays the leaderboard of players' satisfaction scores.
+ */
 public class LandingScreen implements Screen {
     private UniSim game;
     private Texture backgroundTexture;
@@ -43,6 +48,12 @@ public class LandingScreen implements Screen {
     }
 
 
+    /**
+     * Constructor for the LandingScreen.
+     * Initializes the background, music, and all UI elements.
+     *
+     * @param game The game instance for screen switching
+     */
     public LandingScreen(UniSim game) {
         this.game = game;
         this.leaderboardSat = getLeaderboardSat();
@@ -249,6 +260,11 @@ public class LandingScreen implements Screen {
     public void resume() {
     }
 
+    /**
+     * Retrieves the leaderboard satisfaction scores from a file.
+     *
+     * @return A list of satisfaction scores from the leaderboard
+     */
     private List<Float> getLeaderboardSat() {
         List<Float> leaderboardSat = new ArrayList<>();
         FileHandle file = Gdx.files.local("leaderboard.txt");
@@ -272,6 +288,9 @@ public class LandingScreen implements Screen {
         return leaderboardSat;
     }
 
+    /**
+     * Clears the leaderboard satisfaction scores from the file.
+     */
     public void clearLeaderboardSat() {
         // Get a handle to the file
         FileHandle file = Gdx.files.local("leaderboard.txt");

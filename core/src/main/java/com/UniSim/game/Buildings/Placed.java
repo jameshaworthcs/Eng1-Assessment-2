@@ -21,6 +21,11 @@ import static com.UniSim.game.Hud.*;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a placed building in the game world. The class handles the position,
+ * size, and interaction logic for buildings, including showing interaction buttons
+ * when the player is nearby.
+ */
 public class Placed {
 
     protected String name;
@@ -41,7 +46,16 @@ public class Placed {
 
     private Vector3 buildingScreenPosition = new Vector3();
 
-
+    /**
+     * Constructor to initialize a placed building in the game.
+     *
+     * @param name      The name of the building.
+     * @param x         The x-coordinate of the building's position.
+     * @param y         The y-coordinate of the building's position.
+     * @param width     The width of the building.
+     * @param height    The height of the building.
+     * @param stage     The stage where UI elements (like buttons) are displayed.
+     */
     public Placed(String name, float x, float y, float width, float height, Stage stage) {
         this.name = name;
         this.position = new Vector2(x, y);
@@ -84,7 +98,12 @@ public class Placed {
         initializeInteractButton(skin);
     }
 
-
+    /**
+     * Initializes the interact button, positioning it above the building and
+     * setting its properties.
+     *
+     * @param skin The skin used for the UI components.
+     */
     private void initializeInteractButton(Skin skin) {
 
         interactButton = new TextButton(buttonText, skin);
@@ -106,6 +125,15 @@ public class Placed {
         stage.addActor(interactButton);
     }
 
+    /**
+     * Updates the interaction logic, checking if the player is close enough
+     * to interact with the building, and updating the button visibility and text.
+     *
+     * @param playerPosition The position of the player in the game world.
+     * @param camera         The camera used to convert world coordinates to screen coordinates.
+     * @param deltaTime      The time elapsed since the last update.
+     * @return The building object if the interaction was successful, otherwise null.
+     */
     public Building updateInteraction(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
 
         float distance = playerPosition.dst(position);
@@ -135,6 +163,12 @@ public class Placed {
         return null;
     }
 
+    /**
+     * Retrieves the building corresponding to this placed object by name.
+     *
+     * @return The building associated with this placed instance.
+     * @throws RuntimeException if no building with the specified name is found.
+     */
     public Building getPlacedBuilding(){
         ArrayList<Building> allBuildings = BuildingManager.combineBuildings();
 
@@ -146,6 +180,11 @@ public class Placed {
         throw new RuntimeException("No building with name " + this.name + " found");
     }
 
+    /**
+     * Retrieves the texture associated with this building.
+     *
+     * @return The texture of the building.
+     */
     private Texture getTexture() {
         ArrayList<Building> allBuildings = BuildingManager.combineBuildings();
 
@@ -157,11 +196,22 @@ public class Placed {
         return null;
     }
 
+    /**
+     * Draws the building
+     *
+     * @param batch The SpriteBatch used to draw the building.
+     */
     public void drawBuilding(SpriteBatch batch) {
         batch.draw(getTexture(), this.cornerPosition.x, this.cornerPosition.y, width, height);
 
     }
 
+    /**
+     * Checks whether this building overlaps with another placed building.
+     *
+     * @param p The other placed building to check for overlap.
+     * @return true if the buildings overlap, otherwise false.
+     */
     public boolean overlaps (Placed p) {
         return this.cornerPosition.x < p.cornerPosition.x + p.width
             && this.cornerPosition.x + width > p.cornerPosition.x
@@ -169,6 +219,11 @@ public class Placed {
             && this.cornerPosition.y + height > p.cornerPosition.y;
     }
 
+    /**
+     * Retrieves the type of this building (e.g., "Accommodation," "Workplace").
+     *
+     * @return The type of the building.
+     */
     private String getType(){
         ArrayList<Building> allBuildings = BuildingManager.combineBuildings();
 

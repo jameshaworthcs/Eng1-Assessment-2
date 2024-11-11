@@ -2,6 +2,10 @@ package com.UniSim.game.Buildings.Types;
 
 import com.UniSim.game.Buildings.Building;
 
+/**
+ * Workplace class represents a type of Building where players can earn currency at the cost of increased fatigue.
+ * Extends the Building class and includes attributes for fatigue increase and currency increase.
+ */
 public class Workplace extends Building {
 
     private int increaseFatigue;
@@ -13,6 +17,10 @@ public class Workplace extends Building {
         this.increaseCurrency = increaseCurrency;
     }
 
+    /**
+     * Returns the building type as a string.
+     * @return "Workplace", representing the type of this building.
+     */
     @Override
     public String getType(){
         return "Workplace";

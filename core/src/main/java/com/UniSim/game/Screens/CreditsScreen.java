@@ -20,6 +20,10 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+/**
+ * Credits screen displayed in the game, showing the acknowledgements for libraries, assets,
+ * and contributors. This screen can be accessed from the LandingScreen.
+ */
 public class CreditsScreen implements Screen {
     private UniSim game;
     private Stage stage;
@@ -28,7 +32,13 @@ public class CreditsScreen implements Screen {
     private LandingScreen landingScreen;
     private Texture backgroundTexture;
 
-    // Constructor for CreditsScreen accessed from LandingScreen
+    /**
+     * Constructor for initializing the CreditsScreen.
+     *
+     * @param game         The game instance.
+     * @param landingScreen The screen to return to when the user presses the "Back" button.
+     * @param music        The background music to play on the credits screen.
+     */
     public CreditsScreen(UniSim game, LandingScreen landingScreen, Music music) {
         this.game = game;
         this.landingScreen = landingScreen;
@@ -41,7 +51,10 @@ public class CreditsScreen implements Screen {
         initialize();
     }
 
-    // UI initialization logic in a separate method
+    /**
+     * Initializes the UI elements for the Credits screen, including the background,
+     * the credits text, and the back button.
+     */
     private void initialize() {
         stage = new Stage(new FitViewport(2560, 1440));
         skin = new Skin(Gdx.files.internal("uiskin.json"));

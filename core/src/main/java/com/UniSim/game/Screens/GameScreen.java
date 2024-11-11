@@ -37,6 +37,11 @@ import java.util.Objects;
 
 import static com.UniSim.game.Constants.*;
 
+/**
+ * GameScreen class represents the main screen of the game where the gameplay occurs.
+ * It handles rendering the game world, player interactions, building placements,
+ * physics, UI components, and other essential features of the game.
+ */
 public class GameScreen implements Screen {
     private UniSim game;
     private Stage stage;
@@ -79,6 +84,14 @@ public class GameScreen implements Screen {
 
     private String buildingInteractedWith;
 
+    /**
+     * Constructor to initialize the game screen and its components.
+     * This method sets up all the necessary game elements including the map, world,
+     * player, buildings, HUD, and other interactive components.
+     *
+     * @param game The main game instance.
+     * @param music The background music to be played.
+     */
     public GameScreen(UniSim game, Music music) {
         this.game = game;
         loggedMinutes = new ArrayList<>();
@@ -172,6 +185,14 @@ public class GameScreen implements Screen {
         setupCollisionListener();
     }
 
+    /**
+     * Creates hitboxes for the game world, adding them as static bodies.
+     * This method iterates through specific layers of the map and defines collision boundaries.
+     *
+     * @param bdef The body definition used for creating bodies.
+     * @param shape The shape of the hitbox.
+     * @param fdef The fixture definition containing the properties of the hitbox.
+     */
     private void makeHitBoxes(BodyDef bdef, PolygonShape shape, FixtureDef fdef) {
         Body body;
         for(int i = 3; i < 6; i++) {
@@ -209,7 +230,13 @@ public class GameScreen implements Screen {
         return stage;
     }
 
-
+    /**
+     * Renders the game scene each frame, handling input, updating game state,
+     * and drawing all visible elements, including the player, map, buildings,
+     * and HUD. This method also manages the pause menu.
+     *
+     * @param delta The time elapsed since the last frame.
+     */
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -237,7 +264,6 @@ public class GameScreen implements Screen {
 
         renderer.render();
 
-        buildingManager.handleInput();
         buildingManager.handleBuildingPlacement(game.batch, camera, fitViewport);
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
@@ -258,6 +284,12 @@ public class GameScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * Updates the game state, including physics, player movement, camera, and building interactions.
+     * This method is called once per frame to perform essential updates.
+     *
+     * @param delta The time elapsed since the last frame.
+     */
     public void update(float delta) {
         world.step(1 / 60f, 6, 2);
         player.update(delta);
@@ -278,6 +310,14 @@ public class GameScreen implements Screen {
         }
 
     }
+
+    /**
+     * Displays a pop-up message on the screen for a specified duration.
+     * The message will fade out and be removed after the given time.
+     *
+     * @param text The text to display in the pop-up.
+     * @param time The time (in seconds) for the pop-up to be displayed before fading out.
+     */
     public void popUp(String text, float time){
         Label loanMessage = new Label(text, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         loanMessage.setFontScale(4); // Make the text larger for visibility
@@ -294,6 +334,10 @@ public class GameScreen implements Screen {
 
     }
 
+    /**
+     * Triggers the student loan event by increasing the player's currency.
+     * This event will also display a pop-up message informing the player of the loan amount.
+     */
     private void studentLoan() {
         // Increase the currency
         hud.getStats().increaseCurrency(10000);
@@ -303,6 +347,12 @@ public class GameScreen implements Screen {
 
     }
 
+    /**
+     * Handles interactions with various types of buildings. The building type is checked, and the relevant
+     * action (sleep, eat, learn, work, relax) is performed based on the building type.
+     *
+     * @param building The building that the player interacts with.
+     */
     private void buildingInteraction(Building building){
         if(building != null) {
             if (Objects.equals(building.getType(), "Accommodation")) {
@@ -318,12 +368,27 @@ public class GameScreen implements Screen {
             }
         }
     }
+
+    /**
+     * Handles the action of sleeping in an accommodation building, decreasing the player's fatigue.
+     * Displays a pop-up message indicating the amount of fatigue reduced.
+     *
+     * @param building The accommodation building the player interacts with.
+     */
     private void sleep(Building building){
         Accommodation accommodation = (Accommodation) building;
         int fatigueDecrease = accommodation.getFatigueDecrease();
         hud.getStats().decreaseFatigue(fatigueDecrease);
         popUp("-" + fatigueDecrease + " Fatigue", 3);
     }
+
+    /**
+     * Handles the action of relaxing in a recreational building, reducing the player's fatigue,
+     * increasing satisfaction, and decreasing currency.
+     * Displays a pop-up message indicating the changes in fatigue, satisfaction, and currency.
+     *
+     * @param building The recreational building the player interacts with.
+     */
     private void relax(Building building){
         Recreational relax = (Recreational) building;
         int currencyDecrease = relax.getDecreaseCurrency();
@@ -340,6 +405,14 @@ public class GameScreen implements Screen {
             popUp("Not enough money!", 3);
         }
     }
+
+    /**
+     * Handles the action of eating in a food building, decreasing the player's fatigue,
+     * increasing satisfaction, and decreasing currency.
+     * Displays a pop-up message indicating the changes in fatigue, satisfaction, and currency.
+     *
+     * @param building The food building the player interacts with.
+     */
     private void eat(Building building){
         Food food = (Food) building;
         int currencyDecrease = food.getDecreaseCurrency();
@@ -356,6 +429,14 @@ public class GameScreen implements Screen {
             popUp("Not enough money!", 3);
         }
     }
+
+    /**
+     * Handles the action of learning in an academic building, increasing the player's knowledge
+     * and increasing fatigue.
+     * Displays a pop-up message indicating the amount of knowledge gained and fatigue increased.
+     *
+     * @param building The academic building the player interacts with.
+     */
     private void learn(Building building){
         Academic academic = (Academic) building;
         int fatigueIncrease = academic.getFatigueGain();
@@ -369,6 +450,14 @@ public class GameScreen implements Screen {
             popUp("Too tired!", 3);
         }
     }
+
+    /**
+     * Handles the action of working in a workplace building, increasing the player's currency
+     * and increasing fatigue.
+     * Displays a pop-up message indicating the amount of currency earned and fatigue increased.
+     *
+     * @param building The workplace building the player interacts with.
+     */
     private void work(Building building){
         Workplace workplace = (Workplace) building;
         int fatigueIncrease = workplace.getIncreaseFatigue();
@@ -384,8 +473,9 @@ public class GameScreen implements Screen {
 
     }
 
-    /***
-     * Checks if it is within the map borders
+    /**
+     * Checks whether the player is within the boundaries of the map and adjusts the player's velocity
+     * to ensure they do not move outside the map.
      */
     private void moveRequest() {
         Vector2 vector = player.b2body.getLinearVelocity();
@@ -411,6 +501,13 @@ public class GameScreen implements Screen {
 
     }
 
+    /**
+     * Updates the camera's viewport and resolution when the screen size changes.
+     * Ensures the camera's projection is updated accordingly.
+     *
+     * @param width The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true); // 'true' centers the camera
@@ -472,8 +569,14 @@ public class GameScreen implements Screen {
         skin.dispose();
     }
 
-    /***
-     * Keeps camera in the map
+    /**
+     * Keeps the camera within the boundaries of the map to prevent it from going out of bounds.
+     *
+     * @param camera The camera that is being controlled.
+     * @param startX The Viewport width.
+     * @param startY The Viewport height.
+     * @param width The width of the map.
+     * @param height The height of the map.
      */
     public void boundary(Camera camera, float startX, float startY, float width, float height) {
         Vector3 position = camera.position;
@@ -493,7 +596,9 @@ public class GameScreen implements Screen {
         camera.position.set(position);
     }
 
-    // Update camera position if the character moves into the border area
+    /**
+     * Updates the camera position based on player movement and ensures the camera is within the boundaries.
+     */
     private void updateCamera() {
         if(!showFullMap) {
             // Calculate the player's position in the game world and adjust by PPM to convert to screen pixels
@@ -527,7 +632,11 @@ public class GameScreen implements Screen {
         }
     }
 
-    // Handle character movement using arrow keys or WASD
+    /**
+     * Handles the player input for movement and interaction (WASD/Arrow keys and ENTER).
+     *
+     * @param deltaTime The time elapsed since the last frame.
+     */
     private void handleInput(float deltaTime) {
         float horizontalForce = 0;
         float verticalForce = 0;
@@ -550,6 +659,10 @@ public class GameScreen implements Screen {
         }
     }
 
+    /**
+     * Sets up the collision listener to detect when the player interacts with specific areas of the map.
+     * Triggers events when the player enters or exits a designated area.
+     */
     private void setupCollisionListener() {
         world.setContactListener(new ContactListener() {
             @Override
@@ -597,6 +710,13 @@ public class GameScreen implements Screen {
         });
     }
 
+    /**
+     * Toggles the building placement mode. Displays the full map and opens or closes the building placement window
+     * depending on the current state.
+     *
+     * When the map is shown in full, the building placement window is opened. If the window is already open,
+     * it is closed, and a message prompting the player to press ENTER to go into build mode is displayed.
+     */
     private void placingBuilding() {
         showFullMapView();
         camera.update();
@@ -610,8 +730,11 @@ public class GameScreen implements Screen {
 
     }
 
-
-
+    /**
+     * Toggles the camera view between a full map view and the original player view.
+     * In the full map view, the camera shows the entire map with zoom adjusted to fit the whole map.
+     * When returning to the original view, the camera zoom and position are reverted to their previous state.
+     */
     public void showFullMapView() {
         if (!showFullMap) {
             // Save original position and zoom level to revert back

@@ -22,6 +22,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+/**
+ * The SettingsScreen class represents the settings menu of the game,
+ * where the player can adjust game settings like resolution and music volume.
+ * This screen can be accessed either from the landing screen or the pause menu.
+ */
 public class SettingsScreen implements Screen {
     private UniSim game;
     private Stage stage;
@@ -31,7 +36,14 @@ public class SettingsScreen implements Screen {
     private LandingScreen landingScreen;
     private PauseMenu pauseMenu;
 
-    // Constructor for SettingsScreen accessed from LandingScreen
+    /**
+     * Constructor for SettingsScreen accessed from LandingScreen.
+     * Initializes the screen with the game, landing screen, and music reference.
+     *
+     * @param game The game instance for screen switching
+     * @param landingScreen The landing screen to return to
+     * @param music The music instance to control volume
+     */
     public SettingsScreen(UniSim game, LandingScreen landingScreen, Music music) {
         this.game = game;
         this.landingScreen = landingScreen;
@@ -39,7 +51,14 @@ public class SettingsScreen implements Screen {
         initialize();
     }
 
-    // Constructor for SettingsScreen accessed from PauseMenu
+    /**
+     * Constructor for SettingsScreen accessed from PauseMenu.
+     * Initializes the screen with the game, pause menu, and music reference.
+     *
+     * @param game The game instance for screen switching
+     * @param pauseMenu The pause menu to return to
+     * @param music The music instance to control volume
+     */
     public SettingsScreen(UniSim game, PauseMenu pauseMenu, Music music) {
         this.game = game;
         this.pauseMenu = pauseMenu;
@@ -47,6 +66,10 @@ public class SettingsScreen implements Screen {
         initialize();
     }
 
+    /**
+     * Initializes the UI elements for the settings screen including buttons,
+     * sliders, and labels for resolution and music volume settings.
+     */
     private void initialize() {
         stage = new Stage(new FitViewport(2560, 1440));
         skin = new Skin(Gdx.files.internal("uiskin.json"));
@@ -80,20 +103,6 @@ public class SettingsScreen implements Screen {
                 }
             }
         });
-
-
-        // backButton.addListener(new ClickListener() {
-        //     @Override
-        //     public void clicked(InputEvent event, float x, float y) {
-        //         if (pauseMenu != null) {
-        //             pauseMenu.returnToPauseMenu();  // Return to PauseMenu
-        //             Gdx.input.setInputProcessor(pauseMenu.getStage());  // Reset input processor for PauseMenu
-        //         } else if (landingScreen != null) {
-        //             game.setScreen(landingScreen);  // Return to LandingScreen
-        //             Gdx.input.setInputProcessor(landingScreen.getStage());  // Reset input processor for LandingScreen
-        //         }
-        //     }
-        // });
 
         // Resolution buttons
         Button res720Button = new Button(skin);

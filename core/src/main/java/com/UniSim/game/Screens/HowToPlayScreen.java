@@ -26,6 +26,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 
 import java.awt.*;
 
+/**
+ * Screen that displays instructions on how to play the game.
+ * It provides an overview of the game mechanics and controls.
+ * The player can navigate back to either the PauseMenu or LandingScreen from this screen.
+ */
 public class HowToPlayScreen implements Screen {
     private UniSim game;
     private Stage stage;
@@ -37,7 +42,14 @@ public class HowToPlayScreen implements Screen {
     private PauseMenu pauseMenu;         // Reference to PauseMenu for returning
     private Music music;
 
-    // Constructor for HowToPlayScreen accessed from LandingScreen
+    /**
+     * Constructor for HowToPlayScreen when accessed from LandingScreen.
+     * Initializes the screen with the game instance, landing screen, and background music.
+     *
+     * @param game The game instance.
+     * @param landingScreen The LandingScreen to return to.
+     * @param music Background music for the screen.
+     */
     public HowToPlayScreen(UniSim game, LandingScreen landingScreen, Music music) {
         this.game = game;
         this.landingScreen = landingScreen;
@@ -47,7 +59,14 @@ public class HowToPlayScreen implements Screen {
 
 
 
-    // Constructor for HowToPlayScreen accessed from PauseMenu
+    /**
+     * Constructor for HowToPlayScreen when accessed from PauseMenu.
+     * Initializes the screen with the game instance, pause menu, and background music.
+     *
+     * @param game The game instance.
+     * @param pauseMenu The PauseMenu to return to.
+     * @param music Background music for the screen.
+     */
     public HowToPlayScreen(UniSim game, PauseMenu pauseMenu, Music music) {
         this.game = game;
         this.pauseMenu = pauseMenu;
@@ -55,7 +74,9 @@ public class HowToPlayScreen implements Screen {
         initialize();
     }
 
-    // Common initialization method
+    /**
+     * Common initialization method for setting up UI elements, input processor, and background.
+     */
     private void initialize() {
         stage = new Stage(new FitViewport(2560, 1440));
         skin = new Skin(Gdx.files.internal("uiskin.json"));

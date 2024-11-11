@@ -14,6 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+/**
+ * The PauseMenu class handles the creation and functionality of the pause menu in the game.
+ * It allows the player to pause the game, navigate to settings, see the 'How to Play' screen, or quit to the main menu.
+ * The menu is overlaid with a semi-transparent blur effect when active.
+ */
 public class PauseMenu {
     private Window pauseMenu;
     private Image blurOverlay;
@@ -23,6 +28,15 @@ public class PauseMenu {
     private Music music;
     private Stage stage;  // Declare stage here
 
+    /**
+     * Constructs a new PauseMenu instance.
+     *
+     * @param stage      the Stage used to manage the user interface elements
+     * @param skin       the Skin used for styling UI elements
+     * @param gameScreen the current GameScreen to return to when resuming the game
+     * @param game       the main game instance
+     * @param music      the Music instance to control the game's audio
+     */
     public PauseMenu(Stage stage, Skin skin, GameScreen gameScreen, UniSim game, Music music) {
         this.stage = stage;  // Initialize stage here
         this.gameScreen = gameScreen;
