@@ -1,5 +1,8 @@
 package com.UniSim.game;
 
+import java.util.ArrayList;
+
+import com.UniSim.game.Events.Event;
 import com.UniSim.game.Screens.EndScreen;
 import com.UniSim.game.Screens.GameScreen;
 import com.UniSim.game.Stats.PlayerStats;
@@ -17,8 +20,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
-import java.util.ArrayList;
 
 /**
  * The Hud class handles the display of the game's heads-up display,
@@ -71,14 +72,15 @@ public class Hud {
         setStats(skin, world);
         createMessageLabel(skin);
     }
-    public PlayerStats getStats(){
+
+    public PlayerStats getStats() {
         return stats;
     }
 
     /**
      * Sets up and initializes the player statistics display.
      *
-     * @param skin the Skin used for styling the labels
+     * @param skin  the Skin used for styling the labels
      * @param world the Box2D world used for physics
      */
     private void setStats(Skin skin, World world) {
@@ -86,12 +88,14 @@ public class Hud {
         playerStatLabels = new ArrayList<>();
 
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 220, "BUILDINGS: " + stats.getBuildingCounter()));
-        playerStatLabels.add(new StatsLabels(world, stage, skin, 10,200, "SATISFACTION: " + stats.getSatisfaction()));
-        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180, "CURRENCY: " + String.format("$%.2f", stats.getCurrency())));
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 200, "SATISFACTION: " + stats.getSatisfaction()));
+        playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 180,
+                "CURRENCY: " + String.format("$%.2f", stats.getCurrency())));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 160, "FATIGUE: " + stats.getFatigue() + "/ 50"));
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
     }
-    public void updateStats(){
+
+    public void updateStats() {
         playerStatLabels.get(0).setText("BUILDINGS: " + stats.getBuildingCounter());
         playerStatLabels.get(1).setText("SATISFACTION: " + stats.getSatisfaction());
         playerStatLabels.get(2).setText("CURRENCY: " + String.format("$%.2f", stats.getCurrency()));
@@ -108,14 +112,16 @@ public class Hud {
         worldTimer = 300;
         timeCount = 0;
 
-        viewport = new FitViewport(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f, new OrthographicCamera());
+        viewport = new FitViewport(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f,
+                new OrthographicCamera());
         stage = new Stage(viewport, sb);
 
         Table table = new Table();
         table.top();
         table.setFillParent(true);
 
-        countdownLabel = new Label(String.format("%03d", worldTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        countdownLabel = new Label(String.format("%03d", worldTimer),
+                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
         table.add(timeLabel).expandX().pad(10);
@@ -137,12 +143,12 @@ public class Hud {
         stage.addActor(messageLabel); // Add the label to the stage
     }
 
-    public void update(float dt){
+    public void update(float dt) {
         updateStats();
         satisfactionUpdate(dt);
-        //fatigueUpdaate(dt);
+        // fatigueUpdaate(dt);
         timeCount += dt;
-        if(timeCount >= 1){
+        if (timeCount >= 1) {
             if (worldTimer > 0) {
                 worldTimer--;
             } else {
@@ -153,28 +159,41 @@ public class Hud {
             checkIfEnd();
         }
     }
-    public float getTimeCount(){
+
+    public float getTimeCount() {
         return worldTimer;
     }
 
-    public boolean isTimeUp() { return timeUp; }
+    public boolean isTimeUp() {
+        return timeUp;
+    }
 
-    public void sendMessage(String message){
+    public void sendMessage(String message) {
         messageLabel.setText(message);
         messageLabel.setVisible(true); // Show error message
     }
 
-    public void hideMessage(){
+    public void hideMessage() {
         messageLabel.setVisible(false);
     }
 
+    /**
+     * Displays a pop-up for the given event
+     *
+     * @param event
+     *
+     */
 
     /**
      * Updates the satisfaction value of the player every 30 seconds.
      *
      * @param dt the time delta between frames
      */
-    private void satisfactionUpdate(float dt){
+    public void showEventPopup(Event event) {
+        sendMessage(event.getDescription());
+    }
+
+    private void satisfactionUpdate(float dt) {
         if (worldTimer % 30 == 0 && worldTimer != 300 && !satUpdateOnce) {
             int increase = stats.calculateSatisfaction();
             gameScreen.popUp("+" + increase + " Satisfaction", 3);
@@ -191,13 +210,12 @@ public class Hud {
     /**
      * Checks if the game has ended (when the timer runs out).
      */
-    private void checkIfEnd(){
-        if (worldTimer == 0 && !endOnce){
+    private void checkIfEnd() {
+        if (worldTimer == 0 && !endOnce) {
             endOnce = true;
             music.stop();
             game.setScreen(new EndScreen(game, music, stats));
         }
     }
-
 
 }
