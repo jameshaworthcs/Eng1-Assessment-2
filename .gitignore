@@ -87,6 +87,9 @@ www-test/
 .externalToolBuilders/
 *.launch
 
+##VSCode:
+
+.vscode/settings.json
 
 ## NetBeans:
 
