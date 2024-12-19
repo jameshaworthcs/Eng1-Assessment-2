@@ -1,17 +1,15 @@
 package com.UniSim.game.Events;
 
+import com.UniSim.game.Screens.SettingsScreen;
 import com.UniSim.game.Stats.PlayerStats;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-
-//TODO: add event sound into this class so each event can have its own sound
 
 /**
  * The Event class represents an event that can occur in the game.
  * Events can affect the player's stats, trigger other events, or change the
  * game state.
  */
-
 public class Event {
     public enum EventType {
         POSITIVE, NEGATIVE, NEUTRAL
@@ -32,7 +30,6 @@ public class Event {
      * @param moneyEffect   The effect on the player's money.
      * @param soundFilePath The file path to the sound associated with the event.
      */
-
     public Event(EventType type, String description, int scoreEffect, int moneyEffect, String soundFilePath) {
         this.type = type;
         this.description = description;
@@ -63,6 +60,7 @@ public class Event {
     }
 
     public void playSound() {
-        eventSound.play();
+        float soundEffectsVolume = (float) (SettingsScreen.getSoundEffectsVolume() * 0.1);
+        eventSound.play(soundEffectsVolume);
     }
 }
