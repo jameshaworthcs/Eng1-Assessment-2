@@ -1,6 +1,10 @@
 package com.UniSim.game;
 
-import com.UniSim.game.Screens.*;
+import com.UniSim.game.Events.EventManager;
+import com.UniSim.game.Screens.GameScreen;
+import com.UniSim.game.Screens.HowToPlayScreen;
+import com.UniSim.game.Screens.LandingScreen;
+import com.UniSim.game.Screens.SettingsScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -15,8 +19,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 /**
- * The PauseMenu class handles the creation and functionality of the pause menu in the game.
- * It allows the player to pause the game, navigate to settings, see the 'How to Play' screen, or quit to the main menu.
+ * The PauseMenu class handles the creation and functionality of the pause menu
+ * in the game.
+ * It allows the player to pause the game, navigate to settings, see the 'How to
+ * Play' screen, or quit to the main menu.
  * The menu is overlaid with a semi-transparent blur effect when active.
  */
 public class PauseMenu {
@@ -26,7 +32,8 @@ public class PauseMenu {
     private GameScreen gameScreen;
     private UniSim game;
     private Music music;
-    private Stage stage;  // Declare stage here
+    private Stage stage; // Declare stage here
+    private EventManager eventManager;
 
     /**
      * Constructs a new PauseMenu instance.
@@ -38,10 +45,11 @@ public class PauseMenu {
      * @param music      the Music instance to control the game's audio
      */
     public PauseMenu(Stage stage, Skin skin, GameScreen gameScreen, UniSim game, Music music) {
-        this.stage = stage;  // Initialize stage here
+        this.stage = stage; // Initialize stage here
         this.gameScreen = gameScreen;
         this.game = game;
         this.music = music;
+        this.eventManager = gameScreen.getEventManager();
 
         // Create a blur overlay (semi-transparent black for a blurring effect)
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -74,7 +82,8 @@ public class PauseMenu {
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game, PauseMenu.this, music)); // Navigate to SettingsScreen and pass PauseMenu
+                game.setScreen(new SettingsScreen(game, PauseMenu.this, music)); // Navigate to SettingsScreen and pass
+                                                                                 // PauseMenu
             }
         });
         pauseMenu.add(settingsButton).pad(10).row();
@@ -84,7 +93,8 @@ public class PauseMenu {
         howToPlayButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new HowToPlayScreen(game, PauseMenu.this, music)); // Navigate to HowToPlayScreen and pass PauseMenu
+                game.setScreen(new HowToPlayScreen(game, PauseMenu.this, music)); // Navigate to HowToPlayScreen and
+                                                                                  // pass PauseMenu
             }
         });
         pauseMenu.add(howToPlayButton).pad(10).row();
@@ -115,7 +125,7 @@ public class PauseMenu {
 
     public void returnToPauseMenu() {
         game.setScreen(gameScreen); // Return to GameScreen to resume the game
-        togglePause();              // Show pause menu again
+        togglePause(); // Show pause menu again
     }
 
     public GameScreen getGameScreen() {
