@@ -255,6 +255,10 @@ public class GameScreen implements Screen {
         return stage;
     }
 
+    public EventManager getEventManager() {
+        return eventManager;
+    }
+
     /**
      * Renders the game scene each frame, handling input, updating game state,
      * and drawing all visible elements, including the player, map, buildings,
@@ -324,10 +328,11 @@ public class GameScreen implements Screen {
         moveRequest();
         manager.update();
         hud.update(delta);
+        eventManager.update();
         float deltaTime = Gdx.graphics.getDeltaTime();
         buildingInteraction(buildingManager.updateBuildingInteractions(player.b2body.getPosition(), camera, deltaTime));
 
-        float worldTime = hud.getTimeCount();
+        float worldTime = hud.getWorldTimer();
         if (worldTime % 60 == 0 && !loggedMinutes.contains(worldTime) && worldTime != 0 && worldTime != 300) {
             loggedMinutes.add(worldTime);
             studentLoan();

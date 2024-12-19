@@ -160,7 +160,7 @@ public class Hud {
         }
     }
 
-    public float getTimeCount() {
+    public float getWorldTimer() {
         return worldTimer;
     }
 
