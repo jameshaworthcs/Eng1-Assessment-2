@@ -30,7 +30,7 @@ public class EventManager {
      * Schedules the next event to occur at a random interval
      */
     private void scheduleNextEvent() {
-        int delay = 10 + random.nextInt(9) * 10;
+        int delay = 10 + random.nextInt(9) * 10; // Maixmum delay of 90 seconds as at least 3 needed a game
         Timer.schedule(new Task() {
             @Override
             public void run() {
