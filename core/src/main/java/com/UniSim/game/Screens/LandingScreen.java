@@ -267,7 +267,7 @@ public class LandingScreen implements Screen {
      */
     private List<Float> getLeaderboardSat() {
         List<Float> leaderboardSat = new ArrayList<>();
-        FileHandle file = Gdx.files.local("leaderboard.txt");
+        FileHandle file = Gdx.files.local("stats\\leaderboard.txt");
 
         if (file.exists()) {
             // Read the entire file as a string
