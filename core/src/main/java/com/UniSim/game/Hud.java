@@ -146,7 +146,7 @@ public class Hud {
     public void update(float dt) {
         updateStats();
         satisfactionUpdate(dt);
-        // fatigueUpdaate(dt);
+        // fatigueUpdate(dt);
         timeCount += dt;
         if (timeCount >= 1) {
             if (worldTimer > 0) {
@@ -214,7 +214,7 @@ public class Hud {
         if (worldTimer == 0 && !endOnce) {
             endOnce = true;
             music.stop();
-            game.setScreen(new EndScreen(game, music, stats));
+            game.setScreen(new EndScreen(game, music, stats, PlayerStats.getUsername()));
         }
     }
 
