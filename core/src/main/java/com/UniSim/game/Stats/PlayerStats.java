@@ -17,6 +17,7 @@ public class PlayerStats {
     private float currency;
     private int fatigue;
     private int knowledge;
+    private static String username;
 
     /**
      * Initializes the PlayerStats object with default values.
@@ -53,6 +54,11 @@ public class PlayerStats {
 
     public int getBuildingCounter() {
         return buildingCounter;
+    }
+
+    public static String getUsername() {
+        System.err.println("Username: " + PlayerStats.username);
+        return PlayerStats.username;
     }
 
     // change stats
@@ -149,6 +155,10 @@ public class PlayerStats {
      */
     public void takeOffBuildingCost(float currency) {
         this.currency -= currency;
+    }
+
+    public static void setUsername(String username) {
+        PlayerStats.username = username;
     }
 
 }

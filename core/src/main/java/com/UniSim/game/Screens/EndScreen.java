@@ -1,7 +1,7 @@
 package com.UniSim.game.Screens;
-import static com.UniSim.game.Constants.*;
-import com.UniSim.game.Stats.PlayerStats;
+
 import com.UniSim.game.UniSim;
+import com.UniSim.game.Stats.PlayerStats;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -24,7 +24,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
  * EndScreen class represents the screen shown when the game ends.
- * It displays the final stats of the game, including satisfaction and other metrics,
+ * It displays the final stats of the game, including satisfaction and other
+ * metrics,
  * and allows the player to return to the main screen.
  */
 public class EndScreen implements Screen {
@@ -41,24 +42,22 @@ public class EndScreen implements Screen {
     private Skin skin;
     private BitmapFont font;
     private BitmapFont titleFont;
-    private Label.LabelStyle labelStyle;
-    private Label.LabelStyle titleLabelStyle;
     private PlayerStats finalStats;
-
-    private float satisfactionLeft;
+    private int satisfactionLeft;
 
     /**
      * Constructor for EndScreen.
      *
-     * @param game The game instance.
-     * @param music The background music to play during the EndScreen.
+     * @param game       The game instance.
+     * @param music      The background music to play during the EndScreen.
      * @param finalStats The final player stats to display on the EndScreen.
      */
-    public EndScreen(UniSim game, Music music, PlayerStats finalStats) {
+    public EndScreen(UniSim game, Music music, PlayerStats finalStats, String username) {
         this.game = game;
         this.manager = new AssetManager();
         this.finalStats = finalStats;
-        this.satisfactionLeft = Float.parseFloat(finalStats.getSatisfaction());
+        this.satisfactionLeft = finalStats.getSatisfaction();
+        PlayerStats.getUsername();
 
         initializeMusic(music);
         initializeStage();
@@ -89,26 +88,28 @@ public class EndScreen implements Screen {
     }
 
     /**
-     * Initializes the user interface for the EndScreen, including fonts, button styles, and labels.
+     * Initializes the user interface for the EndScreen, including fonts, button
+     * styles, and labels.
      */
     private void initializeUI() {
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         font = new BitmapFont(Gdx.files.internal("Font1.fnt"));
         font.getData().setScale(FONT_SCALE);
-        labelStyle = new Label.LabelStyle(font, null);
+        new Label.LabelStyle(font, null);
 
         titleFont = new BitmapFont(Gdx.files.internal("titleFont.fnt"));
         titleFont.getData().setScale(TITLE_FONT_SCALE);
-        titleLabelStyle = new Label.LabelStyle(titleFont, null);
+        new Label.LabelStyle(titleFont, null);
 
         // Adjust default skin font size
         skin.getFont("default-font").getData().setScale(2f);
-        //show();
+        // show();
     }
 
     /**
-     * Initializes and displays UI elements such as labels and buttons on the screen.
+     * Initializes and displays UI elements such as labels and buttons on the
+     * screen.
      */
     @Override
     public void show() {
@@ -128,7 +129,6 @@ public class EndScreen implements Screen {
             }
         });
 
-
         BitmapFont customFont = new BitmapFont(Gdx.files.internal("Font1.fnt"));
         customFont.getData().setScale(0.9f);
 
@@ -138,7 +138,6 @@ public class EndScreen implements Screen {
 
         BitmapFont customFont1 = new BitmapFont(Gdx.files.internal("Font1.fnt"));
         customFont1.getData().setScale(0.15f);
-
 
         Label.LabelStyle customLabelStyle1 = new Label.LabelStyle();
         customLabelStyle1.font = customFont1;
@@ -156,21 +155,22 @@ public class EndScreen implements Screen {
 
         this.satisfactionLeft += currencyAddition + knowledgeAddition - fatigueSubtraction;
 
-
         Label CongratulationsLabel = new Label("Congratulations", customLabelStyle);
         Label endGameDetailLabel = new Label(
-            "You Finished with:\n" +
-                "You finished with " + beforeSatisfactionLeft + " satisfaction but you had\n" +
-                currencyLeft + " currency left which gave an additional "+ currencyAddition + " satisfaction\n" +
-                fatigueLeft + " fatigue which subtracted " + fatigueSubtraction +" satisfaction\n" +
-                knowledgeLeft + " knowledge which gave an additional " + knowledgeAddition + " satisfaction\n" +
-                "Resulting in a total of " + this.satisfactionLeft + " satisfaction",
-            customLabelStyle1);
+                "You Finished with:\n" +
+                        "You finished with " + beforeSatisfactionLeft + " satisfaction but you had\n" +
+                        currencyLeft + " currency left which gave an additional " + currencyAddition + " satisfaction\n"
+                        +
+                        fatigueLeft + " fatigue which subtracted " + fatigueSubtraction + " satisfaction\n" +
+                        knowledgeLeft + " knowledge which gave an additional " + knowledgeAddition + " satisfaction\n" +
+                        "Resulting in a total of " + this.satisfactionLeft + " satisfaction",
+                customLabelStyle1);
         endGameDetailLabel.setWrap(true);
         endGameDetailLabel.setAlignment(Align.center);
 
         // Positioning and adding elements to the stage
-        CongratulationsLabel.setPosition((stage.getViewport().getWorldWidth() - CongratulationsLabel.getWidth()) / 2, 1000);
+        CongratulationsLabel.setPosition((stage.getViewport().getWorldWidth() - CongratulationsLabel.getWidth()) / 2,
+                1000);
         endGameDetailLabel.setPosition((stage.getViewport().getWorldWidth() - endGameDetailLabel.getWidth()) / 2, 460);
 
         backButton.setPosition(10, 1360);
@@ -235,10 +235,9 @@ public class EndScreen implements Screen {
      */
     private void saveSatisfaction() {
         // Get a handle to the file in the local storage
-        FileHandle file = Gdx.files.local("leaderboard.txt");
-        System.out.println("Saving to: " + file.file().getAbsolutePath());
-        // Append the satisfaction value to the file, followed by a newline for readability
-        file.writeString(satisfactionLeft + "\n", true);
+        FileHandle file = Gdx.files.local("stats\\leaderboard.txt");
+        // Append the username satisfaction value to the file, followed by a newline for
+        // readability
+        file.writeString(satisfactionLeft + ", " + PlayerStats.getUsername() + "\n", true);
     }
 }
-
