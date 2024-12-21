@@ -1,6 +1,10 @@
 package com.UniSim.game.Screens;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.UniSim.game.UniSim;
+import com.UniSim.game.Stats.PlayerStats;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -16,37 +20,37 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.logging.FileHandler;
-
 /**
  * This screen is the landing page of the game. It allows the player to choose
- * between starting a new game, accessing settings, viewing instructions, checking credits,
- * or quitting the game. It also displays the leaderboard of players' satisfaction scores.
+ * between starting a new game, accessing settings, viewing instructions,
+ * checking credits,
+ * or quitting the game. It also displays the leaderboard of players'
+ * satisfaction scores.
  */
 public class LandingScreen implements Screen {
     private UniSim game;
     private Texture backgroundTexture;
     private Label.LabelStyle labelStyle;
     private Label.LabelStyle titleLabelStyle;
-    private Music music;  // Initialize music
+    private Music music; // Initialize music
     public Table leaderboardTable;
     public Stage stage;
     private Skin skin;
     private BitmapFont font;
     private BitmapFont titleFont;
 
-    private List<Float> leaderboardSat;
+    private List<String> leaderboardSat;
+    private List<String> leaderboardNames;
+
+    private TextField usernameTextField;
 
     public Stage getStage() {
         return stage;
     }
-
 
     /**
      * Constructor for the LandingScreen.
@@ -56,7 +60,6 @@ public class LandingScreen implements Screen {
      */
     public LandingScreen(UniSim game) {
         this.game = game;
-        this.leaderboardSat = getLeaderboardSat();
 
         // Initialize music
         music = Gdx.audio.newMusic(Gdx.files.internal("music/awesomeness.wav"));
@@ -65,7 +68,8 @@ public class LandingScreen implements Screen {
         music.play();
 
         // Set up stage and UI elements
-        //stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        // stage = new Stage(new FitViewport(Gdx.graphics.getWidth(),
+        // Gdx.graphics.getHeight()));
         stage = new Stage(new FitViewport(2560, 1440));
         Gdx.input.setInputProcessor(stage);
 
@@ -93,21 +97,29 @@ public class LandingScreen implements Screen {
         TextButton quitButton = new TextButton("Quit", skin);
         TextButton clearLeaderboardButton = new TextButton("Clear Leaderboard", skin);
 
+        usernameTextField = new TextField("Enter your username", skin);
+        usernameTextField.setSize(500, 60);
+        usernameTextField.setPosition(50, 1000);
+
         // Set up button listeners
         playGameButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                String username = usernameTextField.getText();
+                PlayerStats.setUsername(username);
                 if (music.isPlaying()) {
-                    music.stop();  // Stop LandingScreen's music completely before switching to GameScreen
+                    music.stop(); // Stop LandingScreen's music completely before switching to GameScreen
                 }
                 game.setScreen(new GameScreen(game, music));
+                System.err.println("Username: " + username);
+                System.err.println(PlayerStats.getUsername());
             }
         });
 
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game, LandingScreen.this, music));  // Pass music to SettingsScreen
+                game.setScreen(new SettingsScreen(game, LandingScreen.this, music)); // Pass music to SettingsScreen
             }
         });
 
@@ -151,26 +163,29 @@ public class LandingScreen implements Screen {
         this.leaderboardTable = new Table();
         leaderboardTable.top().left();
 
-        // Sort and limit leaderboard times to top ten
-        List<Float> sortedTimes = new ArrayList<>(leaderboardSat);
-        sortedTimes.sort(Comparator.reverseOrder());
-        int limit = Math.min(10, sortedTimes.size());
+        // Get leaderboard data
+        List<List<String>> leaderboard = getLeaderboard();
+        int limit = Math.min(10, leaderboard.size());
 
         Label rankHeader = new Label("Rank", skin);
-        Label timeHeader = new Label("Time", skin);
+        Label scoreHeader = new Label("Score", skin);
 
         leaderboardTable.add(rankHeader).pad(5).left();
-        leaderboardTable.add(timeHeader).pad(5).expandX().center();
+        leaderboardTable.add(scoreHeader).pad(5).expandX().center();
         leaderboardTable.row();
 
         for (int i = 0; i < limit; i++) {
-            Label rankLabel = new Label((i + 1) + ".", skin);
-            Label timeLabel = new Label(String.format("%.1f satisfaction", sortedTimes.get(i)), skin);
+            List<String> entry = leaderboard.get(i);
+            String name = entry.get(0);
+            String score = entry.get(1);
+
+            Label rankLabel = new Label((i + 1) + ".  " + name, skin);
+            Label scoreLabel = new Label(score, skin);
             rankLabel.setColor(0, 1f, 0.5f, 1);
-            timeLabel.setColor(0, 1f, 0.5f, 1);
+            scoreLabel.setColor(0, 1f, 0.5f, 1);
 
             leaderboardTable.add(rankLabel).pad(5).left();
-            leaderboardTable.add(timeLabel).pad(5).expandX().center();
+            leaderboardTable.add(scoreLabel).pad(5).expandX().center();
             leaderboardTable.row();
         }
 
@@ -206,6 +221,7 @@ public class LandingScreen implements Screen {
         clearLeaderboardButton.setSize(300, 50);
         clearLeaderboardButton.setPosition(1550, 190);
 
+        stage.addActor(usernameTextField);
         stage.addActor(playGameButton);
         stage.addActor(settingsButton);
         stage.addActor(howToPlayButton);
@@ -245,7 +261,7 @@ public class LandingScreen implements Screen {
         stage.dispose();
         skin.dispose();
         backgroundTexture.dispose();
-        music.dispose();  // Dispose music when LandingScreen is no longer needed
+        music.dispose(); // Dispose music when LandingScreen is no longer needed
     }
 
     @Override
@@ -265,8 +281,8 @@ public class LandingScreen implements Screen {
      *
      * @return A list of satisfaction scores from the leaderboard
      */
-    private List<Float> getLeaderboardSat() {
-        List<Float> leaderboardSat = new ArrayList<>();
+    private List<List<String>> getLeaderboard() {
+        List<List<String>> leaderboard = new ArrayList<>();
         FileHandle file = Gdx.files.local("stats\\leaderboard.txt");
 
         if (file.exists()) {
@@ -275,17 +291,28 @@ public class LandingScreen implements Screen {
             // Split file into lines (assuming each line is a satisfaction value)
             String[] lines = fileContents.split("\n");
 
-            // Parse each line as a float and add it to the list
+            // Parse each line and add it to the list
             for (String line : lines) {
-                try {
-                    float satisfaction = Float.parseFloat(line.trim());  // Convert line to float
-                    leaderboardSat.add(satisfaction);
-                } catch (NumberFormatException e) {
-                    System.err.println("Error parsing value: " + line);
+                String[] parts = line.split(",");
+                if (parts.length >= 2) {
+                    try {
+                        int satisfaction = Integer.parseInt(parts[0].trim());
+                        String name = parts[1].trim();
+                        List<String> entry = new ArrayList<>();
+                        entry.add(name);
+                        entry.add(String.valueOf(satisfaction));
+                        leaderboard.add(entry);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error parsing value: " + line);
+                    }
                 }
             }
         }
-        return leaderboardSat;
+
+        // Sort the entries by satisfaction score in descending order
+        leaderboard.sort((a, b) -> Float.compare(Float.parseFloat(b.get(1)), Float.parseFloat(a.get(1))));
+
+        return leaderboard;
     }
 
     /**
@@ -293,7 +320,7 @@ public class LandingScreen implements Screen {
      */
     public void clearLeaderboardSat() {
         // Get a handle to the file
-        FileHandle file = Gdx.files.local("leaderboard.txt");
+        FileHandle file = Gdx.files.local("stats\\leaderboard.txt");
 
         // Write an empty string to clear the file's content
         file.writeString("", false);
