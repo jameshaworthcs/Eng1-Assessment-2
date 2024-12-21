@@ -36,8 +36,8 @@ public class PlayerStats {
     }
 
     // get stats
-    public String getSatisfaction() {
-        return Integer.toString(satisfaction);
+    public int getSatisfaction() {
+        return satisfaction;
     }
 
     public float getCurrency() {
