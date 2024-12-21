@@ -111,8 +111,6 @@ public class LandingScreen implements Screen {
                     music.stop(); // Stop LandingScreen's music completely before switching to GameScreen
                 }
                 game.setScreen(new GameScreen(game, music));
-                System.err.println("Username: " + username);
-                System.err.println(PlayerStats.getUsername());
             }
         });
 

@@ -57,7 +57,6 @@ public class PlayerStats {
     }
 
     public static String getUsername() {
-        System.err.println("Username: " + PlayerStats.username);
         return PlayerStats.username;
     }
 
