@@ -108,7 +108,7 @@ public class CreditsScreen implements Screen {
                 "Town music - https://opengameart.org/content/town-music\n" +
                 "Game icons - https://kenney.nl/assets/game-icons\n" +
                 "Ending Music - https://opengameart.org/content/rpg-towntravel-or-credits-song,%20end%20music%20cc-by%203.0\n" +
-                "\nGame Developed by: Juliet Urquhart, Katie Schilling, Matias Duplock, Mohammed Elijack, Nora Wu and Theo Coleman",
+                "\nGame Developed by: Mark Faizi, Ben Faulkner, Lewis Hanson, Ziyad Rashad Hassan, James Haworth",
             customLabelStyle1);
         creditsLabel.setWrap(true);
         creditsLabel.setAlignment(Align.center);
