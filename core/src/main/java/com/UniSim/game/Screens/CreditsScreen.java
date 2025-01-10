@@ -105,6 +105,9 @@ public class CreditsScreen implements Screen {
                 "Speech Bubble - https://opengameart.org/users/charlexmachina\n" +
                 "Map textures - https://opengameart.org/users/isaiah658\n" +
                 "Background music  https://opengameart.org/users/mrpoly\n" +
+                "Positive event sound - https://opengameart.org/content/achievement\n" +
+                "Neutral event sound - https://samplefocus.com/samples/ping-bing\n" +
+                "Negative event sound - https://pixabay.com/sound-effects/negative-101682/\n" +
                 "Town music - https://opengameart.org/content/town-music\n" +
                 "Game icons - https://kenney.nl/assets/game-icons\n" +
                 "Ending Music - https://opengameart.org/content/rpg-towntravel-or-credits-song,%20end%20music%20cc-by%203.0\n" +

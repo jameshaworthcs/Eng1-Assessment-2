@@ -60,7 +60,7 @@ public class Event {
     }
 
     public void playSound() {
-        float soundEffectsVolume = (float) (SettingsScreen.getSoundEffectsVolume() * 0.1);
+        float soundEffectsVolume = (float) (SettingsScreen.getSoundEffectsVolume() * 0.2);
         eventSound.play(soundEffectsVolume);
     }
 }
