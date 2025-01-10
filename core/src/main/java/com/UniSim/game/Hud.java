@@ -120,7 +120,7 @@ public class Hud {
         table.top();
         table.setFillParent(true);
 
-        countdownLabel = new Label(String.format("%03d", worldTimer),
+        countdownLabel = new Label(String.format("%02d:%02d", worldTimer / 60, worldTimer % 60),
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
@@ -154,7 +154,7 @@ public class Hud {
             } else {
                 timeUp = true;
             }
-            countdownLabel.setText(String.format("%03d", worldTimer));
+            countdownLabel.setText(String.format("%02d:%02d", worldTimer / 60, worldTimer % 60));
             timeCount = 0;
             checkIfEnd();
         }
