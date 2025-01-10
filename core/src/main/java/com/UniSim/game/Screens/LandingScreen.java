@@ -38,6 +38,7 @@ public class LandingScreen implements Screen {
     private Texture backgroundTexture;
     private Label.LabelStyle labelStyle;
     private Label.LabelStyle titleLabelStyle;
+    private Label.LabelStyle subtextLabelStyle;
     private Music music; // Initialize music
     public Table leaderboardTable;
     public Stage stage;
@@ -213,14 +214,27 @@ public class LandingScreen implements Screen {
         }
 
         ScrollPane scrollPane = new ScrollPane(leaderboardTable, skin);
-        scrollPane.setSize(1070, 580);
-        scrollPane.setPosition(800, 250);
+        scrollPane.setSize(1070, 300);
+        scrollPane.setPosition(800, 400);
         scrollPane.setFadeScrollBars(false);
 
-        Label headerLabel = new Label("Leaderboard", labelStyle);
-        headerLabel.setColor(0, 0.5f, 1, 1);
-        headerLabel.setPosition(800, 850);
+        // Create larger style for the header
+        Label.LabelStyle headerLabelStyle = new Label.LabelStyle(font, Color.valueOf("007FFF"));
+        headerLabelStyle.font = font;
+        headerLabelStyle.font.getData().setScale(0.7f);  // Larger scale for header
+
+        Label headerLabel = new Label("Leaderboard", headerLabelStyle);
+        headerLabel.setPosition(800, 750);
         stage.addActor(headerLabel);
+
+        // Create smaller style for the subtext with its own font instance
+        BitmapFont subtextFont = new BitmapFont(Gdx.files.internal("Font1.fnt"));
+        subtextFont.getData().setScale(0.25f);  // Much smaller scale for subtext
+        this.subtextLabelStyle = new Label.LabelStyle(subtextFont, Color.valueOf("007FFF"));
+
+        Label topPlayersLabel = new Label("(Top 5 Players Shown)", this.subtextLabelStyle);
+        topPlayersLabel.setPosition(800, 320);
+        stage.addActor(topPlayersLabel);
 
         Label gameTitle = new Label("UniSim", titleLabelStyle);
         gameTitle.setPosition(50, 1100);
@@ -286,6 +300,11 @@ public class LandingScreen implements Screen {
         skin.dispose();
         backgroundTexture.dispose();
         music.dispose(); // Dispose music when LandingScreen is no longer needed
+        font.dispose();
+        titleFont.dispose();
+        if (subtextLabelStyle != null && subtextLabelStyle.font != null) {
+            subtextLabelStyle.font.dispose();
+        }
     }
 
     @Override
