@@ -1,12 +1,15 @@
 package com.UniSim.game;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.UniSim.game.Events.Event;
 import com.UniSim.game.Screens.EndScreen;
 import com.UniSim.game.Screens.GameScreen;
 import com.UniSim.game.Stats.PlayerStats;
 import com.UniSim.game.Stats.StatsLabels;
+import com.UniSim.game.Stats.AchievementManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -41,6 +44,7 @@ public class Hud {
     private boolean endOnce;
     private UniSim game;
     private Music music;
+    private AchievementManager achievementManager;
 
     Label countdownLabel;
     Label timeLabel;
@@ -49,6 +53,23 @@ public class Hud {
 
     private ArrayList<StatsLabels> playerStatLabels;
     private Label messageLabel;
+
+    private Queue<NotificationMessage> messageQueue;
+    private ArrayList<NotificationMessage> activeMessages;
+    private static final float MESSAGE_DURATION = 5f; // Messages last for 5 seconds
+    private static final float MESSAGE_SPACING = 30f; // Vertical space between messages
+
+    private class NotificationMessage {
+        String text;
+        float timeLeft;
+        Label label;
+
+        NotificationMessage(String text, float duration, Label label) {
+            this.text = text;
+            this.timeLeft = duration;
+            this.label = label;
+        }
+    }
 
     /**
      * Creates a new Hud instance.
@@ -68,9 +89,12 @@ public class Hud {
         this.endOnce = false;
         this.game = game;
         this.music = music;
+        this.messageQueue = new LinkedList<>();
+        this.activeMessages = new ArrayList<>();
         setTimer(sb);
         setStats(skin, world);
         createMessageLabel(skin);
+        this.achievementManager = new AchievementManager(this);
     }
 
     public PlayerStats getStats() {
@@ -138,14 +162,36 @@ public class Hud {
      */
     private void createMessageLabel(Skin skin) {
         messageLabel = new Label("", skin);
-        messageLabel.setPosition(10, 20); // Set the position for the message
-        messageLabel.setVisible(false); // Initially hidden
-        stage.addActor(messageLabel); // Add the label to the stage
+        messageLabel.setVisible(false);
+        stage.addActor(messageLabel);
+    }
+
+    public void sendMessage(String message) {
+        Label newLabel = new Label(message, skin);
+        newLabel.setPosition(10, 20);
+        newLabel.setVisible(true);
+        stage.addActor(newLabel);
+        
+        NotificationMessage notification = new NotificationMessage(message, MESSAGE_DURATION, newLabel);
+        activeMessages.add(notification);
+        
+        // Update positions of all active messages
+        updateMessagePositions();
+    }
+
+    private void updateMessagePositions() {
+        float currentY = 20;
+        for (NotificationMessage msg : activeMessages) {
+            msg.label.setPosition(10, currentY);
+            currentY += MESSAGE_SPACING;
+        }
     }
 
     public void update(float dt) {
         updateStats();
         satisfactionUpdate(dt);
+        achievementManager.update(dt);
+        updateNotifications(dt);
         // fatigueUpdate(dt);
         timeCount += dt;
         if (timeCount >= 1) {
@@ -160,6 +206,24 @@ public class Hud {
         }
     }
 
+    private void updateNotifications(float dt) {
+        ArrayList<NotificationMessage> messagesToRemove = new ArrayList<>();
+        
+        for (NotificationMessage message : activeMessages) {
+            message.timeLeft -= dt;
+            if (message.timeLeft <= 0) {
+                message.label.remove(); // Remove the label from the stage
+                messagesToRemove.add(message);
+            }
+        }
+        
+        activeMessages.removeAll(messagesToRemove);
+        
+        if (!messagesToRemove.isEmpty()) {
+            updateMessagePositions(); // Reposition remaining messages
+        }
+    }
+
     public float getWorldTimer() {
         return worldTimer;
     }
@@ -168,13 +232,8 @@ public class Hud {
         return timeUp;
     }
 
-    public void sendMessage(String message) {
-        messageLabel.setText(message);
-        messageLabel.setVisible(true); // Show error message
-    }
-
     public void hideMessage() {
-        messageLabel.setVisible(false);
+        // This method is kept for compatibility but no longer needed
     }
 
     /**
@@ -214,7 +273,9 @@ public class Hud {
         if (worldTimer == 0 && !endOnce) {
             endOnce = true;
             music.stop();
-            game.setScreen(new EndScreen(game, music, stats, PlayerStats.getUsername()));
+            int achievementBonus = achievementManager.calculateAchievementBonus();
+            stats.increaseSatisfaction(achievementBonus); // Add achievement bonuses to final score
+            game.setScreen(new EndScreen(game, music, stats, PlayerStats.getUsername(), achievementManager.getUnlockedAchievements()));
         }
     }
 

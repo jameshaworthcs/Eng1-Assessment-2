@@ -1,7 +1,10 @@
 package com.UniSim.game.Screens;
 
+import java.util.List;
+
 import com.UniSim.game.UniSim;
 import com.UniSim.game.Stats.PlayerStats;
+import com.UniSim.game.Stats.Achievement;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -44,6 +47,7 @@ public class EndScreen implements Screen {
     private BitmapFont titleFont;
     private PlayerStats finalStats;
     private int satisfactionLeft;
+    private List<Achievement> unlockedAchievements;
 
     /**
      * Constructor for EndScreen.
@@ -52,11 +56,12 @@ public class EndScreen implements Screen {
      * @param music      The background music to play during the EndScreen.
      * @param finalStats The final player stats to display on the EndScreen.
      */
-    public EndScreen(UniSim game, Music music, PlayerStats finalStats, String username) {
+    public EndScreen(UniSim game, Music music, PlayerStats finalStats, String username, List<Achievement> unlockedAchievements) {
         this.game = game;
         this.manager = new AssetManager();
         this.finalStats = finalStats;
         this.satisfactionLeft = finalStats.getSatisfaction();
+        this.unlockedAchievements = unlockedAchievements;
         PlayerStats.getUsername();
 
         initializeMusic(music);
@@ -155,15 +160,28 @@ public class EndScreen implements Screen {
 
         this.satisfactionLeft += currencyAddition + knowledgeAddition - fatigueSubtraction;
 
+        // Calculate achievement bonuses
+        int achievementBonus = 0;
+        StringBuilder achievementText = new StringBuilder();
+        if (!unlockedAchievements.isEmpty()) {
+            achievementText.append("\n\nAchievements Unlocked:\n");
+            for (Achievement achievement : unlockedAchievements) {
+                achievementText.append("- ").append(achievement.getName())
+                    .append(" (").append(achievement.getDescription()).append("): +")
+                    .append(achievement.getSatisfactionBonus()).append(" satisfaction\n");
+                achievementBonus += achievement.getSatisfactionBonus();
+            }
+        }
+
         Label CongratulationsLabel = new Label("Congratulations", customLabelStyle);
         Label endGameDetailLabel = new Label(
                 "You Finished with:\n" +
                         "You finished with " + beforeSatisfactionLeft + " satisfaction but you had\n" +
-                        currencyLeft + " currency left which gave an additional " + currencyAddition + " satisfaction\n"
-                        +
+                        currencyLeft + " currency left which gave an additional " + currencyAddition + " satisfaction\n" +
                         fatigueLeft + " fatigue which subtracted " + fatigueSubtraction + " satisfaction\n" +
-                        knowledgeLeft + " knowledge which gave an additional " + knowledgeAddition + " satisfaction\n" +
-                        "Resulting in a total of " + this.satisfactionLeft + " satisfaction",
+                        knowledgeLeft + " knowledge which gave an additional " + knowledgeAddition + " satisfaction" +
+                        achievementText.toString() +
+                        "\nResulting in a total of " + this.satisfactionLeft + " satisfaction",
                 customLabelStyle1);
         endGameDetailLabel.setWrap(true);
         endGameDetailLabel.setAlignment(Align.center);
