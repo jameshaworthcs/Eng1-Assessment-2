@@ -2,12 +2,6 @@ package com.UniSim.game.Screens;
 
 import static com.UniSim.game.Constants.*;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
-import com.UniSim.game.Hud;
-import com.UniSim.game.PauseMenu;
-import com.UniSim.game.UniSim;
 import com.UniSim.game.Buildings.Building;
 import com.UniSim.game.Buildings.BuildingManager;
 import com.UniSim.game.Buildings.Types.Academic;
@@ -15,9 +9,17 @@ import com.UniSim.game.Buildings.Types.Accommodation;
 import com.UniSim.game.Buildings.Types.Food;
 import com.UniSim.game.Buildings.Types.Recreational;
 import com.UniSim.game.Buildings.Types.Workplace;
-import com.UniSim.game.Events.EventManager;
 import com.UniSim.game.Sprites.Character;
+import com.UniSim.game.Events.EventManager;
+import com.UniSim.game.Hud;
+import com.UniSim.game.PauseMenu;
+import com.UniSim.game.Settings.GameSettings;
 import com.UniSim.game.Sprites.SpeechBubble;
+import com.UniSim.game.UniSim;
+
+import java.util.ArrayList;
+import java.util.Objects;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -29,6 +31,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -68,6 +71,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
  */
 public class GameScreen implements Screen {
     private UniSim game;
+    private SpriteBatch batch;
     private Stage stage;
 
     private BuildingManager buildingManager;
@@ -120,6 +124,7 @@ public class GameScreen implements Screen {
      */
     public GameScreen(UniSim game, Music music) {
         this.game = game;
+        this.batch = new SpriteBatch();
         loggedMinutes = new ArrayList<>();
         playerNearReseption = false;
         characterTexture = new Texture("character-1.png");
@@ -148,7 +153,8 @@ public class GameScreen implements Screen {
         buildingManager = new BuildingManager(stage, skin, world, tiledMap, this);
 
         this.music = music;
-        float volume = music.getVolume();
+        float volume = GameSettings.getMusicVolume();
+        music.setVolume(volume);
         manager = new AssetManager();
         manager.load("music/harbor.mp3", Music.class);
         manager.finishLoading();
@@ -609,6 +615,7 @@ public class GameScreen implements Screen {
         world.dispose();
         stage.dispose();
         skin.dispose();
+        batch.dispose();
     }
 
     /**

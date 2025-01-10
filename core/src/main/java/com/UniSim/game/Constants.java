@@ -14,6 +14,7 @@ public final class Constants
     public static final float CHARACTER_SIZE_X = 14;// Character size in pixels (50x50)
     public static final float CHARACTER_SIZE_Y = 18;
     public static final float CHARACTER_SPEED = 10;// Movement speed in pixels per second
+    public static final float TIME_LIMIT = 300; // Game time limit in seconds (5 minutes)
     // Map size (resized to 4400x2000)
     public static final float MAP_SIZE_X = 1600 * PPM;
     public static final float MAP_SIZE_Y = 800 * PPM;

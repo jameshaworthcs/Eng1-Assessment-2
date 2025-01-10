@@ -109,7 +109,7 @@ public class Hud {
      * @param sb the SpriteBatch used for rendering the timer
      */
     private void setTimer(SpriteBatch sb) {
-        worldTimer = 300;
+        worldTimer = (int) Constants.TIME_LIMIT;
         timeCount = 0;
 
         viewport = new FitViewport(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f,
@@ -194,7 +194,7 @@ public class Hud {
     }
 
     private void satisfactionUpdate(float dt) {
-        if (worldTimer % 30 == 0 && worldTimer != 300 && !satUpdateOnce) {
+        if (worldTimer % 30 == 0 && worldTimer != Constants.TIME_LIMIT && !satUpdateOnce) {
             int increase = stats.calculateSatisfaction();
             gameScreen.popUp("+" + increase + " Satisfaction", 3);
             stats.increaseSatisfaction(increase);

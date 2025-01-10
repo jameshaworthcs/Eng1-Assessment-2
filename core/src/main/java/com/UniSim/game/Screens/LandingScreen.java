@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.UniSim.game.UniSim;
+import com.UniSim.game.Settings.GameSettings;
 import com.UniSim.game.Stats.PlayerStats;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -64,7 +65,7 @@ public class LandingScreen implements Screen {
         // Initialize music
         music = Gdx.audio.newMusic(Gdx.files.internal("music/awesomeness.wav"));
         music.setLooping(true);
-        music.setVolume(1.0f);
+        music.setVolume(GameSettings.getMusicVolume()); // Use saved volume setting
         music.play();
 
         // Set up stage and UI elements

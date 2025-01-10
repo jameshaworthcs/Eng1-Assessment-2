@@ -1,6 +1,7 @@
 package com.UniSim.game.Screens;
 
 import com.UniSim.game.PauseMenu;
+import com.UniSim.game.Settings.GameSettings;
 import com.UniSim.game.UniSim;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -32,51 +33,29 @@ public class SettingsScreen implements Screen {
     private Stage stage;
     private Skin skin;
     private Texture backgroundTexture;
-    private Music music; // Music instance to control
+    private Music music;
     private LandingScreen landingScreen;
     private PauseMenu pauseMenu;
-    private static float soundEffectsVolume = 1.0f; // Default sound effects volume
 
-    /**
-     * Constructor for SettingsScreen accessed from LandingScreen.
-     * Initializes the screen with the game, landing screen, and music reference.
-     *
-     * @param game          The game instance for screen switching
-     * @param landingScreen The landing screen to return to
-     * @param music         The music instance to control volume
-     */
     public SettingsScreen(UniSim game, LandingScreen landingScreen, Music music) {
         this.game = game;
         this.landingScreen = landingScreen;
-        this.music = music; // Store the reference to the music instance
+        this.music = music;
         initialize();
     }
 
-    /**
-     * Constructor for SettingsScreen accessed from PauseMenu.
-     * Initializes the screen with the game, pause menu, and music reference.
-     *
-     * @param game      The game instance for screen switching
-     * @param pauseMenu The pause menu to return to
-     * @param music     The music instance to control volume
-     */
     public SettingsScreen(UniSim game, PauseMenu pauseMenu, Music music) {
         this.game = game;
         this.pauseMenu = pauseMenu;
-        this.music = music; // Store the reference to the music instance
+        this.music = music;
         initialize();
     }
 
-    /**
-     * Initializes the UI elements for the settings screen including buttons,
-     * sliders, and labels for resolution and music volume settings.
-     */
     private void initialize() {
         stage = new Stage(new FitViewport(2560, 1440));
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         Gdx.input.setInputProcessor(stage);
 
-        // Load background texture
         backgroundTexture = new Texture("LoadScreenBackground.png");
 
         Table table = new Table();
@@ -88,19 +67,18 @@ public class SettingsScreen implements Screen {
         LabelStyle customLabelStyle = new LabelStyle();
         customLabelStyle.font = customFont;
 
-        // Back button to return to previous screen
+        // Back button
         Button backButton = new Button(skin);
         backButton.add(new Label("Back", customLabelStyle));
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (pauseMenu != null) {
-                    // Return to PauseMenu if accessed from there
-                    pauseMenu.returnToPauseMenu(); // Return to PauseMenu
-                    Gdx.input.setInputProcessor(pauseMenu.getStage()); // Show the PauseMenu overlay
+                    pauseMenu.returnToPauseMenu();
+                    Gdx.input.setInputProcessor(pauseMenu.getStage());
                 } else if (landingScreen != null) {
-                    game.setScreen(landingScreen); // Return to LandingScreen
-                    Gdx.input.setInputProcessor(landingScreen.getStage()); // Reset input processor for LandingScreen
+                    game.setScreen(landingScreen);
+                    Gdx.input.setInputProcessor(landingScreen.getStage());
                 }
             }
         });
@@ -111,7 +89,8 @@ public class SettingsScreen implements Screen {
         res720Button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.graphics.setWindowedMode(1280, 720); // Set resolution
+                Gdx.graphics.setWindowedMode(1280, 720);
+                GameSettings.setResolution(1280, 720);
             }
         });
 
@@ -121,6 +100,7 @@ public class SettingsScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.graphics.setWindowedMode(1920, 1080);
+                GameSettings.setResolution(1920, 1080);
             }
         });
 
@@ -130,6 +110,7 @@ public class SettingsScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.graphics.setWindowedMode(2560, 1440);
+                GameSettings.setResolution(2560, 1440);
             }
         });
 
@@ -141,26 +122,29 @@ public class SettingsScreen implements Screen {
         Label resolutionLabel = new Label("Resolution", musicLabelStyle);
 
         Slider musicSlider = new Slider(0, 1, 0.01f, false, skin);
-        musicSlider.setValue(music.getVolume()); // Initialize slider with current volume
+        musicSlider.setValue(GameSettings.getMusicVolume());
         musicSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
-                music.setVolume(musicSlider.getValue()); // Adjust volume
+                float volume = musicSlider.getValue();
+                music.setVolume(volume);
+                GameSettings.setMusicVolume(volume);
             }
         });
 
         // Sound effects volume slider
         Label soundEffectsLabel = new Label("Sound Effects Volume", musicLabelStyle);
         Slider soundEffectsSlider = new Slider(0, 1, 0.01f, false, skin);
-        soundEffectsSlider.setValue(soundEffectsVolume); // Initialize slider with current volume
+        soundEffectsSlider.setValue(GameSettings.getSoundEffectsVolume());
         soundEffectsSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
-                soundEffectsVolume = soundEffectsSlider.getValue(); // Adjust volume
+                float volume = soundEffectsSlider.getValue();
+                GameSettings.setSoundEffectsVolume(volume);
             }
         });
 
-        // Positioning and adding UI elements to the stage
+        // Positioning and adding UI elements
         backButton.setSize(200, 100);
         backButton.setPosition(10, 1320);
         res720Button.setSize(300, 100);
@@ -188,14 +172,13 @@ public class SettingsScreen implements Screen {
         stage.addActor(soundEffectsSlider);
     }
 
-    // Standard Screen interface methods
     @Override
     public void show() {
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1); // Set background color
+        Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         SpriteBatch batch = new SpriteBatch();
@@ -232,6 +215,6 @@ public class SettingsScreen implements Screen {
     }
 
     public static float getSoundEffectsVolume() {
-        return soundEffectsVolume;
+        return GameSettings.getSoundEffectsVolume();
     }
 }
