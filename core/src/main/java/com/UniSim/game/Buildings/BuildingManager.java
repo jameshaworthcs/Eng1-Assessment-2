@@ -137,25 +137,25 @@ public class BuildingManager {
      */
     private void makeBuildingTypes() {
 
-        accommodations.add(new Accommodation("Derwent", 1000f, "accommodation_3.png", 4f, 32f, 32f, 2));
-        accommodations.add(new Accommodation("Anne Lister", 3000f, "accommodation_3.png", 4f, 64f, 64f, 5));
+        accommodations.add(new Accommodation("Derwent", 1000f, "accommodation_3.png", 4f, 64f, 64f, 2));
+        accommodations.add(new Accommodation("Anne Lister", 3000f, "accommodation_3.png", 4f, 96f, 96f, 5));
         accommodations.add(new Accommodation("David Kato", 8000f, "accommodation_3.png", 4f, 128f, 128f, 10));
 
         foods.add(new Food("Salt and Pepper", 1000f, "accommodation_3.png", 2f, 64f, 64f, 100, 1, 1));
-        foods.add(new Food("Papa Johns", 3000f, "accommodation_3.png", 2f, 128f, 128f, 200, 2, 2));
-        foods.add(new Food("Piazza Restaurant", 5000f, "accommodation_3.png", 2f, 256f, 256f, 300, 3, 3));
+        foods.add(new Food("Papa Johns", 3000f, "accommodation_3.png", 2f, 96f, 96f, 200, 2, 2));
+        foods.add(new Food("Piazza Restaurant", 5000f, "accommodation_3.png", 2f, 128f, 128f, 300, 3, 3));
 
         recreationals.add(new Recreational("Long Boi Statue", 1000f, "accommodation_3.png", 2f, 64f, 64f, 100, 1, 1));
-        recreationals.add(new Recreational("Campus West Gym", 3000f, "accommodation_3.png", 2f, 128f, 128f, 300, 3, 3));
-        recreationals.add(new Recreational("Glasshouse Bar", 5000f, "accommodation_3.png", 2f, 256f, 256f, 500, 5, 5));
+        recreationals.add(new Recreational("Campus West Gym", 3000f, "accommodation_3.png", 2f, 96f, 96f, 300, 3, 3));
+        recreationals.add(new Recreational("Glasshouse Bar", 5000f, "accommodation_3.png", 2f, 128f, 128f, 500, 5, 5));
 
         academics.add(new Academic("CSE 168", 1000f, "lectureroom.png", 1.5f, 64f, 64f, 1, 3));
-        academics.add(new Academic("Main Library", 3000f, "lectureroom.png", 1.5f, 128f, 128f, 3, 5));
-        academics.add(new Academic("Piazza Lecture Theatre", 5000f, "lectureroom.png", 1.5f, 256f, 256f, 5, 10));
+        academics.add(new Academic("Main Library", 3000f, "lectureroom.png", 1.5f, 96f, 96f, 3, 5));
+        academics.add(new Academic("Piazza Lecture Theatre", 5000f, "lectureroom.png", 1.5f, 128f, 128f, 5, 10));
 
-        workplaces.add(new Workplace("Postern Gate Spoons", 1000f, "accommodation_3.png", 1.5f, 40f, 40f, 1, 100));
-        workplaces.add(new Workplace("Greggs", 3000f, "accommodation_3.png", 1.5f, 80f, 80f, 5, 500));
-        workplaces.add(new Workplace("Nisa", 5000f, "accommodation_3.png", 1.5f, 160f, 160f, 10, 1000));
+        workplaces.add(new Workplace("Postern Gate Spoons", 1000f, "accommodation_3.png", 1.5f, 64f, 64f, 1, 100));
+        workplaces.add(new Workplace("Greggs", 3000f, "accommodation_3.png", 1.5f, 96f, 96f, 5, 500));
+        workplaces.add(new Workplace("Nisa", 5000f, "accommodation_3.png", 1.5f, 128f, 128f, 10, 1000));
     }
 
     /**
