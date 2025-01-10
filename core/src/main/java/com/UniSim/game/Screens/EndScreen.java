@@ -234,10 +234,20 @@ public class EndScreen implements Screen {
      * This score is appended to the file for future reference.
      */
     private void saveSatisfaction() {
-        // Get a handle to the file in the local storage
-        FileHandle file = Gdx.files.local("stats\\leaderboard.txt");
-        // Append the username satisfaction value to the file, followed by a newline for
-        // readability
-        file.writeString(satisfactionLeft + ", " + PlayerStats.getUsername() + "\n", true);
+        try {
+            // Create a .unisim directory in user's home directory if it doesn't exist
+            FileHandle gameDir = Gdx.files.external(".unisim");
+            if (!gameDir.exists()) {
+                gameDir.mkdirs();
+            }
+            
+            // Save to .unisim/leaderboard.txt in user's home directory
+            FileHandle file = Gdx.files.external(".unisim/leaderboard.txt");
+            // Append the username satisfaction value to the file, followed by a newline
+            file.writeString(satisfactionLeft + ", " + PlayerStats.getUsername() + "\n", true);
+        } catch (Exception e) {
+            System.err.println("Failed to save leaderboard: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

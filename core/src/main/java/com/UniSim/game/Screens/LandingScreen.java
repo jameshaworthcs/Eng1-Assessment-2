@@ -326,29 +326,34 @@ public class LandingScreen implements Screen {
      */
     private List<List<String>> getLeaderboard() {
         List<List<String>> leaderboard = new ArrayList<>();
-        FileHandle file = Gdx.files.local("stats\\leaderboard.txt");
+        FileHandle file = Gdx.files.external(".unisim/leaderboard.txt");
 
         if (file.exists()) {
-            // Read the entire file as a string
-            String fileContents = file.readString();
-            // Split file into lines (assuming each line is a satisfaction value)
-            String[] lines = fileContents.split("\n");
+            try {
+                // Read the entire file as a string
+                String fileContents = file.readString();
+                // Split file into lines (assuming each line is a satisfaction value)
+                String[] lines = fileContents.split("\n");
 
-            // Parse each line and add it to the list
-            for (String line : lines) {
-                String[] parts = line.split(",");
-                if (parts.length >= 2) {
-                    try {
-                        int satisfaction = Integer.parseInt(parts[0].trim());
-                        String name = parts[1].trim();
-                        List<String> entry = new ArrayList<>();
-                        entry.add(name);
-                        entry.add(String.valueOf(satisfaction));
-                        leaderboard.add(entry);
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error parsing value: " + line);
+                // Parse each line and add it to the list
+                for (String line : lines) {
+                    String[] parts = line.split(",");
+                    if (parts.length >= 2) {
+                        try {
+                            int satisfaction = Integer.parseInt(parts[0].trim());
+                            String name = parts[1].trim();
+                            List<String> entry = new ArrayList<>();
+                            entry.add(name);
+                            entry.add(String.valueOf(satisfaction));
+                            leaderboard.add(entry);
+                        } catch (NumberFormatException e) {
+                            System.err.println("Error parsing value: " + line);
+                        }
                     }
                 }
+            } catch (Exception e) {
+                System.err.println("Error reading leaderboard: " + e.getMessage());
+                e.printStackTrace();
             }
         }
 
@@ -362,10 +367,14 @@ public class LandingScreen implements Screen {
      * Clears the leaderboard satisfaction scores from the file.
      */
     public void clearLeaderboardSat() {
-        // Get a handle to the file
-        FileHandle file = Gdx.files.local("stats\\leaderboard.txt");
-
-        // Write an empty string to clear the file's content
-        file.writeString("", false);
+        try {
+            // Get a handle to the file
+            FileHandle file = Gdx.files.external(".unisim/leaderboard.txt");
+            // Write an empty string to clear the file's content
+            file.writeString("", false);
+        } catch (Exception e) {
+            System.err.println("Error clearing leaderboard: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

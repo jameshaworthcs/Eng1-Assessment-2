@@ -3,13 +3,67 @@ package com.UniSim.game.lwjgl3;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.UniSim.game.UniSim;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
-        if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
-        createApplication();
+        if (StartupHelper.startNewJvmIfRequired()) return;
+        
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            handleCrash(throwable);
+        });
 
+        try {
+            createApplication();
+        } catch (Exception e) {
+            handleCrash(e);
+        }
+    }
+
+    private static void handleCrash(Throwable e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String stackTrace = sw.toString();
+
+        // Create crash report
+        try {
+            File crashDir = new File("crash-reports");
+            if (!crashDir.exists()) {
+                crashDir.mkdir();
+            }
+            
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+            File crashReport = new File(crashDir, "crash-" + timestamp + ".txt");
+            
+            FileWriter writer = new FileWriter(crashReport);
+            writer.write("UniSim Crash Report\n");
+            writer.write("Time: " + timestamp + "\n\n");
+            writer.write("Error: " + e.getMessage() + "\n\n");
+            writer.write("Stack trace:\n");
+            writer.write(stackTrace);
+            writer.close();
+
+            // Show error dialog
+            javax.swing.JOptionPane.showMessageDialog(null,
+                "The game has crashed!\n" +
+                "Error: " + e.getMessage() + "\n\n" +
+                "A crash report has been saved to:\n" + 
+                crashReport.getAbsolutePath(),
+                "UniSim Crash",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
+        System.exit(1);
     }
 
     private static Lwjgl3Application createApplication() {
