@@ -98,7 +98,8 @@ public class LandingScreen implements Screen {
         TextButton quitButton = new TextButton("Quit", skin);
         TextButton clearLeaderboardButton = new TextButton("Clear Leaderboard", skin);
 
-        usernameTextField = new TextField("Enter your username", skin);
+        usernameTextField = new TextField("", skin);
+        usernameTextField.setMessageText("Enter your username");
         usernameTextField.setSize(500, 60);
         usernameTextField.setPosition(50, 1000);
 
@@ -233,6 +234,7 @@ public class LandingScreen implements Screen {
 
     @Override
     public void show() {
+        stage.setKeyboardFocus(usernameTextField);
     }
 
     @Override
