@@ -214,7 +214,7 @@ public class LandingScreen implements Screen {
         }
 
         ScrollPane scrollPane = new ScrollPane(leaderboardTable, skin);
-        scrollPane.setSize(1070, 300);
+        scrollPane.setSize(1070, 360);
         scrollPane.setPosition(800, 400);
         scrollPane.setFadeScrollBars(false);
 
