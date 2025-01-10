@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.graphics.Color;
 
 /**
  * This screen is the landing page of the game. It allows the player to choose
@@ -98,8 +99,30 @@ public class LandingScreen implements Screen {
         TextButton quitButton = new TextButton("Quit", skin);
         TextButton clearLeaderboardButton = new TextButton("Clear Leaderboard", skin);
 
-        usernameTextField = new TextField("", skin);
-        usernameTextField.setMessageText("Enter your username");
+        class PlaceholderTextField extends TextField {
+            private final String placeholder;
+            private final Color placeholderColor;
+
+            public PlaceholderTextField(String placeholder, Skin skin) {
+                super("", skin);
+                this.placeholder = placeholder;
+                this.placeholderColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+            }
+
+            @Override
+            public void draw(com.badlogic.gdx.graphics.g2d.Batch batch, float parentAlpha) {
+                super.draw(batch, parentAlpha);
+                if (getText().isEmpty()) {
+                    BitmapFont font = getStyle().font;
+                    Color oldColor = font.getColor();
+                    font.setColor(placeholderColor);
+                    font.draw(batch, placeholder, getX() + 10, getY() + (getHeight() + font.getCapHeight()) / 2);
+                    font.setColor(oldColor);
+                }
+            }
+        }
+
+        usernameTextField = new PlaceholderTextField("Enter your username", skin);
         usernameTextField.setSize(500, 60);
         usernameTextField.setPosition(50, 1000);
 
