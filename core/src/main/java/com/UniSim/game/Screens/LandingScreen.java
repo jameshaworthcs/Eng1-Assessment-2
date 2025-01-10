@@ -188,7 +188,7 @@ public class LandingScreen implements Screen {
 
         // Get leaderboard data
         List<List<String>> leaderboard = getLeaderboard();
-        int limit = Math.min(10, leaderboard.size());
+        int limit = Math.min(5, leaderboard.size());
 
         Label rankHeader = new Label("Rank", skin);
         Label scoreHeader = new Label("Score", skin);
