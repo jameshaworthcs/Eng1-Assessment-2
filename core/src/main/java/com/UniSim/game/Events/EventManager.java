@@ -17,9 +17,9 @@ public class EventManager {
         this.playerStats = hud.stats;
         this.random = new Random();
         this.events = new Event[] {
-                new Event(Event.EventType.POSITIVE, "Positive event", 5, 100, "assets/music/positive.mp3"),
-                new Event(Event.EventType.NEGATIVE, "Negative event", -3, -50, "assets/music/negative.mp3"),
-                new Event(Event.EventType.NEUTRAL, "Neutral event", 0, 0, "assets/music/neutral.mp3")
+                new Event(Event.EventType.POSITIVE, "Positive event", 5, 100, "music/positive.mp3"),
+                new Event(Event.EventType.NEGATIVE, "Negative event", -3, -50, "music/negative.mp3"),
+                new Event(Event.EventType.NEUTRAL, "Neutral event", 0, 0, "music/neutral.mp3")
                 // More events can be added here
         };
         scheduleNextEvent();
