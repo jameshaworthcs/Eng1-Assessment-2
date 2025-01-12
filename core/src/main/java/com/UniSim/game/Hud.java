@@ -63,13 +63,15 @@ public class Hud {
         String text;
         float timeLeft;
         Label label;
-        String type;  // Add message type
+        String type;
+        boolean isPersistent;
 
         NotificationMessage(String text, float duration, Label label, String type) {
             this.text = text;
             this.timeLeft = duration;
             this.label = label;
             this.type = type;
+            this.isPersistent = type.equals("initialHint");
         }
     }
 
@@ -237,17 +239,19 @@ public class Hud {
         ArrayList<NotificationMessage> messagesToRemove = new ArrayList<>();
         
         for (NotificationMessage message : activeMessages) {
-            message.timeLeft -= dt;
-            if (message.timeLeft <= 0) {
-                message.label.remove(); // Remove the label from the stage
-                messagesToRemove.add(message);
+            if (!message.isPersistent) {
+                message.timeLeft -= dt;
+                if (message.timeLeft <= 0) {
+                    message.label.remove();
+                    messagesToRemove.add(message);
+                }
             }
         }
         
         activeMessages.removeAll(messagesToRemove);
         
         if (!messagesToRemove.isEmpty()) {
-            updateMessagePositions(); // Reposition remaining messages
+            updateMessagePositions();
         }
     }
 
