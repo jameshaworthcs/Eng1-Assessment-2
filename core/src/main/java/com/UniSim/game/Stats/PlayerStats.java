@@ -160,4 +160,17 @@ public class PlayerStats {
         PlayerStats.username = username;
     }
 
+    /**
+     * Calculates a speed modifier based on the current fatigue level.
+     * The speed modifier decreases linearly as fatigue increases.
+     * At 0 fatigue, speed is 100% (modifier = 1.0)
+     * At max fatigue (50), speed is 50% (modifier = 0.5)
+     * 
+     * @return A float between 0.5 and 1.0 representing the speed modifier
+     */
+    public float getSpeedModifier() {
+        // Linear decrease from 1.0 at fatigue=0 to 0.5 at fatigue=50
+        return 1.0f - (fatigue / 100.0f);
+    }
+
 }

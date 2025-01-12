@@ -695,17 +695,20 @@ public class GameScreen implements Screen {
     private void handleInput(float deltaTime) {
         float horizontalForce = 0;
         float verticalForce = 0;
+        float speedModifier = hud.getStats().getSpeedModifier();
+        float modifiedSpeed = CHARACTER_SPEED * speedModifier;
+
         if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            verticalForce = CHARACTER_SPEED;
+            verticalForce = modifiedSpeed;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            verticalForce = -CHARACTER_SPEED;
+            verticalForce = -modifiedSpeed;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            horizontalForce = -CHARACTER_SPEED;
+            horizontalForce = -modifiedSpeed;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            horizontalForce = CHARACTER_SPEED;
+            horizontalForce = modifiedSpeed;
         }
         player.b2body.setLinearVelocity(horizontalForce, verticalForce);
 
