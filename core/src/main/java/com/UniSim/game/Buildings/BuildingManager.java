@@ -437,7 +437,7 @@ public class BuildingManager {
                                 placingBuilding.width / PPM, placingBuilding.height / PPM, stage));
                         createBuildingBody(snappedPosition.x, snappedPosition.y, placingBuilding.width / PPM,
                                 placingBuilding.height / PPM); // Create Box2D body
-                        gameScreen.hud.hideMessage(); // Hide error message after successful placement
+                        gameScreen.hud.hideMessage("buildMode"); // Hide error message after successful placement
                         showBuildingSelectionWindow();
                         gameScreen.hud.stats.takeOffBuildingCost(placingBuilding.cost);
                         gameScreen.hud.stats.incrementBuildingCounter();
