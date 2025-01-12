@@ -731,7 +731,8 @@ public class GameScreen implements Screen {
                         (fixtureA.getUserData() == "player" && fixtureB.getUserData() == "sensor")) {
                     // Trigger an action here, e.g., display a message or perform some event
                     playerNearReseption = true;
-                    hud.sendMessage("Press ENTER to go into build mode.");
+                    hud.hideMessage("buildMode"); // Only clear building mode messages
+                    hud.sendMessage("Press ENTER to go into build mode.", "buildMode");
                 }
             }
 
@@ -740,19 +741,10 @@ public class GameScreen implements Screen {
                 Fixture fixtureA = contact.getFixtureA();
                 Fixture fixtureB = contact.getFixtureB();
 
-                // Check if the player is exiting the sensor area
                 if ((fixtureA.getUserData() == "sensor" && fixtureB.getUserData() == "player") ||
                         (fixtureA.getUserData() == "player" && fixtureB.getUserData() == "sensor")) {
-                    // Trigger an action for when the player exits the sensor area
                     playerNearReseption = false;
-                    if (showFullMap) {
-                        showFullMapView();
-                    }
-                    if (buildingManager.getIsWindowOpen()) {
-                        buildingManager.closeBuildingWindow();
-                    }
-                    hud.hideMessage();
-                    buildingManager.setIsPlacingBuilding(false);
+                    hud.hideMessage("buildMode"); // Only clear building mode messages
                 }
             }
 
@@ -779,14 +771,13 @@ public class GameScreen implements Screen {
     private void placingBuilding() {
         showFullMapView();
         camera.update();
-        hud.hideMessage();
+        hud.hideMessage("buildMode");
         if (showFullMap && !buildingManager.getIsWindowOpen()) {
             buildingManager.openBuildingWindow();
         } else {
             buildingManager.closeBuildingWindow();
-            hud.sendMessage("Press ENTER to go into build mode.");
+            hud.sendMessage("Press ENTER to go into build mode.", "buildMode");
         }
-
     }
 
     /**

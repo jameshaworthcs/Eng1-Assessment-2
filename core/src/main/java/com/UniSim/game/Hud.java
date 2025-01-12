@@ -63,11 +63,13 @@ public class Hud {
         String text;
         float timeLeft;
         Label label;
+        String type;  // Add message type
 
-        NotificationMessage(String text, float duration, Label label) {
+        NotificationMessage(String text, float duration, Label label, String type) {
             this.text = text;
             this.timeLeft = duration;
             this.label = label;
+            this.type = type;
         }
     }
 
@@ -167,12 +169,26 @@ public class Hud {
     }
 
     public void sendMessage(String message) {
+        sendMessage(message, "default");
+    }
+
+    public void sendMessage(String message, String type) {
+        // Remove any existing messages of the same type
+        ArrayList<NotificationMessage> messagesToRemove = new ArrayList<>();
+        for (NotificationMessage msg : activeMessages) {
+            if (msg.type.equals(type)) {
+                msg.label.remove();
+                messagesToRemove.add(msg);
+            }
+        }
+        activeMessages.removeAll(messagesToRemove);
+
         Label newLabel = new Label(message, skin);
         newLabel.setPosition(10, 20);
         newLabel.setVisible(true);
         stage.addActor(newLabel);
         
-        NotificationMessage notification = new NotificationMessage(message, MESSAGE_DURATION, newLabel);
+        NotificationMessage notification = new NotificationMessage(message, MESSAGE_DURATION, newLabel, type);
         activeMessages.add(notification);
         
         // Update positions of all active messages
@@ -232,8 +248,25 @@ public class Hud {
         return timeUp;
     }
 
-    public void hideMessage() {
-        // This method is kept for compatibility but no longer needed
+    public void hideMessage(String type) {
+        // Remove only messages of the specified type
+        ArrayList<NotificationMessage> messagesToRemove = new ArrayList<>();
+        for (NotificationMessage message : activeMessages) {
+            if (message.type.equals(type)) {
+                message.label.remove();
+                messagesToRemove.add(message);
+            }
+        }
+        activeMessages.removeAll(messagesToRemove);
+        updateMessagePositions();
+    }
+
+    public void hideAllMessages() {
+        // Remove all messages and their labels
+        for (NotificationMessage message : activeMessages) {
+            message.label.remove();
+        }
+        activeMessages.clear();
     }
 
     /**
