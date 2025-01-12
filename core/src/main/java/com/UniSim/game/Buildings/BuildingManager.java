@@ -413,9 +413,20 @@ public class BuildingManager {
      */
     public void handleBuildingPlacement(SpriteBatch batch, OrthographicCamera camera, Viewport viewport) {
         if (isPlacingBuilding && placingBuilding != null) {
+            // Show message about spacebar cancellation
+            gameScreen.hud.sendMessage("Press SPACEBAR to cancel building placement", "buildMode");
+
             Vector3 mousePosition = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(mousePosition, viewport.getScreenX(), viewport.getScreenY(),
                     viewport.getScreenWidth(), viewport.getScreenHeight());
+
+            // Check for spacebar to cancel placement
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                isPlacingBuilding = false;
+                placingBuilding = null;
+                gameScreen.hud.hideMessage("buildMode");
+                return;
+            }
 
             batch.begin();
             batch.setColor(1, 1, 1, 0.5f); // Semi-transparent
