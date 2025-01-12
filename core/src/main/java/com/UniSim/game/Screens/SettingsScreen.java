@@ -36,6 +36,14 @@ public class SettingsScreen implements Screen {
     private Music music;
     private LandingScreen landingScreen;
     private PauseMenu pauseMenu;
+    private GameScreen gameScreen;
+
+    public SettingsScreen(UniSim game, GameScreen gameScreen, Music music) {
+        this.game = game;
+        this.gameScreen = gameScreen;
+        this.music = music;
+        initialize();
+    }
 
     public SettingsScreen(UniSim game, LandingScreen landingScreen, Music music) {
         this.game = game;
@@ -79,6 +87,9 @@ public class SettingsScreen implements Screen {
                 } else if (landingScreen != null) {
                     game.setScreen(landingScreen);
                     Gdx.input.setInputProcessor(landingScreen.getStage());
+                } else if (gameScreen != null) {
+                    game.setScreen(gameScreen);
+                    Gdx.input.setInputProcessor(gameScreen.getStage());
                 }
             }
         });

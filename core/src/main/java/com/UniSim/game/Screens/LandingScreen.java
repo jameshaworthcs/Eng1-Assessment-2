@@ -95,7 +95,8 @@ public class LandingScreen implements Screen {
         // Create buttons
         TextButton playGameButton = new TextButton("Play Game", skin);
         TextButton settingsButton = new TextButton("Settings", skin);
-        TextButton howToPlayButton = new TextButton("How to Play", skin);
+        TextButton howToPlayButton = new TextButton("How To Play", skin);
+        TextButton achievementsButton = new TextButton("Achievements", skin);
         TextButton creditsButton = new TextButton("Credits", skin);
         TextButton quitButton = new TextButton("Quit", skin);
         TextButton clearLeaderboardButton = new TextButton("Clear Leaderboard", skin);
@@ -151,6 +152,13 @@ public class LandingScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new HowToPlayScreen(game, LandingScreen.this, music));
+            }
+        });
+
+        achievementsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new AchievementsScreen(game, LandingScreen.this, music));
             }
         });
 
@@ -249,11 +257,14 @@ public class LandingScreen implements Screen {
         howToPlayButton.setSize(500, 140);
         howToPlayButton.setPosition(50, 550);
 
+        achievementsButton.setSize(500, 140);
+        achievementsButton.setPosition(50, 400);
+
         creditsButton.setSize(500, 140);
-        creditsButton.setPosition(50, 400);
+        creditsButton.setPosition(50, 250);
 
         quitButton.setSize(500, 140);
-        quitButton.setPosition(50, 250);
+        quitButton.setPosition(50, 100);
 
         clearLeaderboardButton.setSize(300, 50);
         clearLeaderboardButton.setPosition(1550, 190);
@@ -262,6 +273,7 @@ public class LandingScreen implements Screen {
         stage.addActor(playGameButton);
         stage.addActor(settingsButton);
         stage.addActor(howToPlayButton);
+        stage.addActor(achievementsButton);
         stage.addActor(creditsButton);
         stage.addActor(quitButton);
         stage.addActor(scrollPane);

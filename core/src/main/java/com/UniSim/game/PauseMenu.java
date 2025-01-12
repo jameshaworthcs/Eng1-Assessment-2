@@ -5,6 +5,7 @@ import com.UniSim.game.Screens.GameScreen;
 import com.UniSim.game.Screens.HowToPlayScreen;
 import com.UniSim.game.Screens.LandingScreen;
 import com.UniSim.game.Screens.SettingsScreen;
+import com.UniSim.game.Screens.AchievementsScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -62,7 +63,7 @@ public class PauseMenu {
 
         // Create pause menu window
         pauseMenu = new Window("Paused", skin);
-        pauseMenu.setSize(300, 200);
+        pauseMenu.setSize(300, 400); // Increased height to accommodate new button
         pauseMenu.setPosition((Gdx.graphics.getWidth() - pauseMenu.getWidth()) / 2,
                 (Gdx.graphics.getHeight() - pauseMenu.getHeight()) / 2);
         pauseMenu.setVisible(false);
@@ -82,8 +83,7 @@ public class PauseMenu {
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SettingsScreen(game, PauseMenu.this, music)); // Navigate to SettingsScreen and pass
-                                                                                 // PauseMenu
+                game.setScreen(new SettingsScreen(game, gameScreen, music));
             }
         });
         pauseMenu.add(settingsButton).pad(10).row();
@@ -93,11 +93,20 @@ public class PauseMenu {
         howToPlayButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new HowToPlayScreen(game, PauseMenu.this, music)); // Navigate to HowToPlayScreen and
-                                                                                  // pass PauseMenu
+                game.setScreen(new HowToPlayScreen(game, gameScreen, music));
             }
         });
         pauseMenu.add(howToPlayButton).pad(10).row();
+
+        // Add achievements button
+        TextButton achievementsButton = new TextButton("Achievements", skin);
+        achievementsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new AchievementsScreen(game, gameScreen, music));
+            }
+        });
+        pauseMenu.add(achievementsButton).pad(10).row();
 
         // Add quit button
         TextButton mainMenuButton = new TextButton("Main Menu", skin);

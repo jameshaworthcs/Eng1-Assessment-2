@@ -40,7 +40,23 @@ public class HowToPlayScreen implements Screen {
 
     private LandingScreen landingScreen; // Reference to LandingScreen for returning
     private PauseMenu pauseMenu;         // Reference to PauseMenu for returning
+    private GameScreen gameScreen;        // Reference to GameScreen for returning
     private Music music;
+
+    /**
+     * Constructor for HowToPlayScreen when accessed from GameScreen.
+     * Initializes the screen with the game instance, game screen, and background music.
+     *
+     * @param game The game instance.
+     * @param gameScreen The GameScreen to return to.
+     * @param music Background music for the screen.
+     */
+    public HowToPlayScreen(UniSim game, GameScreen gameScreen, Music music) {
+        this.game = game;
+        this.gameScreen = gameScreen;
+        this.music = music;
+        initialize();
+    }
 
     /**
      * Constructor for HowToPlayScreen when accessed from LandingScreen.
@@ -56,8 +72,6 @@ public class HowToPlayScreen implements Screen {
         this.music = music;
         initialize();
     }
-
-
 
     /**
      * Constructor for HowToPlayScreen when accessed from PauseMenu.
@@ -101,6 +115,9 @@ public class HowToPlayScreen implements Screen {
                 } else if (landingScreen != null) {
                     game.setScreen(landingScreen);  // Return to LandingScreen
                     Gdx.input.setInputProcessor(landingScreen.getStage());  // Reset input processor for LandingScreen
+                } else if (gameScreen != null) {
+                    game.setScreen(gameScreen);  // Return to GameScreen
+                    Gdx.input.setInputProcessor(gameScreen.getStage());  // Reset input processor for GameScreen
                 }
             }
         });
