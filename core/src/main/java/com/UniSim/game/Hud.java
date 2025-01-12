@@ -186,7 +186,8 @@ public class Hud {
         Label newLabel = new Label(message, skin);
         // Position buildMode messages in bottom right, others in bottom left
         if (type.equals("buildMode")) {
-            newLabel.setPosition(Gdx.graphics.getWidth() - newLabel.getWidth() - 10, 20);
+            float stageWidth = stage.getViewport().getWorldWidth();
+            newLabel.setPosition(stageWidth - newLabel.getWidth() - 20, 20);
         } else {
             newLabel.setPosition(10, 20);
         }
@@ -202,9 +203,10 @@ public class Hud {
 
     private void updateMessagePositions() {
         float currentY = 20;
+        float stageWidth = stage.getViewport().getWorldWidth();
         for (NotificationMessage msg : activeMessages) {
             if (msg.type.equals("buildMode")) {
-                msg.label.setPosition(Gdx.graphics.getWidth() - msg.label.getWidth() - 10, currentY);
+                msg.label.setPosition(stageWidth - msg.label.getWidth() - 20, currentY);
             } else {
                 msg.label.setPosition(10, currentY);
             }
