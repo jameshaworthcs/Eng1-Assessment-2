@@ -429,7 +429,7 @@ public class BuildingManager {
             }
 
             batch.begin();
-            batch.setColor(1, 1, 1, 0.5f); // Semi-transparent
+            batch.setColor(1, 1, 1, 0.5f); // Semi-transparent66
 
             Vector3 snappedPosition = snapToGrid(mousePosition.x, mousePosition.y);
 

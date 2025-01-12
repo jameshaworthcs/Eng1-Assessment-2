@@ -167,6 +167,9 @@ public class GameScreen implements Screen {
         hud = new Hud(game.batch, skin, world, this, game, music);
         eventManager = new EventManager(hud);
 
+        // Add initial hint message
+        hud.sendMessage("Walk to the house to start placing buildings", "initialHint");
+
         // Load the pause icon texture
         pauseIconTexture = new Texture(Gdx.files.internal("pause.png"));
         TextureRegionDrawable drawable = new TextureRegionDrawable(new TextureRegion(pauseIconTexture));
@@ -729,13 +732,16 @@ public class GameScreen implements Screen {
                 Fixture fixtureA = contact.getFixtureA();
                 Fixture fixtureB = contact.getFixtureB();
 
-                // Check if one of the fixtures is a sensor and the other is the player
-                if ((fixtureA.getUserData() == "sensor" && fixtureB.getUserData() == "player") ||
-                        (fixtureA.getUserData() == "player" && fixtureB.getUserData() == "sensor")) {
-                    // Trigger an action here, e.g., display a message or perform some event
+                if (fixtureA.getUserData() != null && fixtureA.getUserData().equals("sensor")) {
                     playerNearReseption = true;
-                    hud.hideMessage("buildMode"); // Only clear building mode messages
-                    hud.sendMessage("Press ENTER to go into build mode.", "buildMode");
+                    // Hide the initial hint message when player reaches the house
+                    hud.hideMessage("initialHint");
+                }
+
+                if (fixtureB.getUserData() != null && fixtureB.getUserData().equals("sensor")) {
+                    playerNearReseption = true;
+                    // Hide the initial hint message when player reaches the house
+                    hud.hideMessage("initialHint");
                 }
             }
 
