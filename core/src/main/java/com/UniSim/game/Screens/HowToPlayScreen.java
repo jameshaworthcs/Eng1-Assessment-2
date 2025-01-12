@@ -150,7 +150,7 @@ public class HowToPlayScreen implements Screen {
             "You can study, increasing knowledge, by placing academic building and interacting with them\n" +
             "You can eat, decreasing fatigue and increasing satisfaction, by placing Food halls and interacting with them\n" +
             "You can relax, increasing satisfaction, by placing recreational buildings and interacting with them\n" +
-            "Each building has a five second cooldown between each use\n" +
+            "Each building has a ten second cooldown between each use\n" +
             "Your fatigue level affects your movement speed - the more fatigued you are, the slower you move",
             customLabelStyle1);
         instructionsLabel.setWrap(true);
