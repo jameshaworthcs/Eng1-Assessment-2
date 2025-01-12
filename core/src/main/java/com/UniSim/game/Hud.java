@@ -184,21 +184,30 @@ public class Hud {
         activeMessages.removeAll(messagesToRemove);
 
         Label newLabel = new Label(message, skin);
-        newLabel.setPosition(10, 20);
+        // Position buildMode messages in bottom right, others in bottom left
+        if (type.equals("buildMode")) {
+            newLabel.setPosition(Gdx.graphics.getWidth() - newLabel.getWidth() - 10, 20);
+        } else {
+            newLabel.setPosition(10, 20);
+        }
         newLabel.setVisible(true);
         stage.addActor(newLabel);
         
         NotificationMessage notification = new NotificationMessage(message, MESSAGE_DURATION, newLabel, type);
         activeMessages.add(notification);
         
-        // Update positions of all active messages
+        // Update positions of all messages
         updateMessagePositions();
     }
 
     private void updateMessagePositions() {
         float currentY = 20;
         for (NotificationMessage msg : activeMessages) {
-            msg.label.setPosition(10, currentY);
+            if (msg.type.equals("buildMode")) {
+                msg.label.setPosition(Gdx.graphics.getWidth() - msg.label.getWidth() - 10, currentY);
+            } else {
+                msg.label.setPosition(10, currentY);
+            }
             currentY += MESSAGE_SPACING;
         }
     }
