@@ -60,7 +60,7 @@ configure(subprojects) {
 
 subprojects {
   version = '$projectVersion'
-  ext.appName = 'UniSimDemo'
+  ext.appName = 'UniSim_ENG1_2'
   repositories {
     mavenCentral()
     maven { url 'https://s01.oss.sonatype.org' }
@@ -72,7 +72,7 @@ subprojects {
   }
 }
 
-eclipse.project.name = 'UniSimDemo' + '-parent'
+eclipse.project.name = 'UniSim_ENG1_2' + '-parent'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
