@@ -10,46 +10,46 @@ import com.badlogic.gdx.utils.Array;
 import static com.UniSim.game.Constants.PPM;
 
 /**
- * The SpeechBubble class represents a speech bubble in the game.
- * It is used to show you are close enough to a building to use it.
- * The speech bubble animation is managed by the state time, and the texture frames are set accordingly.
+ * Visual indicator that appears above buildings when the player is nearby.
+ * Shows an animated speech bubble to indicate interaction is possible.
+ * Uses a simple two-frame animation that loops continuously.
  */
 public class SpeechBubble extends Sprite {
-
-    private Animation<TextureRegion> speechBubble;
-    public World world;
-    private float stateTime;
+    private Animation<TextureRegion> speechBubble;  // Animated bubble texture
+    public World world;                            // Physics world reference
+    private float stateTime;                       // Animation timing
 
     /**
-     * Constructs a new SpeechBubble at the given position.
-     * The speech bubble will display an animation based on the provided texture.
+     * Creates a new speech bubble at the specified position.
+     * Loads and sets up the animation frames from the texture.
      *
-     * @param world The Box2D world the speech bubble will exist in
-     * @param screen The GameScreen where the speech bubble will be rendered
-     * @param x The x-coordinate to position the speech bubble
-     * @param y The y-coordinate to position the speech bubble
+     * @param world Game's physics world
+     * @param screen Screen containing the bubble texture
+     * @param x X position in world coordinates
+     * @param y Y position in world coordinates
      */
     public SpeechBubble(World world, GameScreen screen, float x, float y) {
         super(screen.getSpeechBubbleTexture());
         this.world = world;
 
+        // Set up animation frames from sprite sheet
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        frames.add(new TextureRegion(getTexture(), 48, 0, 16, 16));
-        frames.add(new TextureRegion(getTexture(), 64, 0, 16, 16));
-        speechBubble = new Animation<TextureRegion>(0.5f, frames);
+        frames.add(new TextureRegion(getTexture(), 48, 0, 16, 16));  // First frame
+        frames.add(new TextureRegion(getTexture(), 64, 0, 16, 16));  // Second frame
+        speechBubble = new Animation<TextureRegion>(0.5f, frames);    // Half second per frame
 
         setBounds(x, y, 16 / PPM, 16 / PPM);
         setRegion(speechBubble.getKeyFrame(stateTime));
     }
 
     /**
-     * Updates the speech bubble's animation by advancing the state time.
-     * This method should be called every frame to update the speech bubble.
+     * Updates the bubble's animation state.
+     * Advances animation time and updates the displayed frame.
      *
-     * @param delta The time passed since the last frame
+     * @param delta Time elapsed since last frame
      */
     public void update(float delta) {
-        stateTime += delta;  // Increment stateTime by delta time each frame
-        setRegion(speechBubble.getKeyFrame(stateTime, true));
+        stateTime += delta;
+        setRegion(speechBubble.getKeyFrame(stateTime, true));  // Loop animation
     }
 }

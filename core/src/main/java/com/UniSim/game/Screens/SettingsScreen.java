@@ -24,20 +24,36 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
- * The SettingsScreen class represents the settings menu of the game,
- * where the player can adjust game settings like resolution and music volume.
- * This screen can be accessed either from the landing screen or the pause menu.
+ * Settings configuration screen for UniSim.
+ * Allows players to adjust:
+ * - Display resolution
+ * - Music volume
+ * - Sound effects volume
+ * Can be accessed from main menu or pause menu.
  */
 public class SettingsScreen implements Screen {
-    private UniSim game;
-    private Stage stage;
-    private Skin skin;
-    private Texture backgroundTexture;
-    private Music music;
-    private LandingScreen landingScreen;
-    private PauseMenu pauseMenu;
-    private GameScreen gameScreen;
+    // Core components
+    private UniSim game;              // Main game instance
+    private Stage stage;              // UI stage
+    private Skin skin;                // UI styling
+    private Texture backgroundTexture;  // Menu background
+    
+    // Audio
+    private Music music;              // Background music
+    
+    // Navigation references
+    private LandingScreen landingScreen;  // Main menu reference
+    private PauseMenu pauseMenu;          // Pause menu reference
+    private GameScreen gameScreen;        // Game screen reference
 
+    /**
+     * Creates settings screen from game screen.
+     * Used when accessing settings during gameplay.
+     *
+     * @param game Main game instance
+     * @param gameScreen Active game screen
+     * @param music Background music track
+     */
     public SettingsScreen(UniSim game, GameScreen gameScreen, Music music) {
         this.game = game;
         this.gameScreen = gameScreen;
@@ -45,6 +61,14 @@ public class SettingsScreen implements Screen {
         initialize();
     }
 
+    /**
+     * Creates settings screen from main menu.
+     * Used when accessing settings before starting game.
+     *
+     * @param game Main game instance
+     * @param landingScreen Main menu screen
+     * @param music Background music track
+     */
     public SettingsScreen(UniSim game, LandingScreen landingScreen, Music music) {
         this.game = game;
         this.landingScreen = landingScreen;
@@ -52,6 +76,14 @@ public class SettingsScreen implements Screen {
         initialize();
     }
 
+    /**
+     * Creates settings screen from pause menu.
+     * Used when accessing settings while game is paused.
+     *
+     * @param game Main game instance
+     * @param pauseMenu Active pause menu
+     * @param music Background music track
+     */
     public SettingsScreen(UniSim game, PauseMenu pauseMenu, Music music) {
         this.game = game;
         this.pauseMenu = pauseMenu;
@@ -59,6 +91,14 @@ public class SettingsScreen implements Screen {
         initialize();
     }
 
+    /**
+     * Initializes the settings screen UI.
+     * Sets up:
+     * - Resolution selection buttons
+     * - Volume sliders
+     * - Back button
+     * - Background and styling
+     */
     private void initialize() {
         stage = new Stage(new FitViewport(2560, 1440));
         skin = new Skin(Gdx.files.internal("uiskin.json"));
@@ -183,10 +223,12 @@ public class SettingsScreen implements Screen {
         stage.addActor(soundEffectsSlider);
     }
 
-    @Override
-    public void show() {
-    }
-
+    /**
+     * Main render loop for the screen.
+     * Updates background and UI elements.
+     *
+     * @param delta Time since last frame
+     */
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
@@ -201,6 +243,13 @@ public class SettingsScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * Handles screen resize events.
+     * Updates viewport and UI scaling.
+     *
+     * @param width New screen width
+     * @param height New screen height
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
@@ -218,6 +267,10 @@ public class SettingsScreen implements Screen {
     public void hide() {
     }
 
+    /**
+     * Cleans up resources when screen is closed.
+     * Disposes textures and UI elements.
+     */
     @Override
     public void dispose() {
         stage.dispose();
@@ -225,7 +278,19 @@ public class SettingsScreen implements Screen {
         backgroundTexture.dispose();
     }
 
+    /**
+     * Gets current sound effects volume.
+     * @return Volume level between 0 and 1
+     */
     public static float getSoundEffectsVolume() {
         return GameSettings.getSoundEffectsVolume();
+    }
+
+    /**
+     * Sets up input processing when screen becomes active.
+     */
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
     }
 }

@@ -10,35 +10,45 @@ import com.badlogic.gdx.utils.Array;
 import static com.UniSim.game.Constants.*;
 
 /**
- * The Character class represents the player's character in the game, including animations, physics,
- * and movement logic. It extends the Sprite class to allow rendering the character's texture and updating
- * its position based on the game world.
+ * Player character in the game world.
+ * Handles movement, animations, and physics interactions.
+ * Uses Box2D for physics and sprite animations for visual feedback.
  */
 public class Character extends Sprite {
-    /**
-     * Enum representing the different states of the character.
-     */
-    public enum State {RUN_UP, RUN_DOWN, RUN_X, STAND_UP, STAND_DOWN, STAND_X}
+    /** Movement and animation states for the character */
+    public enum State {
+        RUN_UP,     // Moving upward
+        RUN_DOWN,   // Moving downward
+        RUN_X,      // Moving left/right
+        STAND_UP,   // Standing still facing up
+        STAND_DOWN, // Standing still facing down
+        STAND_X     // Standing still facing left/right
+    }
 
-
+    // State tracking
     public State currentState;
     public State previousState;
     public World world;
     public Body b2body;
-    private TextureRegion characterStandUp;
-    private TextureRegion characterStandDown;
-    private TextureRegion characterStandX;
-    private Animation <TextureRegion> characterRunUp;
-    private Animation <TextureRegion> characterRunDown;
-    private Animation <TextureRegion> characterRunX;
-    private boolean isGoingRight;
-    private float stateTimer;
+
+    // Animation textures
+    private TextureRegion characterStandUp;    // Standing facing up
+    private TextureRegion characterStandDown;  // Standing facing down
+    private TextureRegion characterStandX;     // Standing facing left/right
+    private Animation<TextureRegion> characterRunUp;    // Running up animation
+    private Animation<TextureRegion> characterRunDown;  // Running down animation
+    private Animation<TextureRegion> characterRunX;     // Running left/right animation
+
+    // Animation state
+    private boolean isGoingRight;  // Direction character is facing horizontally
+    private float stateTimer;      // Time in current animation state
 
     /**
-     * Constructs a new character in the game and sets animations for all states.
+     * Creates a new character with animations and physics body.
+     * Sets up all animation frames from the sprite sheet.
      *
-     * @param world The Box2D world in which the character exists
-     * @param screen The GameScreen where the character will be displayed
+     * @param world Box2D world for physics
+     * @param screen Game screen containing character texture
      */
     public Character(World world, GameScreen screen) {
         super(screen.getCharacterTexture());
@@ -48,20 +58,27 @@ public class Character extends Sprite {
         stateTimer = 0.0f;
         isGoingRight = false;
 
+        // Load running animations
         Array<TextureRegion> frames = new Array<TextureRegion>();
+        
+        // Down animation
         frames.add(new TextureRegion(getTexture(), 17, 4, 14, 18));
         frames.add(new TextureRegion(getTexture(), 33, 4, 14, 18));
         characterRunDown = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+        
+        // Up animation
         frames.add(new TextureRegion(getTexture(), 17, 28, 14, 18));
         frames.add(new TextureRegion(getTexture(), 33, 28, 14, 18));
         characterRunUp = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+        
+        // Left/right animation
         frames.add(new TextureRegion(getTexture(), 17, 52, 14, 18));
         frames.add(new TextureRegion(getTexture(), 33, 52, 14, 18));
         characterRunX = new Animation<TextureRegion>(0.1f, frames);
 
-
+        // Load standing frames
         characterStandDown = new TextureRegion(getTexture(), 1, 4, 14, 18);
         characterStandX = new TextureRegion(getTexture(), 1, 51, 14, 18);
         characterStandUp = new TextureRegion(getTexture(), 1, 28, 14, 18);
@@ -72,8 +89,8 @@ public class Character extends Sprite {
     }
 
     /**
-     * Defines the Box2D physics body for the character.
-     * This method sets the position, type, and shape of the character's physics body.
+     * Creates the physics body and collision shape for the character.
+     * Sets up a rectangular collision box and marks it as the player.
      */
     private void defineCharacter() {
         BodyDef bdef = new BodyDef();
@@ -84,7 +101,7 @@ public class Character extends Sprite {
 
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox( CHARACTER_SIZE_X / 2 / PPM, CHARACTER_SIZE_Y / 2 / PPM); // 2 as 32 in each diriection
+        shape.setAsBox(CHARACTER_SIZE_X / 2 / PPM, CHARACTER_SIZE_Y / 2 / PPM);
 
         fdef.shape = shape;
         Fixture characterFixture = b2body.createFixture(fdef);
@@ -93,27 +110,28 @@ public class Character extends Sprite {
     }
 
     /**
-     * Updates the character's position and animation frame based on the physics body.
+     * Updates character position and animation each frame.
+     * Syncs sprite position with physics body and updates animation frame.
      *
-     * @param delta Time passed since the last update
+     * @param delta Time since last frame
      */
     public void update(float delta) {
-        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y- getHeight() / 2);
+        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
         setRegion(getFrame(delta));
     }
 
     /**
-     * Returns the correct animation frame for the current state of the character.
+     * Gets the current animation frame based on movement state.
+     * Handles flipping sprites when changing direction.
      *
-     * @param delta Time passed since the last frame
-     * @return The correct animation frame for the current state
+     * @param delta Time since last frame
+     * @return Current animation frame
      */
     public TextureRegion getFrame(float delta) {
         currentState = getState();
-
         TextureRegion region;
 
-        switch (currentState){
+        switch (currentState) {
             case RUN_X:
                 region = characterRunX.getKeyFrame(stateTimer, true);
                 if (isGoingRight && !region.isFlipX()) {
@@ -150,9 +168,8 @@ public class Character extends Sprite {
     }
 
     /**
-     * Determines the current state of the character based on its velocity.
-     *
-     * @return The current state of the character
+     * Determines character state based on movement velocity.
+     * Uses previous state to choose correct standing animation.
      */
     public State getState() {
         if (b2body.getLinearVelocity().y > 0) {

@@ -27,39 +27,89 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.Color;
 
 /**
- * This screen is the landing page of the game. It allows the player to choose
- * between starting a new game, accessing settings, viewing instructions,
- * checking credits,
- * or quitting the game. It also displays the leaderboard of players'
- * satisfaction scores.
+ * Main menu screen for UniSim.
+ * Provides:
+ * - Game start with username entry
+ * - Access to settings and instructions
+ * - Leaderboard display
+ * - Credits and quit options
+ * Features a clean UI with background music and visual styling.
  */
 public class LandingScreen implements Screen {
-    private UniSim game;
-    private Texture backgroundTexture;
-    private Label.LabelStyle labelStyle;
-    private Label.LabelStyle titleLabelStyle;
-    private Label.LabelStyle subtextLabelStyle;
-    private Music music; // Initialize music
-    public Table leaderboardTable;
-    public Stage stage;
-    private Skin skin;
-    private BitmapFont font;
-    private BitmapFont titleFont;
+    // Core components
+    private UniSim game;              // Main game instance
+    private Stage stage;              // UI stage
+    private Skin skin;                // UI styling
+    
+    // Visual elements
+    private Texture backgroundTexture;  // Menu background
+    private BitmapFont font;           // Regular text font
+    private BitmapFont titleFont;      // Title text font
+    private Label.LabelStyle labelStyle;         // Regular text style
+    private Label.LabelStyle titleLabelStyle;    // Title text style
+    private Label.LabelStyle subtextLabelStyle;  // Subtitle text style
+    
+    // Audio
+    private Music music;  // Background music
+    
+    // UI components
+    public Table leaderboardTable;      // Score display
+    private TextField usernameTextField;  // Player name input
+    
+    // Leaderboard data
+    private List<String> leaderboardSat;    // Satisfaction scores
+    private List<String> leaderboardNames;   // Player names
 
-    private List<String> leaderboardSat;
-    private List<String> leaderboardNames;
+    /**
+     * Custom text field with placeholder text support.
+     * Shows gray placeholder text when empty.
+     */
+    private class PlaceholderTextField extends TextField {
+        private final String placeholder;       // Default text
+        private final Color placeholderColor;   // Gray color for placeholder
+        
+        /**
+         * Creates a new text field with placeholder.
+         *
+         * @param placeholder Text to show when empty
+         * @param skin UI styling to use
+         */
+        public PlaceholderTextField(String placeholder, Skin skin) {
+            super("", skin);
+            this.placeholder = placeholder;
+            this.placeholderColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+        }
 
-    private TextField usernameTextField;
+        @Override
+        public void draw(com.badlogic.gdx.graphics.g2d.Batch batch, float parentAlpha) {
+            super.draw(batch, parentAlpha);
+            if (getText().isEmpty()) {
+                BitmapFont font = getStyle().font;
+                Color oldColor = font.getColor();
+                font.setColor(placeholderColor);
+                font.draw(batch, placeholder, getX() + 10, getY() + (getHeight() + font.getCapHeight()) / 2);
+                font.setColor(oldColor);
+            }
+        }
+    }
 
+    /**
+     * Gets the UI stage for input handling.
+     * @return Stage used for UI rendering
+     */
     public Stage getStage() {
         return stage;
     }
 
     /**
-     * Constructor for the LandingScreen.
-     * Initializes the background, music, and all UI elements.
+     * Creates the landing screen with all UI elements.
+     * Sets up:
+     * - Background and styling
+     * - Menu buttons and text fields
+     * - Leaderboard display
+     * - Music and sound
      *
-     * @param game The game instance for screen switching
+     * @param game Main game instance
      */
     public LandingScreen(UniSim game) {
         this.game = game;
@@ -100,29 +150,6 @@ public class LandingScreen implements Screen {
         TextButton creditsButton = new TextButton("Credits", skin);
         TextButton quitButton = new TextButton("Quit", skin);
         TextButton clearLeaderboardButton = new TextButton("Clear Leaderboard", skin);
-
-        class PlaceholderTextField extends TextField {
-            private final String placeholder;
-            private final Color placeholderColor;
-
-            public PlaceholderTextField(String placeholder, Skin skin) {
-                super("", skin);
-                this.placeholder = placeholder;
-                this.placeholderColor = new Color(0.5f, 0.5f, 0.5f, 1f);
-            }
-
-            @Override
-            public void draw(com.badlogic.gdx.graphics.g2d.Batch batch, float parentAlpha) {
-                super.draw(batch, parentAlpha);
-                if (getText().isEmpty()) {
-                    BitmapFont font = getStyle().font;
-                    Color oldColor = font.getColor();
-                    font.setColor(placeholderColor);
-                    font.draw(batch, placeholder, getX() + 10, getY() + (getHeight() + font.getCapHeight()) / 2);
-                    font.setColor(oldColor);
-                }
-            }
-        }
 
         usernameTextField = new PlaceholderTextField("Enter your username", skin);
         usernameTextField.setSize(500, 60);
@@ -286,6 +313,12 @@ public class LandingScreen implements Screen {
         stage.setKeyboardFocus(usernameTextField);
     }
 
+    /**
+     * Main render loop for the screen.
+     * Updates background and UI elements.
+     *
+     * @param delta Time since last frame
+     */
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -332,9 +365,10 @@ public class LandingScreen implements Screen {
     }
 
     /**
-     * Retrieves the leaderboard satisfaction scores from a file.
+     * Loads and parses the leaderboard file.
+     * Extracts player names and satisfaction scores.
      *
-     * @return A list of satisfaction scores from the leaderboard
+     * @return List containing names and scores
      */
     private List<List<String>> getLeaderboard() {
         List<List<String>> leaderboard = new ArrayList<>();
@@ -376,7 +410,8 @@ public class LandingScreen implements Screen {
     }
 
     /**
-     * Clears the leaderboard satisfaction scores from the file.
+     * Clears the satisfaction scores from leaderboard.
+     * Used when resetting game data.
      */
     public void clearLeaderboardSat() {
         try {

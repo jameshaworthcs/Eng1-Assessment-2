@@ -5,48 +5,59 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 /**
- * Abstract Building class representing a general structure in the game with basic properties
- * like name, cost, and texture. It also defines the bonuses associated with the building and
- * provides a method to get the building's type.
+ * Base class for all buildings in UniSim.
+ * Defines common properties and behaviors for:
+ * - Academic buildings
+ * - Food services
+ * - Accommodation
+ * - Recreational facilities
+ * - Workplaces
  */
 public abstract class Building {
 
-    protected String name;
-    protected float cost;
-    protected Texture texture;
-    protected float width;
-    protected float height;
+    // Basic properties
+    protected String name;      // Building name
+    protected float cost;       // Construction cost
+    protected Texture texture;  // Visual representation
+    protected float width;      // Building width
+    protected float height;     // Building height
 
-    private float lakeBonus;
+    // Placement bonuses
+    private float lakeBonus;    // Bonus for lakeside placement
 
     /**
-     * Constructor to initialize a Building with specified properties including name, cost, texture,
-     * lake bonus, width, and height.
-     * @param name Name of the building.
-     * @param cost Cost of the building in in-game currency.
-     * @param picture Path to the texture image file for the building.
-     * @param lakeBonus Bonus granted when the building is placed near a lake.
-     * @param width Width of the building in game units.
-     * @param height Height of the building in game units.
+     * Creates a new building with specified attributes.
+     * Loads the building's texture and sets its properties.
+     *
+     * @param name Building's display name
+     * @param cost Construction cost in currency
+     * @param picture Texture file path
+     * @param lakeBonus Bonus for lake proximity
+     * @param width Building width in units
+     * @param height Building height in units
      */
     public Building(String name, float cost, String picture, float lakeBonus, float width, float height) {
         this.cost = cost;
         this.name = name;
         this.lakeBonus = lakeBonus;
-
         this.width = width;
         this.height = height;
+        
         try {
             this.texture = new Texture(picture);
-        }catch (Exception e) {
+        } catch (Exception e) {
             Gdx.app.error("BuildingList", "Error loading texture: " + picture, e);
         }
     }
 
     /**
-     * Abstract method to get the type of the building. Each building type provideS its own
-     * implementation of this method.
-     * @return The type of the building as a String.
+     * Gets the building's category.
+     * Used for:
+     * - Interaction handling
+     * - Effect application
+     * - UI display
+     *
+     * @return Building type identifier
      */
     abstract public String getType();
 }

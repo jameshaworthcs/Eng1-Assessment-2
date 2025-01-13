@@ -28,21 +28,26 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import java.awt.*;
 
 /**
- * Screen that displays instructions on how to play the game.
- * It provides an overview of the game mechanics and controls.
- * The player can navigate back to either the PauseMenu or LandingScreen from this screen.
+ * Tutorial screen that explains game mechanics and controls.
+ * Features:
+ * - Scrollable instructions with sections
+ * - Starting resources and rules
+ * - Building types and their effects
+ * - Game mechanics and tips
+ * Can be accessed from main menu, pause menu, or game screen.
  */
 public class HowToPlayScreen implements Screen {
-    private UniSim game;
-    private Stage stage;
-    private Skin skin;
-
-    private Texture backgroundTexture;
-
-    private LandingScreen landingScreen; // Reference to LandingScreen for returning
-    private PauseMenu pauseMenu;         // Reference to PauseMenu for returning
-    private GameScreen gameScreen;        // Reference to GameScreen for returning
-    private Music music;
+    // Core components
+    private UniSim game;              // Main game instance
+    private Stage stage;              // UI stage
+    private Skin skin;                // UI styling
+    private Texture backgroundTexture;  // Menu background
+    
+    // Navigation references
+    private LandingScreen landingScreen;  // Main menu reference
+    private PauseMenu pauseMenu;          // Pause menu reference
+    private GameScreen gameScreen;        // Game screen reference
+    private Music music;                  // Background music
 
     /**
      * Constructor for HowToPlayScreen when accessed from GameScreen.

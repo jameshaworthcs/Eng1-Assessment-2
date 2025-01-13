@@ -15,14 +15,32 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+/**
+ * Achievement tracking and display screen.
+ * Features:
+ * - List of available achievements
+ * - Achievement descriptions and rewards
+ * - Satisfaction point bonuses
+ * - Scrollable interface
+ * Can be accessed from main menu or pause menu.
+ */
 public class AchievementsScreen implements Screen {
-    private final UniSim game;
-    private final Screen previousScreen;
-    private Stage stage;
-    private Skin skin;
-    private Texture backgroundTexture;
-    private Music music;
+    // Core components
+    private final UniSim game;              // Main game instance
+    private final Screen previousScreen;     // Screen to return to
+    private Stage stage;                     // UI stage
+    private Skin skin;                       // UI styling
+    private Texture backgroundTexture;       // Menu background
+    private Music music;                     // Background music
 
+    /**
+     * Creates the achievements screen.
+     * Sets up UI components and loads achievements.
+     *
+     * @param game Main game instance
+     * @param previousScreen Screen to return to
+     * @param music Background music track
+     */
     public AchievementsScreen(UniSim game, Screen previousScreen, Music music) {
         this.game = game;
         this.previousScreen = previousScreen;
@@ -37,6 +55,13 @@ public class AchievementsScreen implements Screen {
         createUI();
     }
 
+    /**
+     * Sets up the screen's UI elements.
+     * Creates:
+     * - Title and header
+     * - Scrollable achievement list
+     * - Back button
+     */
     private void createUI() {
         Table mainTable = new Table();
         mainTable.setFillParent(true);
@@ -107,6 +132,16 @@ public class AchievementsScreen implements Screen {
         stage.addActor(backButton);
     }
 
+    /**
+     * Adds an achievement entry to the achievements list.
+     * Creates a styled table entry with title, description, and reward.
+     *
+     * @param table Parent table to add achievement to
+     * @param style Text styling for achievement labels
+     * @param title Achievement name
+     * @param description Achievement unlock condition
+     * @param reward Satisfaction bonus when unlocked
+     */
     private void addAchievement(Table table, Label.LabelStyle style, String title, String description, String reward) {
         Table achievementEntry = new Table();
         achievementEntry.top().left();

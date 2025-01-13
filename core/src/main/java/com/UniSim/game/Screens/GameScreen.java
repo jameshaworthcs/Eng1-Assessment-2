@@ -63,64 +63,67 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
- * GameScreen class represents the main screen of the game where the gameplay
- * occurs.
- * It handles rendering the game world, player interactions, building
- * placements,
- * physics, UI components, and other essential features of the game.
+ * Main gameplay screen of UniSim.
+ * Handles:
+ * - Game world rendering and physics
+ * - Player character movement and interactions
+ * - Building placement and management
+ * - Camera control and UI elements
+ * - Event system and notifications
  */
 public class GameScreen implements Screen {
-    private UniSim game;
-    private SpriteBatch batch;
-    private Stage stage;
-
-    private BuildingManager buildingManager;
-
-    private Texture characterTexture;
-    private Texture speechBubbleTexture;
-
-    private World world;
-    private Character player;
-    private SpeechBubble speechBubbleReception;
-    private Texture map;
-    private OrthographicCamera camera;
-
-    private Box2DDebugRenderer b2dr;
-
-    private FitViewport fitViewport;
-
-    private Skin skin; // Skin for UI styling
-
-    private TmxMapLoader mapLoader;
-    private TiledMap tiledMap;
-    private OrthogonalTiledMapRenderer renderer;
-
-    public static AssetManager manager;
-    private Music music;
-
-    public Hud hud;
-
-    private PauseMenu pauseMenu;
-    private Texture pauseIconTexture;
-
-    private boolean playerNearReseption;
-
-    private boolean showFullMap = false;
-    private Vector3 originalCameraPosition;
-    private float originalZoom;
-    private ArrayList<Float> loggedMinutes;
-
-    private String buildingInteractedWith;
-
-    private EventManager eventManager;
-
+    // Core game components
+    private UniSim game;              // Main game instance
+    private SpriteBatch batch;        // Sprite rendering
+    private Stage stage;              // UI stage
+    private BuildingManager buildingManager;  // Manages building placement/interaction
+    
+    // Textures and visuals
+    private Texture characterTexture;     // Player sprite
+    private Texture speechBubbleTexture;  // Interaction indicator
+    private Texture map;                  // Game world background
+    private Texture pauseIconTexture;     // Pause menu button
+    
+    // Physics and world
+    private World world;              // Box2D physics world
+    private Character player;         // Player character
+    private SpeechBubble speechBubbleReception;  // Building interaction indicator
+    private OrthographicCamera camera;    // Game view camera
+    private Box2DDebugRenderer b2dr;      // Physics debug rendering
+    private FitViewport fitViewport;      // Screen scaling
+    
+    // Map and rendering
+    private Skin skin;                    // UI styling
+    private TmxMapLoader mapLoader;       // Tiled map loading
+    private TiledMap tiledMap;            // Game world map
+    private OrthogonalTiledMapRenderer renderer;  // Map rendering
+    
+    // Game systems
+    public static AssetManager manager;   // Resource management
+    private Music music;                  // Background music
+    public Hud hud;                      // Heads-up display
+    private PauseMenu pauseMenu;         // Pause menu
+    private EventManager eventManager;    // Random events
+    
+    // Game state
+    private boolean playerNearReseption;  // Reception interaction flag
+    private boolean showFullMap = false;  // Map view toggle
+    private Vector3 originalCameraPosition;  // For map view
+    private float originalZoom;             // For map view
+    private ArrayList<Float> loggedMinutes;  // Time tracking
+    private String buildingInteractedWith;   // Current interaction
+    
     /**
-     * Constructor to initialize the game screen and its components.
-     * This method sets up all the necessary game elements including the map, world,
-     * player, buildings, HUD, and other interactive components.
+     * Creates a new game screen and initializes all components.
+     * Sets up:
+     * - Physics world and collision detection
+     * - Map loading and rendering
+     * - Player character and camera
+     * - UI elements and menus
+     * - Building system
      *
-     * @param game  The main game instance.
-     * @param music The background music to be played.
+     * @param game Main game instance
+     * @param music Background music track
      */
     public GameScreen(UniSim game, Music music) {
         this.game = game;
@@ -218,13 +221,8 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Creates hitboxes for the game world, adding them as static bodies.
-     * This method iterates through specific layers of the map and defines collision
-     * boundaries.
-     *
-     * @param bdef  The body definition used for creating bodies.
-     * @param shape The shape of the hitbox.
-     * @param fdef  The fixture definition containing the properties of the hitbox.
+     * Creates collision boxes for map objects.
+     * Converts Tiled map objects to Box2D physics bodies.
      */
     private void makeHitBoxes(BodyDef bdef, PolygonShape shape, FixtureDef fdef) {
         Body body;
@@ -245,35 +243,21 @@ public class GameScreen implements Screen {
         }
     }
 
-    // Method to set the music volume
+    /**
+     * Updates music volume from settings.
+     * @param volume New volume level (0-1)
+     */
     public void setMusicVolume(float volume) {
         if (music != null) {
             music.setVolume(volume);
         }
     }
 
-    // Method to get the current music volume
-    public float getMusicVolume() {
-        if (music != null) {
-            return music.getVolume();
-        }
-        return 0;
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
-
-    public EventManager getEventManager() {
-        return eventManager;
-    }
-
     /**
-     * Renders the game scene each frame, handling input, updating game state,
-     * and drawing all visible elements, including the player, map, buildings,
-     * and HUD. This method also manages the pause menu.
+     * Main game loop.
+     * Updates physics, handles input, and renders world.
      *
-     * @param delta The time elapsed since the last frame.
+     * @param delta Time since last frame
      */
     @Override
     public void render(float delta) {
@@ -321,11 +305,15 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Updates the game state, including physics, player movement, camera, and
-     * building interactions.
-     * This method is called once per frame to perform essential updates.
+     * Updates game state each frame.
+     * Handles:
+     * - Physics world stepping
+     * - Camera movement
+     * - UI updates
+     * - Building interactions
+     * - Event processing
      *
-     * @param delta The time elapsed since the last frame.
+     * @param delta Time since last frame
      */
     public void update(float delta) {
         world.step(1 / 60f, 6, 2);
@@ -350,12 +338,11 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Displays a pop-up message on the screen for a specified duration.
-     * The message will fade out and be removed after the given time.
+     * Shows a temporary popup message.
+     * Used for notifications and feedback.
      *
-     * @param text The text to display in the pop-up.
-     * @param time The time (in seconds) for the pop-up to be displayed before
-     *             fading out.
+     * @param text Message to display
+     * @param time How long to show message
      */
     public void popUp(String text, float time) {
         Label loanMessage = new Label(text, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
@@ -389,12 +376,13 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Handles interactions with various types of buildings. The building type is
-     * checked, and the relevant
-     * action (sleep, eat, learn, work, relax) is performed based on the building
-     * type.
-     *
-     * @param building The building that the player interacts with.
+     * Processes building interactions based on type.
+     * Triggers appropriate effects for:
+     * - Academic buildings (study)
+     * - Food buildings (eat)
+     * - Accommodation (sleep)
+     * - Recreational (relax)
+     * - Workplace (work)
      */
     private void buildingInteraction(Building building) {
         if (building != null) {
@@ -650,8 +638,8 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Updates the camera position based on player movement and ensures the camera
-     * is within the boundaries.
+     * Handles camera movement and boundaries.
+     * Keeps camera within map limits and follows player.
      */
     private void updateCamera() {
         if (!showFullMap) {
@@ -690,10 +678,12 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Handles the player input for movement and interaction (WASD/Arrow keys and
-     * ENTER).
-     *
-     * @param deltaTime The time elapsed since the last frame.
+     * Processes player input for movement and actions.
+     * Handles:
+     * - WASD movement
+     * - Building placement
+     * - Menu controls
+     * - Interaction triggers
      */
     private void handleInput(float deltaTime) {
         float horizontalForce = 0;
@@ -721,9 +711,11 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Sets up the collision listener to detect when the player interacts with
-     * specific areas of the map.
-     * Triggers events when the player enters or exits a designated area.
+     * Sets up collision detection between objects.
+     * Handles:
+     * - Player-building collisions
+     * - Interaction zones
+     * - Map boundaries
      */
     private void setupCollisionListener() {
         world.setContactListener(new ContactListener() {
@@ -819,5 +811,21 @@ public class GameScreen implements Screen {
             camera.update();
             showFullMap = false;
         }
+    }
+
+    /**
+     * Gets the UI stage.
+     * @return Stage used for UI rendering
+     */
+    public Stage getStage() {
+        return stage;
+    }
+
+    /**
+     * Gets the event manager for random events.
+     * @return EventManager instance
+     */
+    public EventManager getEventManager() {
+        return eventManager;
     }
 }

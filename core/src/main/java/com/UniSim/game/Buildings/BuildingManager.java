@@ -40,14 +40,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
- * BuildingManager handles the creation, placement, and interaction with
- * buildings in the game.
- * It manages different building types, their placement on the map, and player
- * interactions.
+ * Manages the creation, placement, and interaction with buildings in the game.
+ * Handles different building types, their placement on the map, and player interactions.
+ * Provides UI for building selection and placement validation.
  */
 public class BuildingManager {
     private Stage stage;
-
     private Skin skin;
     private World world;
     private Window buildingWindow;
@@ -60,30 +58,23 @@ public class BuildingManager {
     private static ArrayList<Workplace> workplaces;
 
     private ArrayList<Placed> placed;
-
     private boolean isPlacingBuilding;
     private Label messageLabel;
-
     private Building placingBuilding;
-
     private TiledMap tiledMap;
-
     private GameScreen gameScreen;
     private TextButton interactButton;
     private boolean isInteractable;
-
     private Building buildingPressed;
 
     /**
-     * Constructor initializes the BuildingManager with required game objects.
-     * It sets up building types, stages, world, and maps for building placement and
-     * interaction.
+     * Initializes the BuildingManager with required game components.
      *
-     * @param stage      The stage for UI elements.
-     * @param skin       The skin for UI elements.
-     * @param world      The physics world for Box2D interactions.
-     * @param tiledMap   The map containing the game world.
-     * @param gameScreen The screen managing the gameplay.
+     * @param stage      The stage for UI elements
+     * @param skin       The skin for UI styling
+     * @param world      The Box2D physics world
+     * @param tiledMap   The game world map
+     * @param gameScreen The parent game screen
      */
     public BuildingManager(Stage stage, Skin skin, World world, TiledMap tiledMap, GameScreen gameScreen) {
         accommodations = new ArrayList<Accommodation>();
@@ -105,38 +96,31 @@ public class BuildingManager {
     }
 
     /**
-     * Updates the interactions with buildings, checking proximity to the player and
-     * returning a building if the player is near it.
+     * Updates building interactions based on player proximity.
+     * Checks if the player is close enough to interact with any building.
      *
-     * @param playerPosition The player's current position in the world.
-     * @param camera         The camera to calculate the view.
-     * @param deltaTime      Time passed since the last frame.
-     * @return The building the player is interacting with, or null if no
-     *         interaction.
+     * @param playerPosition Player's current position
+     * @param camera        Game camera for view calculations
+     * @param deltaTime     Time since last frame
+     * @return The building being interacted with, or null if none
      */
     public Building updateBuildingInteractions(Vector2 playerPosition, OrthographicCamera camera, float deltaTime) {
         buildingPressed = null;
         for (Placed building : placed) {
             buildingPressed = building.updateInteraction(playerPosition, camera, deltaTime);
-            if (!Objects.equals(buildingPressed, null)) {
+            if (buildingPressed != null) {
                 break;
             }
-
         }
-
         return buildingPressed;
     }
 
-    // TODO: Generate new images for the various buildings
-    // TODO: On hover over buildings in build menu show stats of the building,
-    // doesnt have to be on hover could just be listed below the building
-
     /**
-     * Creates instances of various building types and adds them to respective
-     * lists.
+     * Initializes all available building types with their properties.
+     * TODO: Update building images with final assets
+     * TODO: Add building stats display in build menu
      */
     private void makeBuildingTypes() {
-
         accommodations.add(new Accommodation("Derwent", 1000f, "accommodation_3.png", 4f, 64f, 64f, 2));
         accommodations.add(new Accommodation("Anne Lister", 3000f, "accommodation_3.png", 4f, 96f, 96f, 5));
         accommodations.add(new Accommodation("David Kato", 8000f, "accommodation_3.png", 4f, 128f, 128f, 10));
@@ -159,8 +143,8 @@ public class BuildingManager {
     }
 
     /**
-     * Displays the building selection window to allow the player to choose a
-     * building type.
+     * Displays the main building selection window.
+     * Creates buttons for each building category and handles navigation.
      */
     private void showBuildingSelectionWindow() {
         if (buildingWindow == null) {
@@ -168,7 +152,7 @@ public class BuildingManager {
             buildingWindow.setSize(450, 600);
             buildingWindow.setPosition(1700, 400);
         } else {
-            buildingWindow.clear(); // Clear existing content
+            buildingWindow.clear();
         }
 
         isWindowOpen = true;
@@ -209,17 +193,15 @@ public class BuildingManager {
         });
         buildingWindow.add(recreationalButton).padBottom(10).row();
 
-        // **Declare and initialize the Workplace Button**
-        TextButton WorkplaceButton = new TextButton("Workplace", skin);
-        WorkplaceButton.addListener(new ClickListener() {
+        TextButton workplaceButton = new TextButton("Workplace", skin);
+        workplaceButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 showWorkOptions();
             }
         });
-        buildingWindow.add(WorkplaceButton).padBottom(10).row();
+        buildingWindow.add(workplaceButton).padBottom(10).row();
 
-        // Add the Back button at the bottom
         TextButton backButton = new TextButton("Back", skin);
         backButton.addListener(new ClickListener() {
             @Override
@@ -230,7 +212,7 @@ public class BuildingManager {
             }
         });
 
-        buildingWindow.add(backButton).padTop(100).row(); // Add the "Back" button at the bottom
+        buildingWindow.add(backButton).padTop(100).row();
 
         if (!stage.getActors().contains(buildingWindow, true)) {
             stage.addActor(buildingWindow);
@@ -238,43 +220,38 @@ public class BuildingManager {
     }
 
     /**
-     * Creates a scrollable window for the building options and a back button.
+     * Creates a scrollable window for building options.
+     * Sets up scrolling behavior and adds a back button.
      *
-     * @param buildingTable The table containing building options.
+     * @param buildingTable The table containing building options
      */
     private void setScrollAndBack(Table buildingTable) {
-        // Create a ScrollPane and set it to only show vertical scrollbars
         ScrollPane scrollPane = new ScrollPane(buildingTable, skin);
-        scrollPane.setFadeScrollBars(false); // Disable fade so scrollbars are always visible
-        scrollPane.setScrollingDisabled(true, false); // Disable horizontal scrolling, enable vertical scrolling
-        scrollPane.setForceScroll(false, true); // Only force vertical scroll
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollingDisabled(true, false);
+        scrollPane.setForceScroll(false, true);
 
-        // Add the scroll pane to the window
         buildingWindow.add(scrollPane).expand().fill().row();
 
-        // Add the Back button at the bottom
         TextButton backButton = new TextButton("Back", skin);
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                showBuildingSelectionWindow(); // Go back to the main menu
+                showBuildingSelectionWindow();
             }
         });
 
-        buildingWindow.add(backButton).padTop(20).row(); // Add the "Back" button at the bottom
+        buildingWindow.add(backButton).padTop(20).row();
     }
 
     /**
-     * Displays the options for selecting an accommodation building.
+     * Displays accommodation building options in a scrollable window.
      */
     private void showAccommodationOptions() {
-        buildingWindow.clear(); // Clear previous content
+        buildingWindow.clear();
         buildingWindow.add(new Label("Select Accommodation", skin)).padBottom(20).row();
-
-        // Create a Table for building options
+        
         Table buildingTable = new Table();
-
-        // Add building options
         for (Accommodation accommodation : accommodations) {
             addBuildingOption(buildingTable, accommodation);
         }
@@ -282,16 +259,13 @@ public class BuildingManager {
     }
 
     /**
-     * Displays the options for selecting a workplace building.
+     * Displays workplace building options in a scrollable window.
      */
     private void showWorkOptions() {
         buildingWindow.clear();
         buildingWindow.add(new Label("Select Workplace", skin)).padBottom(20).row();
-
-        // Create a Table for building options
+        
         Table buildingTable = new Table();
-
-        // Add building options
         for (Workplace workplace : workplaces) {
             addBuildingOption(buildingTable, workplace);
         }
@@ -341,23 +315,19 @@ public class BuildingManager {
     }
 
     /**
-     * Adds a building to the table, displaying an image and selecting button.
+     * Adds a building option to the selection table with image, label, and select button.
+     * Maintains aspect ratio of building images and handles selection events.
      *
-     * @param buildingTable The table to add the building option to.
-     * @param building      The building to display.
+     * @param buildingTable The table to add the building option to
+     * @param building The building to add
      */
     private void addBuildingOption(Table buildingTable, Building building) {
-        // Create the Image and maintain its aspect ratio
         Image buildingImage = new Image(building.texture);
-
-        // Set maximum width and height (for display in the selection window)
+        
         float maxWidth = 100;
         float maxHeight = 100;
-
-        // Calculate aspect ratio
         float aspectRatio = (float) building.texture.getWidth() / building.texture.getHeight();
-
-        // Adjust width and height to maintain the aspect ratio but within the max size
+        
         float displayWidth, displayHeight;
         if (aspectRatio > 1) {
             displayWidth = maxWidth;
@@ -366,16 +336,12 @@ public class BuildingManager {
             displayHeight = maxHeight;
             displayWidth = maxHeight * aspectRatio;
         }
-
-        // Set the size of the image for the selection window
+        
         buildingImage.setSize(displayWidth, displayHeight);
-
-        // Add the building image and label to the table
         buildingTable.add(buildingImage).size(displayWidth, displayHeight).padBottom(10).row();
         Label buildingLabel = new Label(building.name + " - " + String.format("$%.2f", building.cost), skin);
         buildingTable.add(buildingLabel).padBottom(10).row();
-
-        // Create the Select button
+        
         TextButton selectButton = new TextButton("Select", skin);
         selectButton.addListener(new ClickListener() {
             @Override
@@ -385,7 +351,6 @@ public class BuildingManager {
                 closeBuildingWindow();
             }
         });
-
         buildingTable.add(selectButton).padBottom(20).row();
     }
 
@@ -404,184 +369,161 @@ public class BuildingManager {
     }
 
     /**
-     * Handles the logic for placing buildings in the game, rendering of placed
-     * buildings and input handling.
+     * Handles the building placement process.
+     * Shows placement preview, validates position, and creates the building when placed.
      *
-     * @param batch    The SpriteBatch for drawing buildings.
-     * @param camera   The camera to calculate the position for placing buildings.
-     * @param viewport The viewport to map the camera's view.
+     * @param batch The sprite batch for rendering
+     * @param camera The game camera
+     * @param viewport The game viewport
      */
     public void handleBuildingPlacement(SpriteBatch batch, OrthographicCamera camera, Viewport viewport) {
         if (isPlacingBuilding && placingBuilding != null) {
-            // Show message about spacebar cancellation
             gameScreen.hud.sendMessage("Press SPACEBAR to cancel building placement", "buildMode");
-
-            Vector3 mousePosition = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(mousePosition, viewport.getScreenX(), viewport.getScreenY(),
-                    viewport.getScreenWidth(), viewport.getScreenHeight());
-
-            // Check for spacebar to cancel placement
+            
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 isPlacingBuilding = false;
                 placingBuilding = null;
                 gameScreen.hud.hideMessage("buildMode");
+                showBuildingSelectionWindow();
                 return;
             }
 
+            Vector3 mousePosition = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(mousePosition,
+                    viewport.getScreenX(), viewport.getScreenY(),
+                    viewport.getScreenWidth(), viewport.getScreenHeight());
+
             batch.begin();
-            batch.setColor(1, 1, 1, 0.5f); // Semi-transparent
-
+            batch.setColor(1, 1, 1, 0.5f);
             Vector3 snappedPosition = snapToGrid(mousePosition.x, mousePosition.y);
-
-            // Draw the building using the custom width and height
             batch.draw(placingBuilding.texture, snappedPosition.x - placingBuilding.width / 2 / PPM,
                     snappedPosition.y - placingBuilding.height / 2 / PPM,
                     placingBuilding.width / PPM, placingBuilding.height / PPM);
-
-            batch.setColor(1, 1, 1, 1); // Reset to full opacity
+            batch.setColor(1, 1, 1, 1);
             batch.end();
 
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 if (!checkOverlap(snappedPosition.x, snappedPosition.y)) {
                     if (canAffordBuilding()) {
-                        placed.add(new Placed(placingBuilding.name, snappedPosition.x, snappedPosition.y,
+                        placed.add(new Placed(placingBuilding.name,
+                                snappedPosition.x, snappedPosition.y,
                                 placingBuilding.width / PPM, placingBuilding.height / PPM, stage));
                         createBuildingBody(snappedPosition.x, snappedPosition.y, placingBuilding.width / PPM,
-                                placingBuilding.height / PPM); // Create Box2D body
-                        gameScreen.hud.hideMessage("buildMode"); // Hide error message after successful placement
+                                placingBuilding.height / PPM);
+                        gameScreen.hud.hideMessage("buildMode");
                         showBuildingSelectionWindow();
                         gameScreen.hud.stats.takeOffBuildingCost(placingBuilding.cost);
                         gameScreen.hud.stats.incrementBuildingCounter();
                     } else {
-
                         gameScreen.popUp("Cannot Afford Building", 4);
                         showBuildingSelectionWindow();
                     }
                     isPlacingBuilding = false;
                 } else {
-
                     gameScreen.popUp("Cannot place building here!", 4);
                 }
             }
         }
-
-        batch.begin();
-        for (Placed building : placed) {
-            building.drawBuilding(batch);
-        }
-        batch.end();
     }
 
     /**
-     * Checks if the player can afford the building being placed.
+     * Checks if the player can afford the currently selected building.
      *
-     * @return True if the player can afford the building, false otherwise.
+     * @return true if the player has enough money, false otherwise
      */
     private boolean canAffordBuilding() {
-        return !(placingBuilding.cost > gameScreen.hud.stats.getCurrency());
+        return gameScreen.hud.stats.getCurrency() >= placingBuilding.cost;
     }
 
     /**
-     * Checks if the new building overlaps with any existing buildings or map
-     * objects.
+     * Checks if a building placement would overlap with existing buildings or map objects.
      *
-     * @param x The x-coordinate to check for overlap.
-     * @param y The y-coordinate to check for overlap.
-     * @return True if there is overlap, false otherwise.
+     * @param x The x coordinate to check
+     * @param y The y coordinate to check
+     * @return true if there is an overlap, false otherwise
      */
     private boolean checkOverlap(float x, float y) {
         boolean overlap = false;
-        Placed newBuildingPla = new Placed(placingBuilding.name, x, y, placingBuilding.width / PPM,
-                placingBuilding.height / PPM, stage);
+        Placed newBuildingPla = new Placed(placingBuilding.name,
+                x, y,
+                placingBuilding.width / PPM, placingBuilding.height / PPM, stage);
+
         for (Placed building : placed) {
             if (newBuildingPla.overlaps(building)) {
-                overlap = true; // Overlap detected
+                overlap = true;
                 break;
             }
         }
 
         for (MapLayer layer : tiledMap.getLayers()) {
-            if (layer.getObjects().getCount() > 0) { // Add any other relevant layer names here
+            if (layer.getObjects().getCount() > 0) {
                 for (MapObject object : layer.getObjects().getByType(RectangleMapObject.class)) {
                     Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-                    // Define object rectangle for overlap check
                     Placed temp = new Placed(
                             "Borders",
-                            (rect.getX() + (rect.getWidth() / 2)) / PPM,
-                            (rect.getY() + (rect.getHeight() / 2)) / PPM,
-                            rect.getWidth() / PPM,
-                            rect.getHeight() / PPM,
+                            rect.x / PPM + rect.width / PPM / 2,
+                            rect.y / PPM + rect.height / PPM / 2,
+                            rect.width / PPM,
+                            rect.height / PPM,
                             stage);
 
-                    // Check for overlap
                     if (newBuildingPla.overlaps(temp)) {
-                        overlap = true; // Overlap detected
-                        break; // Stop further checks within this layer
+                        overlap = true;
+                        break;
                     }
                 }
             }
-            if (overlap)
-                break; // Stop checking other layers if overlap is detected
+            if (overlap) break;
         }
-
         return overlap;
     }
 
     /**
-     * Creates a Box2D body for the building to interact with the game world.
-     *
-     * @param x      The x-coordinate to place the body.
-     * @param y      The y-coordinate to place the body.
-     * @param width  The width of the body.
-     * @param height The height of the body.
+     * Creates a Box2D body for a placed building.
      */
     private void createBuildingBody(float x, float y, float width, float height) {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set((x), (y)); // Adjust position correctly for PPM
+        bodyDef.position.set(x, y);
         bodyDef.type = BodyDef.BodyType.StaticBody;
 
-        Body buildingBody = world.createBody(bodyDef);
+        Body body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((width / 2), (height / 2));
+        shape.setAsBox(width / 2, height / 2);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1.0f;
-        fixtureDef.friction = 0.3f;
 
-        buildingBody.createFixture(fixtureDef);
+        body.createFixture(fixtureDef);
         shape.dispose();
     }
 
     /**
-     * Combines all building lists into a single list for easy access.
+     * Combines all building types into a single list.
      *
-     * @return A list containing all buildings of all types.
+     * @return A list containing all available buildings
      */
     public static ArrayList<Building> combineBuildings() {
-        ArrayList<Building> allBuildings = new ArrayList<>();
-        allBuildings.addAll(accommodations);
-        allBuildings.addAll(academics);
-        allBuildings.addAll(recreationals);
-        allBuildings.addAll(foods);
-        allBuildings.addAll(workplaces);
-        return allBuildings;
+        ArrayList<Building> buildings = new ArrayList<Building>();
+        buildings.addAll(accommodations);
+        buildings.addAll(academics);
+        buildings.addAll(foods);
+        buildings.addAll(recreationals);
+        buildings.addAll(workplaces);
+        return buildings;
     }
 
+    // Window management methods
     public void closeBuildingWindow() {
         if (buildingWindow != null) {
             buildingWindow.remove();
+            isWindowOpen = false;
         }
-        isWindowOpen = false;
     }
 
     public void openBuildingWindow() {
-        if (!isWindowOpen) {
-            isWindowOpen = true;
-            showBuildingSelectionWindow();
-        }
+        showBuildingSelectionWindow();
     }
 
     public boolean getIsWindowOpen() {

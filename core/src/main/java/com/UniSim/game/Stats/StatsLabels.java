@@ -7,56 +7,56 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 /**
- * The StatsLabels class is responsible for creating and managing on-screen labels that display various game stats or messages.
- * It allows the creation of a label with customizable text and position, which can be updated during gameplay.
+ * Manages UI labels for displaying game statistics and messages.
+ * Creates and positions text labels on the game screen.
+ * Provides methods to update label contents dynamically.
  */
 public class StatsLabels {
-    private Body body;
-    private Table table;
-    private Label label;
-    private Skin skin;
-    private World world;
-    private Stage stage;
-    private Label messageLabel;
+    private Body body;          // Physics body (if needed for positioning)
+    private Table table;        // Layout container
+    private Label label;        // Unused - consider removing
+    private Skin skin;          // UI styling
+    private World world;        // Physics world reference
+    private Stage stage;        // UI stage
+    private Label messageLabel; // Main display label
 
     /**
-     * Constructor that initializes the StatsLabels object, creating a label with specified text at a given position.
+     * Creates a new stats label at specified position.
+     * Places the label on the UI stage with given styling.
      *
-     * @param world The game world
-     * @param stage The stage where the label will be added
-     * @param skin The skin used to style the label
-     * @param x The x-coordinate of the label's position
-     * @param y The y-coordinate of the label's position
-     * @param labelText The text to be displayed in the label
+     * @param world Game's physics world
+     * @param stage UI stage for rendering
+     * @param skin UI theme/styling
+     * @param x X position on screen
+     * @param y Y position on screen
+     * @param labelText Initial text to display
      */
     public StatsLabels(World world, Stage stage, Skin skin, int x, int y, String labelText) {
-
         this.world = world;
         this.stage = stage;
         this.skin = skin;
-
         createStatsLabel(x, y, labelText);
     }
 
     /**
-     * Creates the label and adds it to the stage.
-     * Initially, the label is set to be visible, and its position is determined by the provided coordinates.
+     * Sets up the label with initial position and text.
+     * Adds it to the stage for rendering.
      *
-     * @param x The x-coordinate of the label's position
-     * @param y The y-coordinate of the label's position
-     * @param stat The text to be displayed in the label
+     * @param x X position on screen
+     * @param y Y position on screen
+     * @param stat Text to display
      */
     private void createStatsLabel(int x, int y, String stat) {
         messageLabel = new Label(stat, skin);
-        messageLabel.setPosition(x, y); // Set the position for the message
-        messageLabel.setVisible(true); // Initially hidden
-        stage.addActor(messageLabel); // Add the label to the stage
+        messageLabel.setPosition(x, y);
+        messageLabel.setVisible(true);
+        stage.addActor(messageLabel);
     }
 
     /**
-     * Sets the text of the label to the specified new text.
+     * Updates the label's displayed text.
      *
-     * @param newText The new text to be displayed in the label
+     * @param newText New text to display
      */
     public void setText(String newText) {
         messageLabel.setText(newText);

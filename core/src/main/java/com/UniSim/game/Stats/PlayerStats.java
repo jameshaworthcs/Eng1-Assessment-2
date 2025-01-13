@@ -3,29 +3,22 @@ package com.UniSim.game.Stats;
 import static java.lang.Math.*;
 
 /**
- * The PlayerStats class is responsible for managing and updating the player's
- * statistics in the game.
- * It tracks values like satisfaction, currency, fatigue, knowledge, and
- * building count.
- * It provides methods to get, increase, and decrease these statistics based on
- * in-game actions.
+ * Manages all player statistics and attributes in the game.
+ * Tracks resources like currency and satisfaction, as well as
+ * player state like fatigue and knowledge levels.
+ * Provides methods to modify stats while enforcing game rules.
  */
 public class PlayerStats {
-
-    private int buildingCounter;
-    private int satisfaction;
-    private float currency;
-    private int fatigue;
-    private int knowledge;
-    private static String username;
+    private int buildingCounter;   // Number of buildings placed
+    private int satisfaction;      // Overall player satisfaction
+    private float currency;        // Available money for spending
+    private int fatigue;          // Current fatigue level (0-50)
+    private int knowledge;        // Academic progress
+    private static String username;  // Player's chosen name
 
     /**
-     * Initializes the PlayerStats object with default values.
-     * - buildingCounter: 0
-     * - satisfaction: 0
-     * - currency: 10,000
-     * - fatigue: 0
-     * - knowledge: 0
+     * Creates new player stats with starting values.
+     * Players begin with 10,000 currency and all other stats at zero.
      */
     public PlayerStats() {
         this.buildingCounter = 0;
@@ -35,51 +28,58 @@ public class PlayerStats {
         knowledge = 0;
     }
 
-    // get stats
+    // Getters for all stats
+    /** Gets current satisfaction level */
     public int getSatisfaction() {
         return satisfaction;
     }
 
+    /** Gets available currency */
     public float getCurrency() {
         return currency;
     }
 
+    /** Gets current fatigue level */
     public int getFatigue() {
         return fatigue;
     }
 
+    /** Gets accumulated knowledge */
     public int getKnowledge() {
         return knowledge;
     }
 
+    /** Gets number of buildings placed */
     public int getBuildingCounter() {
         return buildingCounter;
     }
 
+    /** Gets player's username */
     public static String getUsername() {
         return PlayerStats.username;
     }
 
-    // change stats
+    // Stat modification methods
+    /** Increases satisfaction by given amount */
     public void increaseSatisfaction(int amount) {
         satisfaction = satisfaction + amount;
     }
 
+    /** Decreases satisfaction, won't go below zero */
     public void decreaseSatisfaction(int amount) {
         satisfaction = max(satisfaction - amount, 0);
     }
 
+    /** Adds to available currency */
     public void increaseCurrency(int amount) {
         currency = currency + amount;
     }
 
     /**
-     * Decreases the player's currency by the given amount.
-     * If the player has insufficient currency, it returns false.
-     *
-     * @param amount The amount to decrease currency by
-     * @return true if the operation was successful, false if there was not enough
-     *         currency
+     * Attempts to spend currency if enough is available.
+     * 
+     * @param amount Amount to spend
+     * @return true if purchase successful, false if insufficient funds
      */
     public boolean decreaseCurrency(int amount) {
         if (currency - amount < 0) {
@@ -91,13 +91,11 @@ public class PlayerStats {
     }
 
     /**
-     * Increases the player's fatigue by the given amount.
-     * Fatigue cannot exceed 50. If the increase would cause the fatigue to exceed
-     * 50, it returns false.
-     *
-     * @param amount The amount to increase fatigue by
-     * @return true if the operation was successful, false if the fatigue would
-     *         exceed 50
+     * Attempts to increase fatigue level.
+     * Fatigue is capped at 50 to prevent excessive penalties.
+     * 
+     * @param amount Fatigue to add
+     * @return true if fatigue was increased, false if at max
      */
     public boolean increaseFatigue(int amount) {
         if (fatigue + amount > 50) {
@@ -109,37 +107,34 @@ public class PlayerStats {
     }
 
     /**
-     * Decreases the player's fatigue by the given amount.
-     * Fatigue cannot go below 0.
-     *
-     * @param amount The amount to decrease fatigue by
+     * Reduces fatigue level through rest.
+     * Fatigue cannot go below zero.
      */
     public void decreaseFatigue(int amount) {
         fatigue = max(fatigue - amount, 0);
     }
 
-    // assume knowledge doesn't decrease
+    /** Increases knowledge from studying or activities */
     public void increaseKnowledge(int amount) {
         knowledge = knowledge + amount;
     }
 
+    /** Applies effects from random events */
     public void applyEventEffects(int scoreEffect, int moneyEffect) {
         increaseSatisfaction(scoreEffect);
         increaseCurrency(moneyEffect);
     }
 
+    /** Increments building count when new building is placed */
     public void incrementBuildingCounter() {
         buildingCounter++;
     }
 
     /**
-     * Calculates the player's current satisfaction based on several factors:
-     * - Building count: Each building adds 1.5 satisfaction points
-     * - Knowledge: Each point of knowledge adds 2 satisfaction points
-     * - Fatigue: Fatigue causes a penalty to satisfaction, calculated as a fraction
-     * of the fatigue level
-     *
-     * @return The calculated satisfaction level
+     * Calculates overall satisfaction based on various factors:
+     * - Each building adds 1.5 satisfaction
+     * - Each knowledge point adds 2 satisfaction
+     * - High fatigue reduces satisfaction
      */
     public int calculateSatisfaction() {
         double fatiguePenalty = (fatigue / 50.0) * 10;
@@ -147,30 +142,23 @@ public class PlayerStats {
         return (int) increase;
     }
 
-    /**
-     * Reduces the player's currency by building cost.
-     *
-     * @param currency The cost to subtract from the player's current currency
-     */
-    public void takeOffBuildingCost(float currency) {
-        this.currency -= currency;
+    /** Deducts cost when purchasing a building */
+    public void takeOffBuildingCost(float cost) {
+        this.currency -= cost;
     }
 
+    /** Sets the player's username */
     public static void setUsername(String username) {
         PlayerStats.username = username;
     }
 
     /**
-     * Calculates a speed modifier based on the current fatigue level.
-     * The speed modifier decreases linearly as fatigue increases.
-     * At 0 fatigue, speed is 100% (modifier = 1.0)
-     * At max fatigue (50), speed is 50% (modifier = 0.5)
-     * 
-     * @return A float between 0.5 and 1.0 representing the speed modifier
+     * Gets movement speed modifier based on fatigue.
+     * Speed decreases linearly with fatigue:
+     * - 100% speed at 0 fatigue
+     * - 50% speed at max fatigue (50)
      */
     public float getSpeedModifier() {
-        // Linear decrease from 1.0 at fatigue=0 to 0.5 at fatigue=50
         return 1.0f - (fatigue / 100.0f);
     }
-
 }

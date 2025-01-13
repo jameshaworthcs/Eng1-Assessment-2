@@ -6,14 +6,20 @@ import java.util.List;
 import com.UniSim.game.Hud;
 
 /**
- * The AchievementManager class manages all achievements in the game,
- * tracks their progress, and handles unlocking achievements.
+ * Manages the game's achievement system.
+ * Tracks progress towards achievements, handles unlocking them,
+ * and calculates achievement-based bonuses.
  */
 public class AchievementManager {
-    private List<Achievement> achievements;
-    private Hud hud;
-    private int highSatisfactionTimer; // Tracks time spent with high satisfaction
+    private List<Achievement> achievements;         // All available achievements
+    private Hud hud;                               // For displaying notifications
+    private int highSatisfactionTimer;             // Time with satisfaction > 80%
 
+    /**
+     * Creates a new achievement manager and sets up all achievements.
+     * 
+     * @param hud HUD for displaying achievement notifications
+     */
     public AchievementManager(Hud hud) {
         this.hud = hud;
         this.achievements = new ArrayList<>();
@@ -21,8 +27,12 @@ public class AchievementManager {
         initializeAchievements();
     }
 
+    /**
+     * Sets up all available achievements in the game.
+     * Defines names, descriptions, and unlock criteria.
+     */
     private void initializeAchievements() {
-        // High satisfaction achievement
+        // Satisfaction-based achievement
         achievements.add(new Achievement(
             "I Heart Uni",
             "Maintain satisfaction above 80% for 3 minutes",
@@ -30,7 +40,7 @@ public class AchievementManager {
             Achievement.AchievementType.HIGH_SATISFACTION
         ));
 
-        // Building count achievements
+        // Building milestones
         achievements.add(new Achievement(
             "Minimalist",
             "Place a total of five buildings",
@@ -45,7 +55,7 @@ public class AchievementManager {
             Achievement.AchievementType.BUILDING_COUNT
         ));
 
-        // Knowledge achievement
+        // Academic progress
         achievements.add(new Achievement(
             "Knowledge Master",
             "Reach a knowledge score of 20 or higher",
@@ -54,33 +64,45 @@ public class AchievementManager {
         ));
     }
 
+    /**
+     * Updates achievement progress based on current game state.
+     * Checks various stats and unlocks achievements when criteria are met.
+     * 
+     * @param dt Time elapsed since last update
+     */
     public void update(float dt) {
         PlayerStats stats = hud.getStats();
         
-        // Check high satisfaction achievement
+        // Track time with high satisfaction
         if (stats.getSatisfaction() >= 80) {
             highSatisfactionTimer += dt;
-            if (highSatisfactionTimer >= 180) { // 3 minutes = 180 seconds
+            if (highSatisfactionTimer >= 180) {  // 3 minutes
                 unlockAchievement("I Heart Uni");
             }
         } else {
             highSatisfactionTimer = 0;
         }
 
-        // Check building count achievements
+        // Check building milestones
         if (stats.getBuildingCounter() >= 5) {
             unlockAchievement("Minimalist");
         }
-        if (stats.getBuildingCounter() >= 20) { // Assuming 20 is max buildings
+        if (stats.getBuildingCounter() >= 20) {  // Max buildings
             unlockAchievement("Jam Packed");
         }
 
-        // Check knowledge achievement
+        // Check academic progress
         if (stats.getKnowledge() >= 20) {
             unlockAchievement("Knowledge Master");
         }
     }
 
+    /**
+     * Unlocks an achievement and shows a notification.
+     * Only unlocks if the achievement exists and isn't already unlocked.
+     * 
+     * @param name Name of the achievement to unlock
+     */
     private void unlockAchievement(String name) {
         for (Achievement achievement : achievements) {
             if (achievement.getName().equals(name) && !achievement.isUnlocked()) {
@@ -91,6 +113,10 @@ public class AchievementManager {
         }
     }
 
+    /**
+     * Gets a list of all unlocked achievements.
+     * Used for displaying achievement progress to the player.
+     */
     public List<Achievement> getUnlockedAchievements() {
         List<Achievement> unlockedAchievements = new ArrayList<>();
         for (Achievement achievement : achievements) {
@@ -101,6 +127,10 @@ public class AchievementManager {
         return unlockedAchievements;
     }
 
+    /**
+     * Calculates total satisfaction bonus from unlocked achievements.
+     * Used to boost player satisfaction based on achievement progress.
+     */
     public int calculateAchievementBonus() {
         int totalBonus = 0;
         for (Achievement achievement : achievements) {

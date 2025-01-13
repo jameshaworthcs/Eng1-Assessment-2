@@ -3,23 +3,27 @@ package com.UniSim.game.Buildings.Types;
 import com.UniSim.game.Buildings.Building;
 
 /**
- * Accommodation class represents a type of Building that helps decrease player fatigue.
- * Extends the Building class and includes a unique attribute for fatigue reduction.
+ * Accommodation building for rest and recovery.
+ * Effects when used:
+ * - Significantly reduces fatigue
+ * - Provides essential rest areas
+ * Examples: Dorms, rest areas, lounges
  */
 public class Accommodation extends Building {
-
-    private int fatigueDecrease;
+    // Rest effect
+    private int fatigueDecrease;  // Energy restored per rest
 
     /**
-     * Constructor to initialize an Accommodation building with specific properties including
-     * fatigue decrease along with other general building attributes.
-     * @param name Name of the accommodation building.
-     * @param cost Cost of the building in in-game currency.
-     * @param picture Path to the texture image file for the building.
-     * @param lakeBonus Bonus granted when the building is placed near a lake.
-     * @param width Width of the building in game units.
-     * @param height Height of the building in game units.
-     * @param fatigueDecrease Amount of fatigue reduced when interacting with this building.
+     * Creates a new accommodation building.
+     * Configures rest and recovery effects.
+     *
+     * @param name Building's display name
+     * @param cost Construction cost in currency
+     * @param picture Texture file path
+     * @param lakeBonus Bonus for lake proximity
+     * @param width Building width in units
+     * @param height Building height in units
+     * @param fatigueDecrease Energy restored per rest
      */
     public Accommodation(String name, float cost, String picture, float lakeBonus, float width, float height, int fatigueDecrease) {
         super(name, cost, picture, lakeBonus, width, height);
@@ -27,14 +31,18 @@ public class Accommodation extends Building {
     }
 
     /**
-     * Returns the building type as a string.
-     * @return "Accommodation", representing the type of this building.
+     * Gets the building's type identifier.
+     * @return "Accommodation" as building type
      */
     @Override
-    public String getType(){
+    public String getType() {
         return "Accommodation";
     }
 
+    /**
+     * Gets energy restored from resting.
+     * @return Fatigue points reduced
+     */
     public int getFatigueDecrease() {
         return fatigueDecrease;
     }

@@ -20,30 +20,34 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 /**
- * The PauseMenu class handles the creation and functionality of the pause menu
- * in the game.
- * It allows the player to pause the game, navigate to settings, see the 'How to
- * Play' screen, or quit to the main menu.
- * The menu is overlaid with a semi-transparent blur effect when active.
+ * Manages the game's pause menu interface.
+ * Provides options to:
+ * - Resume game
+ * - Access settings
+ * - View achievements
+ * - Check how to play
+ * - Return to main menu
+ * Includes a blur overlay effect when menu is active.
  */
 public class PauseMenu {
-    private Window pauseMenu;
-    private Image blurOverlay;
-    private boolean isPaused = false;
-    private GameScreen gameScreen;
-    private UniSim game;
-    private Music music;
-    private Stage stage; // Declare stage here
-    private EventManager eventManager;
+    private Window pauseMenu;         // Main menu window
+    private Image blurOverlay;        // Background blur effect
+    private boolean isPaused = false; // Current pause state
+    private GameScreen gameScreen;    // Reference to game screen
+    private UniSim game;              // Main game instance
+    private Music music;              // Background music
+    private Stage stage;              // UI rendering stage
+    private EventManager eventManager; // Handles game events
 
     /**
-     * Constructs a new PauseMenu instance.
+     * Creates a new pause menu with all UI components.
+     * Sets up the menu window, buttons, and blur overlay.
      *
-     * @param stage      the Stage used to manage the user interface elements
-     * @param skin       the Skin used for styling UI elements
-     * @param gameScreen the current GameScreen to return to when resuming the game
-     * @param game       the main game instance
-     * @param music      the Music instance to control the game's audio
+     * @param stage UI rendering stage
+     * @param skin UI theme/styling
+     * @param gameScreen Current game screen
+     * @param game Main game instance
+     * @param music Background music
      */
     public PauseMenu(Stage stage, Skin skin, GameScreen gameScreen, UniSim game, Music music) {
         this.stage = stage; // Initialize stage here
@@ -122,26 +126,45 @@ public class PauseMenu {
         stage.addActor(pauseMenu);
     }
 
+    /**
+     * Toggles the pause menu visibility.
+     * Shows/hides menu and blur overlay.
+     */
     public void togglePause() {
         isPaused = !isPaused;
         pauseMenu.setVisible(isPaused);
         blurOverlay.setVisible(isPaused);
     }
 
+    /**
+     * Checks if game is currently paused.
+     * @return true if paused, false if running
+     */
     public boolean isPaused() {
         return isPaused;
     }
 
+    /**
+     * Returns to pause menu from sub-screens.
+     * Used when backing out of settings/achievements.
+     */
     public void returnToPauseMenu() {
         game.setScreen(gameScreen); // Return to GameScreen to resume the game
         togglePause(); // Show pause menu again
     }
 
+    /**
+     * Gets the current game screen.
+     * @return Active GameScreen instance
+     */
     public GameScreen getGameScreen() {
         return gameScreen;
     }
 
-    // Getter for stage
+    /**
+     * Gets the UI stage.
+     * @return Stage used for rendering menu
+     */
     public Stage getStage() {
         return stage;
     }

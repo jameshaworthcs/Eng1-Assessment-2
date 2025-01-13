@@ -14,14 +14,18 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// note to self on how to run tests:
-// .\gradlew.bat clean core:test --info
-
+/**
+ * Test class for UniSim game initialization and disposal.
+ * Uses headless application configuration for testing without graphics.
+ */
 public class UniSimTest {
     private HeadlessApplication app;
     private TestUniSim game;
 
-    // Mock screen for testing
+    /**
+     * Mock screen implementation for testing.
+     * Provides empty implementations of Screen interface methods.
+     */
     private static class TestScreen implements Screen {
         @Override public void show() {}
         @Override public void render(float delta) {}
@@ -32,7 +36,10 @@ public class UniSimTest {
         @Override public void dispose() {}
     }
 
-    // Test implementation of UniSim that doesn't create SpriteBatch
+    /**
+     * Test implementation of UniSim that tracks create and dispose calls.
+     * Avoids creating SpriteBatch to enable headless testing.
+     */
     private static class TestUniSim extends UniSim {
         public boolean createCalled = false;
         public boolean disposeCalled = false;
@@ -53,20 +60,21 @@ public class UniSimTest {
         }
     }
 
+    /**
+     * Sets up the test environment with a headless application configuration.
+     * Mocks necessary LibGDX components for testing.
+     */
     @BeforeEach
     public void setUp() {
         HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
         
-        // Mock GL20
         Gdx.gl = Mockito.mock(GL20.class);
         Gdx.gl20 = Mockito.mock(GL20.class);
         
-        // Mock Graphics
         Graphics graphics = Mockito.mock(Graphics.class);
         Mockito.when(graphics.getWidth()).thenReturn(800);
         Mockito.when(graphics.getHeight()).thenReturn(600);
         
-        // Create test game instance
         game = new TestUniSim();
         app = new HeadlessApplication(game, config);
         
@@ -78,6 +86,9 @@ public class UniSimTest {
         app.exit();
     }
 
+    /**
+     * Tests that game initialization properly sets up the initial screen.
+     */
     @Test
     public void testGameInitialization() {
         assertTrue(game.createCalled, "Game create() should be called");
@@ -85,6 +96,9 @@ public class UniSimTest {
         assertTrue(game.getScreen() instanceof TestScreen, "Initial screen should be TestScreen");
     }
 
+    /**
+     * Tests that game disposal properly cleans up resources.
+     */
     @Test
     public void testGameDisposal() {
         game.dispose();

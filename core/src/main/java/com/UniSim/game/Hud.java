@@ -25,47 +25,59 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
- * The Hud class handles the display of the game's heads-up display,
- * including player statistics (e.g., satisfaction, currency, fatigue),
- * the countdown timer, and messages for the player.
- * It also manages updates to the player's stats and the game timer.
+ * Manages the game's heads-up display (HUD) and UI elements.
+ * Handles displaying and updating:
+ * - Player stats (satisfaction, currency, fatigue)
+ * - Game timer and countdown
+ * - Notification messages and popups
+ * - Achievement notifications
  */
 public class Hud {
-    public Stage stage;
-    private Viewport viewport;
-    private Skin skin;
-    private World world;
+    public Stage stage;                // UI rendering stage
+    private Viewport viewport;         // Screen viewport for UI scaling
+    private Skin skin;                 // UI theme/styling
+    private World world;               // Physics world reference
 
-    private Integer worldTimer;
-    private float timeCount;
-    private boolean timeUp;
-    private GameScreen gameScreen;
-    private boolean satUpdateOnce;
-    private boolean endOnce;
-    private UniSim game;
-    private Music music;
-    private AchievementManager achievementManager;
+    private Integer worldTimer;        // Game time remaining
+    private float timeCount;           // Time accumulator
+    private boolean timeUp;            // Whether game time has expired
+    private GameScreen gameScreen;     // Reference to main game screen
+    private boolean satUpdateOnce;     // Track satisfaction update
+    private boolean endOnce;           // Prevent multiple end triggers
+    private UniSim game;               // Main game instance
+    private Music music;               // Background music
+    private AchievementManager achievementManager;  // Handles achievements
 
-    Label countdownLabel;
-    Label timeLabel;
+    Label countdownLabel;              // Displays time remaining
+    Label timeLabel;                   // "TIME" text label
+    public PlayerStats stats;          // Player's game statistics
+    private ArrayList<StatsLabels> playerStatLabels;  // UI labels for stats
+    private Label messageLabel;        // General message display
 
-    public PlayerStats stats;
+    private Queue<NotificationMessage> messageQueue;    // Pending notifications
+    private ArrayList<NotificationMessage> activeMessages;  // Currently shown
+    private static final float MESSAGE_DURATION = 5f;   // Message display time
+    private static final float MESSAGE_SPACING = 30f;   // Pixels between messages
 
-    private ArrayList<StatsLabels> playerStatLabels;
-    private Label messageLabel;
-
-    private Queue<NotificationMessage> messageQueue;
-    private ArrayList<NotificationMessage> activeMessages;
-    private static final float MESSAGE_DURATION = 5f; // Messages last for 5 seconds
-    private static final float MESSAGE_SPACING = 30f; // Vertical space between messages
-
+    /**
+     * Represents a notification message in the HUD.
+     * Can be temporary or persistent, with different display types.
+     */
     private class NotificationMessage {
-        String text;
-        float timeLeft;
-        Label label;
-        String type;
-        boolean isPersistent;
+        String text;           // Message content
+        float timeLeft;        // Display time remaining
+        Label label;          // UI label component
+        String type;          // Message category
+        boolean isPersistent; // Whether message stays until hidden
 
+        /**
+         * Creates a new notification message.
+         *
+         * @param text Message to display
+         * @param duration How long to show (seconds)
+         * @param label UI label for rendering
+         * @param type Category of message
+         */
         NotificationMessage(String text, float duration, Label label, String type) {
             this.text = text;
             this.timeLeft = duration;
@@ -76,14 +88,15 @@ public class Hud {
     }
 
     /**
-     * Creates a new Hud instance.
+     * Creates a new HUD with all UI components.
+     * Sets up the viewport, stats display, timer, and message system.
      *
-     * @param sb         the SpriteBatch used for rendering the HUD elements
-     * @param skin       the Skin used for styling the labels and UI elements
-     * @param world      the Box2D world used for game physics
-     * @param gameScreen the current game screen
-     * @param game       the main game instance
-     * @param music      the background music for the game
+     * @param sb Sprite batch for rendering
+     * @param skin UI theme/styling
+     * @param world Physics world reference
+     * @param gameScreen Main game screen
+     * @param game Main game instance
+     * @param music Background music
      */
     public Hud(SpriteBatch sb, Skin skin, World world, GameScreen gameScreen, UniSim game, Music music) {
         this.world = world;
@@ -101,15 +114,17 @@ public class Hud {
         this.achievementManager = new AchievementManager(this);
     }
 
+    /**
+     * Gets the player's current stats.
+     * @return PlayerStats object with current game statistics
+     */
     public PlayerStats getStats() {
         return stats;
     }
 
     /**
-     * Sets up and initializes the player statistics display.
-     *
-     * @param skin  the Skin used for styling the labels
-     * @param world the Box2D world used for physics
+     * Initializes player stats display.
+     * Creates and positions labels for each stat type.
      */
     private void setStats(Skin skin, World world) {
         stats = new PlayerStats();
@@ -123,6 +138,10 @@ public class Hud {
         playerStatLabels.add(new StatsLabels(world, stage, skin, 10, 140, "KNOWLEDGE: " + stats.getKnowledge()));
     }
 
+    /**
+     * Updates all player stat displays.
+     * Called each frame to refresh UI with current values.
+     */
     public void updateStats() {
         playerStatLabels.get(0).setText("BUILDINGS: " + stats.getBuildingCounter());
         playerStatLabels.get(1).setText("SATISFACTION: " + stats.getSatisfaction());
@@ -132,9 +151,8 @@ public class Hud {
     }
 
     /**
-     * Initializes the timer and UI elements for tracking and displaying time.
-     *
-     * @param sb the SpriteBatch used for rendering the timer
+     * Sets up the game timer display.
+     * Creates labels for countdown and configures their position.
      */
     private void setTimer(SpriteBatch sb) {
         worldTimer = (int) Constants.TIME_LIMIT;
@@ -160,9 +178,8 @@ public class Hud {
     }
 
     /**
-     * Creates the message label for displaying player notifications.
-     *
-     * @param skin the Skin used for styling the label
+     * Creates the message label for notifications.
+     * Positions it at the bottom of the screen.
      */
     private void createMessageLabel(Skin skin) {
         messageLabel = new Label("", skin);
@@ -170,10 +187,23 @@ public class Hud {
         stage.addActor(messageLabel);
     }
 
+    /**
+     * Displays a temporary message in the HUD.
+     * Message will fade after default duration.
+     *
+     * @param message Text to display
+     */
     public void sendMessage(String message) {
         sendMessage(message, "default");
     }
 
+    /**
+     * Displays a message of specific type in the HUD.
+     * Different types can have different behaviors.
+     *
+     * @param message Text to display
+     * @param type Category of message
+     */
     public void sendMessage(String message, String type) {
         // Remove any existing messages of the same type
         ArrayList<NotificationMessage> messagesToRemove = new ArrayList<>();
@@ -203,6 +233,10 @@ public class Hud {
         updateMessagePositions();
     }
 
+    /**
+     * Updates vertical positions of active messages.
+     * Ensures proper spacing between messages.
+     */
     private void updateMessagePositions() {
         float currentY = 20;
         float stageWidth = stage.getViewport().getWorldWidth();
@@ -216,6 +250,12 @@ public class Hud {
         }
     }
 
+    /**
+     * Main update method called each frame.
+     * Updates timer, messages, and checks game end conditions.
+     *
+     * @param dt Time elapsed since last frame
+     */
     public void update(float dt) {
         updateStats();
         satisfactionUpdate(dt);
@@ -235,6 +275,12 @@ public class Hud {
         }
     }
 
+    /**
+     * Updates active notifications.
+     * Removes expired messages and updates timers.
+     *
+     * @param dt Time elapsed since last frame
+     */
     private void updateNotifications(float dt) {
         ArrayList<NotificationMessage> messagesToRemove = new ArrayList<>();
         
@@ -255,14 +301,28 @@ public class Hud {
         }
     }
 
+    /**
+     * Gets current game timer value.
+     * @return Seconds remaining in game
+     */
     public float getWorldTimer() {
         return worldTimer;
     }
 
+    /**
+     * Checks if game time has expired.
+     * @return true if time is up, false otherwise
+     */
     public boolean isTimeUp() {
         return timeUp;
     }
 
+    /**
+     * Hides messages of a specific type.
+     * Useful for clearing certain categories of messages.
+     *
+     * @param type Category of messages to hide
+     */
     public void hideMessage(String type) {
         // Remove only messages of the specified type
         ArrayList<NotificationMessage> messagesToRemove = new ArrayList<>();
@@ -276,6 +336,10 @@ public class Hud {
         updateMessagePositions();
     }
 
+    /**
+     * Hides all active messages.
+     * Clears both persistent and temporary messages.
+     */
     public void hideAllMessages() {
         // Remove all messages and their labels
         for (NotificationMessage message : activeMessages) {
@@ -285,21 +349,21 @@ public class Hud {
     }
 
     /**
-     * Displays a pop-up for the given event
+     * Shows a popup for a game event.
+     * Displays event description and effects.
      *
-     * @param event
-     *
-     */
-
-    /**
-     * Updates the satisfaction value of the player every 30 seconds.
-     *
-     * @param dt the time delta between frames
+     * @param event Event to display
      */
     public void showEventPopup(Event event) {
         sendMessage(event.getDescription());
     }
 
+    /**
+     * Updates player satisfaction.
+     * Checks conditions and updates score periodically.
+     *
+     * @param dt Time elapsed since last frame
+     */
     private void satisfactionUpdate(float dt) {
         if (worldTimer % 30 == 0 && worldTimer != Constants.TIME_LIMIT && !satUpdateOnce) {
             int increase = stats.calculateSatisfaction();
@@ -315,7 +379,8 @@ public class Hud {
     }
 
     /**
-     * Checks if the game has ended (when the timer runs out).
+     * Checks if game end conditions are met.
+     * Transitions to end screen if necessary.
      */
     private void checkIfEnd() {
         if (worldTimer == 0 && !endOnce) {

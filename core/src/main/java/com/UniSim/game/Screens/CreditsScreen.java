@@ -21,33 +21,36 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 /**
- * Credits screen displayed in the game, showing the acknowledgements for libraries, assets,
- * and contributors. This screen can be accessed from the LandingScreen.
+ * Credits and acknowledgements screen.
+ * Lists:
+ * - Third-party libraries used
+ * - Asset sources and attributions
+ * - Development team members
+ * Features scrollable text and return to main menu.
  */
 public class CreditsScreen implements Screen {
-    private UniSim game;
-    private Stage stage;
-    private Skin skin;
-    private Music music;
-    private LandingScreen landingScreen;
-    private Texture backgroundTexture;
+    // Core components
+    private UniSim game;              // Main game instance
+    private Stage stage;              // UI stage
+    private Skin skin;                // UI styling
+    private Music music;              // Background music
+    private LandingScreen landingScreen;  // Main menu reference
+    private Texture backgroundTexture;    // Menu background
 
     /**
-     * Constructor for initializing the CreditsScreen.
+     * Creates the credits screen with acknowledgements.
+     * Sets up UI components and loads content.
      *
-     * @param game         The game instance.
-     * @param landingScreen The screen to return to when the user presses the "Back" button.
-     * @param music        The background music to play on the credits screen.
+     * @param game Main game instance
+     * @param landingScreen Screen to return to
+     * @param music Background music track
      */
     public CreditsScreen(UniSim game, LandingScreen landingScreen, Music music) {
         this.game = game;
         this.landingScreen = landingScreen;
         this.music = music;
-        //this.stage = new Stage(new ScreenViewport());
-        this.skin = new Skin(Gdx.files.internal("uiskin.json")); // Load the skin for UI elements
-        Gdx.input.setInputProcessor(stage);  // Set input processor to this screen's stage
-
-        // Initialize UI elements
+        this.skin = new Skin(Gdx.files.internal("uiskin.json")); 
+        Gdx.input.setInputProcessor(stage);
         initialize();
     }
 

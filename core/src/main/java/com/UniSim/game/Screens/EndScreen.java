@@ -26,28 +26,39 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
- * EndScreen class represents the screen shown when the game ends.
- * It displays the final stats of the game, including satisfaction and other
- * metrics,
- * and allows the player to return to the main screen.
+ * Game completion screen showing final results.
+ * Features:
+ * - Final satisfaction score calculation
+ * - Breakdown of contributing factors:
+ *   - Remaining currency bonus
+ *   - Knowledge multiplier
+ *   - Fatigue penalty
+ *   - Achievement bonuses
+ * - High score saving
+ * - Return to main menu option
  */
 public class EndScreen implements Screen {
 
-    private static final float FONT_SCALE = 0.8f;
-    private static final float TITLE_FONT_SCALE = 1f;
+    // Font sizing constants
+    private static final float FONT_SCALE = 0.8f;        // Regular text scale
+    private static final float TITLE_FONT_SCALE = 1f;    // Header text scale
 
-    private final UniSim game;
-    private final AssetManager manager;
-
-    private Stage stage;
-    private Texture backgroundTexture;
-    private Music music;
-    private Skin skin;
-    private BitmapFont font;
-    private BitmapFont titleFont;
-    private PlayerStats finalStats;
-    private int satisfactionLeft;
-    private List<Achievement> unlockedAchievements;
+    // Core components
+    private final UniSim game;              // Main game instance
+    private final AssetManager manager;      // Resource manager
+    private Stage stage;                     // UI stage
+    private Texture backgroundTexture;       // Menu background
+    private Music music;                     // Background music
+    private Skin skin;                       // UI styling
+    
+    // Text rendering
+    private BitmapFont font;                 // Regular text font
+    private BitmapFont titleFont;            // Title text font
+    
+    // Game results
+    private PlayerStats finalStats;          // End game statistics
+    private int satisfactionLeft;            // Final satisfaction score
+    private List<Achievement> unlockedAchievements;  // Earned achievements
 
     /**
      * Constructor for EndScreen.
