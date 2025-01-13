@@ -37,19 +37,15 @@ public class PauseMenu {
     private EventManager eventManager;
 
     /**
-     * Constructs a new PauseMenu instance.
+     * Constructs a new PauseMenu instance with minimal initialization.
      *
-     * @param stage      the Stage used to manage the user interface elements
-     * @param skin       the Skin used for styling UI elements
      * @param gameScreen the current GameScreen to return to when resuming the game
-     * @param game       the main game instance
-     * @param music      the Music instance to control the game's audio
      */
-    public PauseMenu(Stage stage, Skin skin, GameScreen gameScreen, UniSim game, Music music) {
-        this.stage = stage; // Initialize stage here
+    public PauseMenu(GameScreen gameScreen) {
+        this.stage = gameScreen.getStage();
         this.gameScreen = gameScreen;
-        this.game = game;
-        this.music = music;
+        this.game = gameScreen.game;
+        this.music = gameScreen.music;
         this.eventManager = gameScreen.getEventManager();
 
         // Create a blur overlay (semi-transparent black for a blurring effect)
@@ -62,8 +58,9 @@ public class PauseMenu {
         stage.addActor(blurOverlay);
 
         // Create pause menu window
+        Skin skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         pauseMenu = new Window("Paused", skin);
-        pauseMenu.setSize(300, 400); // Increased height to accommodate new button
+        pauseMenu.setSize(300, 400);
         pauseMenu.setPosition((Gdx.graphics.getWidth() - pauseMenu.getWidth()) / 2,
                 (Gdx.graphics.getHeight() - pauseMenu.getHeight()) / 2);
         pauseMenu.setVisible(false);

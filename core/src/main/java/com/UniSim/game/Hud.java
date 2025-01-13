@@ -76,28 +76,20 @@ public class Hud {
     }
 
     /**
-     * Creates a new Hud instance.
+     * Creates a new Hud instance with minimal initialization.
      *
      * @param sb         the SpriteBatch used for rendering the HUD elements
-     * @param skin       the Skin used for styling the labels and UI elements
-     * @param world      the Box2D world used for game physics
      * @param gameScreen the current game screen
-     * @param game       the main game instance
-     * @param music      the background music for the game
      */
-    public Hud(SpriteBatch sb, Skin skin, World world, GameScreen gameScreen, UniSim game, Music music) {
-        this.world = world;
-        this.skin = skin;
+    public Hud(SpriteBatch sb, GameScreen gameScreen) {
         this.gameScreen = gameScreen;
         this.satUpdateOnce = false;
         this.endOnce = false;
-        this.game = game;
-        this.music = music;
         this.messageQueue = new LinkedList<>();
         this.activeMessages = new ArrayList<>();
         setTimer(sb);
-        setStats(skin, world);
-        createMessageLabel(skin);
+        setStats(null, null);
+        createMessageLabel(new Skin(Gdx.files.internal("skin/uiskin.json")));
         this.achievementManager = new AchievementManager(this);
     }
 
