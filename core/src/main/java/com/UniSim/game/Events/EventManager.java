@@ -1,67 +1,85 @@
 package com.UniSim.game.Events;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
+import com.UniSim.game.Hud;
+import com.UniSim.game.Stats.PlayerStats;
+
 public class EventManager {
-    private List<GameEvent> events;
+    private Hud hud;
+    private PlayerStats playerStats;
     private Random random;
+    private Event[] events;
+    private int nextEventTime;
 
-    public EventManager() {
-        this.events = new ArrayList<>();
+    public EventManager(Hud hud) {
+        this.hud = hud;
+        this.playerStats = hud.stats;
         this.random = new Random();
-    }
+        this.events = new Event[] {
+                // Positive Events
+                new Event(Event.EventType.POSITIVE, 
+                    "Research Grant Awarded!\nThe university received additional funding. (+$500, +5 satisfaction)", 
+                    5, 500, "music/positive.mp3"),
+                new Event(Event.EventType.POSITIVE, 
+                    "Successful Student Society Event!\nA major student event was a huge success. (+$200, +8 satisfaction)", 
+                    8, 200, "music/positive.mp3"),
+                new Event(Event.EventType.POSITIVE, 
+                    "Alumni Donation!\nA generous alumni made a donation. (+$1000, +3 satisfaction)", 
+                    3, 1000, "music/positive.mp3"),
+                new Event(Event.EventType.POSITIVE, 
+                    "High Student Attendance!\nLecture attendance is up. (+$0, +10 satisfaction)", 
+                    10, 0, "music/positive.mp3"),
 
-    public GameEvent createEvent(String name, String description, int impact) {
-        GameEvent event = new GameEvent(name, description, impact);
-        events.add(event);
-        return event;
-    }
+                // Negative Events
+                new Event(Event.EventType.NEGATIVE, 
+                    "Building Maintenance Required!\nUnexpected repairs needed. (-$300, -5 satisfaction)", 
+                    -5, -300, "music/negative.mp3"),
+                new Event(Event.EventType.NEGATIVE, 
+                    "Student Protest!\nStudents are unhappy with facilities. (-$0, -8 satisfaction)", 
+                    -8, 0, "music/negative.mp3"),
+                new Event(Event.EventType.NEGATIVE, 
+                    "Budget Cuts!\nGovernment reduced university funding. (-$800, -3 satisfaction)", 
+                    -3, -800, "music/negative.mp3"),
+                new Event(Event.EventType.NEGATIVE, 
+                    "Failed Equipment!\nSome academic equipment needs replacement. (-$400, -4 satisfaction)", 
+                    -4, -400, "music/negative.mp3"),
 
-    public void triggerEvent(GameEvent event) {
-        if (event != null && events.contains(event)) {
-            event.setActive(true);
-        }
-    }
-
-    public void resolveEvent(GameEvent event) {
-        if (event != null && events.contains(event)) {
-            event.setActive(false);
-        }
-    }
-
-    public boolean hasActiveEvents() {
-        return events.stream().anyMatch(GameEvent::isActive);
-    }
-
-    public int getTotalEvents() {
-        return events.size();
-    }
-
-    public GameEvent generateRandomEvent() {
-        String[] eventNames = {"Funding Cut", "Research Grant", "Student Protest", "Alumni Donation"};
-        String[] eventDescriptions = {
-            "University funding has been reduced",
-            "Received a research grant",
-            "Students are protesting",
-            "Alumni made a generous donation"
+                // Neutral Events
+                new Event(Event.EventType.NEUTRAL, 
+                    "Campus Tour Day!\nProspective students are visiting. (No immediate effect)", 
+                    0, 0, "music/neutral.mp3"),
+                new Event(Event.EventType.NEUTRAL, 
+                    "Student Exchange Program!\nNew international students arrived. (No immediate effect)", 
+                    0, 0, "music/neutral.mp3"),
+                new Event(Event.EventType.NEUTRAL, 
+                    "Academic Conference!\nScholars gathering for discussions. (No immediate effect)", 
+                    0, 0, "music/neutral.mp3")
         };
-        int[] eventImpacts = {-500, 1000, -200, 800};
-
-        int index = random.nextInt(eventNames.length);
-        return createEvent(eventNames[index], eventDescriptions[index], eventImpacts[index]);
+        scheduleNextEvent();
     }
 
-    /**
-     * Updates the event manager state.
-     * This method is called every frame to handle any time-based event logic.
-     */
+    private void scheduleNextEvent() {
+        // Random delay between 15 and 30 seconds
+        int delay = 15 + random.nextInt(16);
+        nextEventTime = (int) (hud.getWorldTimer() - delay);
+    }
+
     public void update() {
-        // Check for any events that need to be triggered
-        if (random.nextFloat() < 0.001f && !hasActiveEvents()) { // 0.1% chance per frame to trigger a random event
-            GameEvent event = generateRandomEvent();
-            triggerEvent(event);
+        if (hud.getWorldTimer() <= nextEventTime) {
+            triggerEvent();
+            scheduleNextEvent();
         }
+    }
+
+    private void triggerEvent() {
+        Event event = chooseRandomEvent();
+        event.applyEffects(playerStats);
+        hud.showEventPopup(event);
+        event.playSound();
+    }
+
+    private Event chooseRandomEvent() {
+        return events[random.nextInt(events.length)];
     }
 }

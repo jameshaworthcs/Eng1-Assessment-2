@@ -61,7 +61,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 /**
  * GameScreen class represents the main screen of the game where the gameplay
@@ -71,7 +70,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
  * physics, UI components, and other essential features of the game.
  */
 public class GameScreen implements Screen {
-    public UniSim game;
+    private UniSim game;
     private SpriteBatch batch;
     private Stage stage;
 
@@ -97,7 +96,7 @@ public class GameScreen implements Screen {
     private OrthogonalTiledMapRenderer renderer;
 
     public static AssetManager manager;
-    public Music music;
+    private Music music;
 
     public Hud hud;
 
@@ -125,9 +124,15 @@ public class GameScreen implements Screen {
      */
     public GameScreen(UniSim game, Music music) {
         this.game = game;
-        batch = game.batch;
-        stage = new Stage(new ScreenViewport());
-        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        this.batch = new SpriteBatch();
+        loggedMinutes = new ArrayList<>();
+        playerNearReseption = false;
+        characterTexture = new Texture("character-1.png");
+        speechBubbleTexture = new Texture("question.png");
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())); // Initialize the stage
+        Gdx.input.setInputProcessor(stage); // Set the stage as the input processor
 
         world = new World(new Vector2(0, 0), false);
 
@@ -159,14 +164,57 @@ public class GameScreen implements Screen {
         music.setVolume(volume);
         music.play();
 
-        hud = new Hud(game.batch, this);
-        eventManager = new EventManager();
+        hud = new Hud(game.batch, skin, world, this, game, music);
+        eventManager = new EventManager(hud);
 
-        pauseMenu = new PauseMenu(this);
-        pauseIconTexture = new Texture("pause.png");
+        // Add initial hint message
+        hud.sendMessage("Walk to the house to start placing buildings", "initialHint");
 
-        playerNearReseption = false;
-        loggedMinutes = new ArrayList<>();
+        // Load the pause icon texture
+        pauseIconTexture = new Texture(Gdx.files.internal("pause.png"));
+        TextureRegionDrawable drawable = new TextureRegionDrawable(new TextureRegion(pauseIconTexture));
+        ImageButton pauseButton = new ImageButton(drawable);
+        pauseButton.setPosition(10, Gdx.graphics.getHeight() - pauseButton.getHeight() - 10);
+        pauseButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (showFullMap) {
+                    showFullMapView();
+                }
+                if (buildingManager.getIsWindowOpen()) {
+                    buildingManager.closeBuildingWindow();
+                }
+                pauseMenu.togglePause();
+            }
+        });
+        stage.addActor(pauseButton);
+
+        // Initialize pause menu
+        pauseMenu = new PauseMenu(stage, skin, this, game, music);
+
+        BodyDef bdef = new BodyDef();
+        PolygonShape shape = new PolygonShape();
+        FixtureDef fdef = new FixtureDef();
+
+        makeHitBoxes(bdef, shape, fdef);
+        Body body;
+
+        for (MapObject object : tiledMap.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+            bdef.type = BodyDef.BodyType.StaticBody;
+            bdef.position.set((rect.getX() + rect.getWidth() / 2) / PPM, (rect.getY() + rect.getHeight() / 2) / PPM);
+
+            body = world.createBody(bdef);
+
+            shape.setAsBox(rect.getWidth() / 2 / PPM, rect.getHeight() / 2 / PPM);
+            fdef.shape = shape;
+            fdef.isSensor = true;
+            Fixture sensorFixture = body.createFixture(fdef);
+            sensorFixture.setUserData("sensor");
+            shape.dispose();
+        }
+        setupCollisionListener();
     }
 
     /**
