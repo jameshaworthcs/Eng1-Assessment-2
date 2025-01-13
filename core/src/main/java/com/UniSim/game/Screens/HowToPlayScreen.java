@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 
 import java.awt.*;
 
@@ -98,12 +99,10 @@ public class HowToPlayScreen implements Screen {
 
         backgroundTexture = new Texture("LoadScreenBackground.png");
 
-        // Create a table to organize UI elements
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
 
-        // Back button
         Button backButton = new Button(skin);
         backButton.add(new Label("Back", skin));
         backButton.addListener(new ClickListener() {
@@ -122,54 +121,72 @@ public class HowToPlayScreen implements Screen {
             }
         });
 
-        // Large text box with instructions
-        BitmapFont customFont = new BitmapFont(Gdx.files.internal("Font1.fnt"));
-        customFont.getData().setScale(0.9f);
+        BitmapFont titleFont = new BitmapFont(Gdx.files.internal("Font1.fnt"));
+        titleFont.getData().setScale(0.2f);
 
-        LabelStyle customLabelStyle = new LabelStyle();
-        customLabelStyle.font = customFont;
-        customLabelStyle.fontColor = Color.BLACK;
+        LabelStyle titleStyle = new LabelStyle();
+        titleStyle.font = titleFont;
+        titleStyle.fontColor = Color.BLACK;
 
-        BitmapFont customFont1 = new BitmapFont(Gdx.files.internal("Font1.fnt"));
-        customFont1.getData().setScale(0.14f);
+        BitmapFont contentFont = new BitmapFont(Gdx.files.internal("Font1.fnt"));
+        contentFont.getData().setScale(0.10f);
 
+        LabelStyle contentStyle = new LabelStyle();
+        contentStyle.font = contentFont;
+        contentStyle.fontColor = Color.BLACK;
 
-        LabelStyle customLabelStyle1 = new LabelStyle();
-        customLabelStyle1.font = customFont1;
-        customLabelStyle1.fontColor = Color.BLACK;
+        Label titleLabel = new Label("How to Play", titleStyle);
+        
+        // sections for better organization
+        String[] instructions = {
+            "Starting Resources:",
+            "• You begin with 10,000 pounds\n• An additional 10,000 pounds is given each minute\n• You have five minutes to achieve the highest satisfaction possible\n",
+            
+            "Building Management:",
+            "• Buildings can be bought and placed by pressing escape near the reception\n• Each building has a ten second cooldown between uses\n",
+            
+            "Activities and Buildings:",
+            "• Work: Place work buildings to earn more currency\n" +
+            "• Sleep: Use accommodation buildings to reduce fatigue\n" +
+            "• Study: Visit academic buildings to increase knowledge\n" +
+            "• Eat: Food halls reduce fatigue and increase satisfaction\n" +
+            "• Relax: Recreational buildings boost satisfaction\n",
+            
+            "Game Mechanics:",
+            "• Your fatigue level affects movement speed\n• The more fatigued you are, the slower you move\n• Interact with buildings by approaching them"
+        };
 
-        Label howToPlayLabel = new Label("How to play:", customLabelStyle);
-        Label instructionsLabel = new Label(
-            "You are given 10,000 pounds to start with \n" +
-            "An additional 10,000 pounds is given each minute \n" +
-            "You have five minutes to get the highest satisfaction possible\n" +
-            "This can be achieved by placing buildings and interacting with them\n" +
-            "Buildings can be bought and placed by inpressing escape near the reception building\n" +
-            "You can work, increasing currency, by placing work buildings and then interacting with them\n" +
-            "You can sleep, decreasing fatigue, by placing accommodation buildings and interacting with them\n" +
-            "You can study, increasing knowledge, by placing academic building and interacting with them\n" +
-            "You can eat, decreasing fatigue and increasing satisfaction, by placing Food halls and interacting with them\n" +
-            "You can relax, increasing satisfaction, by placing recreational buildings and interacting with them\n" +
-            "Each building has a ten second cooldown between each use\n" +
-            "Your fatigue level affects your movement speed - the more fatigued you are, the slower you move",
-            customLabelStyle1);
-        instructionsLabel.setWrap(true);
-        instructionsLabel.setAlignment(Align.center);
+        Table contentTable = new Table();
+        contentTable.defaults().pad(10);
+        contentTable.top();
 
-        // Positioning and adding elements to the stage
-        //howToPlayLabel.setPosition(500, 1000);
+        for (int i = 0; i < instructions.length; i++) {
+            Label instructionLabel = new Label(instructions[i], contentStyle);
+            instructionLabel.setWrap(true);
+            if (i % 2 == 0) {
+                // Section headers
+                instructionLabel.setStyle(titleStyle);
+                contentTable.add(instructionLabel).width(1600).padTop(20);
+            } else {
+                // Section content
+                contentTable.add(instructionLabel).width(1600);
+            }
+            contentTable.row();
+        }
 
-        howToPlayLabel.setPosition((stage.getViewport().getWorldWidth() - howToPlayLabel.getWidth()) / 2, 1000);
-        instructionsLabel.setPosition((stage.getViewport().getWorldWidth() - instructionsLabel.getWidth()) / 2, 460);
+        ScrollPane scrollPane = new ScrollPane(contentTable, skin);
+        scrollPane.setScrollingDisabled(true, false);
 
-        backButton.setPosition(10, 1360);
-        backButton.setSize(150, 70);
+        // positioning
+        titleLabel.setPosition((stage.getViewport().getWorldWidth() - titleLabel.getWidth()) / 2, 1300);
+        scrollPane.setBounds(100, 100, stage.getViewport().getWorldWidth() - 200, 1150);
 
-        stage.addActor(howToPlayLabel);
-        stage.addActor(instructionsLabel);
+        backButton.setPosition(50, stage.getViewport().getWorldHeight() - 100);
+        backButton.setSize(200, 80);
+
+        stage.addActor(titleLabel);
+        stage.addActor(scrollPane);
         stage.addActor(backButton);
-
-
     }
 
     @Override
